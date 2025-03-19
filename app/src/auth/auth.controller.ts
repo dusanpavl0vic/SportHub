@@ -10,7 +10,7 @@ import { CreateTeamDto } from 'src/dto/team.dto';
 export class AuthController {
     constructor(private authService: AuthService) {}
 
-    @HttpCode(HttpStatus.OK)
+    @HttpCode(HttpStatus.CREATED)
     @Post('signUpPlayer')
     signUpPlayer(@Body() dto: CreatePlayerDto) {
         return this.authService.signUpPlayer(dto);
@@ -22,7 +22,7 @@ export class AuthController {
         return this.authService.signInPlayer(dto);
     }
 
-    @HttpCode(HttpStatus.OK)
+    @HttpCode(HttpStatus.CREATED)
     @Post('signUpTeam')
     signUpTeam(@Body() dto: CreateTeamDto) {
         return this.authService.signUpTeam(dto);

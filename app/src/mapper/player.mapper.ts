@@ -11,6 +11,7 @@ export class PlayerMapper {
             firstName: player.firstName,
             lastName: player.lastName,
             phoneNumber: player.phoneNumber ?? undefined,
+            profilePicture: player.profilePicture ?? undefined,
             birthDate: player.birthDate ?? undefined,
             city: player.city,
             teamId: player.teamId ?? undefined,
@@ -20,11 +21,11 @@ export class PlayerMapper {
     static toReturnPlayerDto(player: Player): ReturnPlayerDto {
         return {
             id: player.id,
-            role: player.role,
             email: player.email,
             firstName: player.firstName,
             lastName: player.lastName,
             phoneNumber: player.phoneNumber ?? null,
+            profilePicture: player.profilePicture ?? null,
             birthDate: player.birthDate ?? null,
             city: player.city,
             teamId: player.teamId ?? null,
@@ -48,7 +49,6 @@ export class PlayerMapper {
             phoneNumber: data.phoneNumber,
             birthDate: data.birthDate,
             city: data.city,
-            teamId: data.teamId,
         };
     }
 }

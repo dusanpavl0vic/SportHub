@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Team } from '@prisma/client';
 import { ShowTeamCardDto, ShowTeamDto } from 'src/dto/team.dto';
 import { TeamMapper } from 'src/mapper/mapper';
@@ -10,46 +10,58 @@ export class TeamService {
     constructor(private prisma: PrismaService) {}
     
     async getTeamsFilters(
+        page: number,
+        take: number,
         sport?: string,
         city?: string,
         sort?: 'a-z' | 'z-a' | 'memberCountAsc' | 'memberCountDesc',
-        skip?: number,
-        take?: number,
     ): Promise<ShowTeamCardDto[]> {
-        
-        const orderBy = this.getSortingOrder(sort);
+        try {
+            const orderBy = this.getSortingOrder(sort);
 
-        const teams: Team[] = await this.prisma.team.findMany({
-            skip: skip,
-            take: take,
-            where: {
-                sport: {
-                    contains: sport,
-                },
-                city: {
-                    contains: city,
-                },
-            },
-            orderBy,
-        });
+            if (page == undefined && take == undefined) {
+                throw new Error('You must provide skip and take parameters');
+            }
 
-        return teams.map(TeamMapper.toShowTeamCardDto);
+            const teams: Team[] = await this.prisma.team.findMany({
+                skip: page * take,
+                take: take,
+                where: {
+                    sport: {
+                        contains: sport,
+                    },
+                    city: {
+                        contains: city,
+                    },
+                },
+                orderBy,
+            });
+
+            return teams.map(TeamMapper.toShowTeamCardDto);
+
+        } catch (error) {
+            throw new InternalServerErrorException(`Failed to fetch teams: ${error.message}`);
+        }
 
     }
 
     async getTeamInfo(teamId: number): Promise<ShowTeamDto> {
-        const team = await this.prisma.team.findUnique({
-            where: {
-                id: teamId,
-            },
-        });
+        try {
+            const team = await this.prisma.team.findUnique({
+                where: {
+                    id: teamId,
+                },
+            });
 
-        if (!team) {
-            throw new Error('Team not found');
+            if (!team) {
+                throw new NotFoundException(`Team with ID ${teamId} not found`);
+            }
+
+            return TeamMapper.toShowTeamDto(team);
         }
-
-        return TeamMapper.toShowTeamDto(team);
-
+        catch (error) {
+            throw new InternalServerErrorException(`Failed to fetch team: ${error.message}`);
+        }
     }
 
     

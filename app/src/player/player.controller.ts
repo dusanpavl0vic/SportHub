@@ -7,10 +7,11 @@ import { PlayerService } from './player.service';
 
 @Controller('player')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(["PLAYER"])
 export class PlayerController {
     
     constructor( private playerService: PlayerService ) {}
+    
+    @Roles(["PLAYER"])
     @Get('me')
     getMe(@GetUser('') player: Player) {
         return player;

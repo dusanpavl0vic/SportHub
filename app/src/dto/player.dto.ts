@@ -9,6 +9,7 @@ export class PlayerDto {
   firstName: string;
   lastName: string;
   phoneNumber?: string;
+  profilePicture?: string;
   birthDate?: Date;
   city: string;
   teamId?: number;
@@ -16,11 +17,11 @@ export class PlayerDto {
 
 export interface ReturnPlayerDto {
   id: number;
-  role: Role;
   email: string;
   firstName: string;
   lastName: string;
   phoneNumber?: string | null;
+  profilePicture?: string | null;
   birthDate?: Date | null;
   city: string;
   teamId?: number | null;
@@ -54,6 +55,5 @@ export class UpdatePlayerDto {
   phoneNumber?: string;
   birthDate?: Date;
   city?: string;
-  teamId?: number;
 }
   
