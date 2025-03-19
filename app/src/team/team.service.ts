@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Team } from '@prisma/client';
 import { ShowTeamCardDto, ShowTeamDto } from 'src/dto/team.dto';
+import { TeamMapper } from 'src/mapper/mapper';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class PublicTeamService {
-    constructor(private prisma: PrismaService) {}
+export class TeamService {
 
-    async getTeams(
+    constructor(private prisma: PrismaService) {}
+    
+    async getTeamsFilters(
         sport?: string,
         city?: string,
         sort?: 'a-z' | 'z-a' | 'memberCountAsc' | 'memberCountDesc',
@@ -31,14 +33,7 @@ export class PublicTeamService {
             orderBy,
         });
 
-        return teams.map((team) => ({
-            id: team.id,
-            teamName: team.teamName,
-            profilePicture: team.profilePicture ?? '',
-            city: team.city,
-            numberOfPlayers: team.numberOfPlayers,
-            sport: team.sport,
-        }));
+        return teams.map(TeamMapper.toShowTeamCardDto);
 
     }
 
@@ -53,17 +48,7 @@ export class PublicTeamService {
             throw new Error('Team not found');
         }
 
-        return {
-            id: team.id,
-            teamName: team.teamName,
-            profilePicture: team.profilePicture ?? '',
-            city: team.city,
-            numberOfPlayers: team.numberOfPlayers,
-            sport: team.sport,
-            coachName: team.coachName ?? '',
-            coachPhoneNumber: team.coachPhoneNumber ?? '',
-            location: team.location ?? '',
-        };
+        return TeamMapper.toShowTeamDto(team);
 
     }
 
@@ -80,7 +65,4 @@ export class PublicTeamService {
                 return { numberOfPlayers: 'desc' } as const;
         }
     }
-
-
-
 }

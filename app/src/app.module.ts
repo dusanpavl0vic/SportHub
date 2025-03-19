@@ -7,6 +7,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { RolesGuard } from './auth/guard/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { PublicTeamModule } from './public-team/public-team.module';
+import { ScheduleModule } from './schedule/schedule.module';
+import { AnnouncementModule } from './announcement/announcement.module';
+import { TeamSecureController } from './teams/team-secure/team-secure.controller';
 
 @Module({
   imports: [
@@ -19,7 +22,10 @@ import { PublicTeamModule } from './public-team/public-team.module';
     TeamModule,
     PrismaModule,
     PublicTeamModule,
+    ScheduleModule,
+    AnnouncementModule,
   ],
+  controllers: [TeamSecureController],
   
 })
 export class AppModule {}

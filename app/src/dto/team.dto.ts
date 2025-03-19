@@ -5,6 +5,7 @@ export class TeamDto {
   id: number;
   role: Role;
   email: string;
+  password: string;
   teamName: string;
   profilePicture: string;
   city: string;
