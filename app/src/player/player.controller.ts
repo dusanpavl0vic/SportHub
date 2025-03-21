@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard';
 import { GetUser, Roles } from 'src/auth/decorator/index';
 import { Player } from '@prisma/client';
@@ -15,6 +15,16 @@ export class PlayerController {
     @Get('me')
     getMe(@GetUser('') player: Player) {
         return player;
+    }
+
+    @Roles(["PLAYER"])
+    @Get('teammates')
+    async getTeammates(@GetUser() player: Player) {
+        if (!player.teamId) {
+            throw new NotFoundException('You are not in a team.');
+        }
+
+        return this.playerService.showTeammates(player.teamId);
     }
 
 }

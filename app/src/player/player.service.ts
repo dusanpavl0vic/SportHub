@@ -155,8 +155,28 @@ export class PlayerService {
         //TODO: Implement this method
     }
 
-    async showTeammates(){
-        
+    async showTeammates(teamId: number){
+        try {
+
+            if (teamId == undefined) {
+                throw new Error('You must provide teamId');
+            }
+
+            const teammates = await this.prisma.player.findMany({
+                where: {
+                    teamId: teamId
+                }
+            });
+
+            return teammates.map(PlayerMapper.toReturnPlayerDto);
+
+
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+                throw new NotFoundException(`You are not in team.`);
+            }
+            throw new InternalServerErrorException(`Failed to join team: ${error.message}`);
+        }
     }
 
 }
