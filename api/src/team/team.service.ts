@@ -16,7 +16,7 @@ export class TeamService {
         city?: string,
         sort?: 'a-z' | 'z-a' | 'memberCountAsc' | 'memberCountDesc',
     ): Promise<ShowTeamCardDto[]> {
-        try {
+
             const orderBy = this.getSortingOrder(sort);
 
             if (page == undefined && take == undefined) {
@@ -37,16 +37,16 @@ export class TeamService {
                 orderBy,
             });
 
-            return teams.map(TeamMapper.toShowTeamCardDto);
+            if (!teams) {
+                throw new NotFoundException('No teams found');
+            }
 
-        } catch (error) {
-            throw new InternalServerErrorException(`Failed to fetch teams: ${error.message}`);
-        }
+            return teams.map(TeamMapper.toShowTeamCardDto);
 
     }
 
     async getTeamInfo(teamId: number): Promise<ShowTeamDto> {
-        try {
+
             const team = await this.prisma.team.findUnique({
                 where: {
                     id: teamId,
@@ -58,10 +58,6 @@ export class TeamService {
             }
 
             return TeamMapper.toShowTeamDto(team);
-        }
-        catch (error) {
-            throw new InternalServerErrorException(`Failed to fetch team: ${error.message}`);
-        }
     }
 
     

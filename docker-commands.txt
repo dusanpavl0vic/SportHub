@@ -1,0 +1,40 @@
+1. Provera pokrenutih kontejnera:
+   docker ps
+
+2. Ulazak u terminal kontejnera:
+   docker exec -it sporthub-backend sh
+
+   (Zameni "sporthub-backend" sa imenom tvog kontejnera)
+
+3. Pokretanje build procesa (ako si izmenio Dockerfile):
+   docker-compose build
+
+4. Pokretanje kontejnera sa Docker Compose:
+   docker-compose up -d
+
+5. Instalacija novih biblioteka unutar kontejnera (npr. `passportjs`):
+   # Prvo uđi u kontejner (ako već nisi unutra):
+   # docker exec -it sporthub-backend sh
+   # Zatim instaliraj paket:
+   pnpm add passport
+
+6. Pokretanje Prisma Studio iz kontejnera:
+   npx prisma studio
+
+7. Provera statusa svih kontejnera:
+   docker ps -a
+
+8. Zaustavljanje svih kontejnera:
+   docker-compose down
+
+9. Brisanje Docker slika:
+   docker image prune -a
+
+10. Brisanje kontejnera:
+   docker container prune
+
+11. Prikazivanje logova kontejnera (npr. 'sporthub-backend'):
+   docker logs -f sporthub-backend
+
+12. Pokretanje shell komande unutar kontejnera (ako nije bash, koristi sh):
+   docker exec -it sporthub-backend bash
