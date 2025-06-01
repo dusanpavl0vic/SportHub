@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { Team } from '@prisma/client';
-import { ShowTeamCardDto, ShowTeamDto } from 'src/dto/team.dto';
+import { ShowTeamCardDto, ShowTeamDto } from 'src/dtos/team.dto';
 import { TeamMapper } from 'src/mapper/mapper';
 import { PrismaService } from 'src/prisma/prisma.service';
 

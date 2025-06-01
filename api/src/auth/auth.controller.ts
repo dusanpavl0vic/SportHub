@@ -1,8 +1,8 @@
 import { Body, Controller, HttpCode, HttpStatus, Post, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto } from 'src/dto/dto';
-import { CreatePlayerDto } from 'src/dto/player.dto';
-import { CreateTeamDto } from 'src/dto/team.dto';
+import { AuthDto } from 'src/dtos/dto';
+import { CreatePlayerDto } from 'src/dtos/player.dto';
+import { CreateTeamDto } from 'src/dtos/team.dto';
 
 
 

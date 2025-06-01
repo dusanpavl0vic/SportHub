@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Player } from '@prisma/client';
-import { PlayerDto, ReturnPlayerDto, UpdatePlayerDto } from 'src/dto/player.dto';
+import { PlayerDto, ReturnPlayerDto, UpdatePlayerDto } from 'src/dtos/player.dto';
 import { PlayerMapper } from 'src/mapper/mapper';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { cleanData } from 'src/util/clean-data.util';

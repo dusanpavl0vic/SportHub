@@ -26,11 +26,17 @@ export class JwtStrategy extends PassportStrategy(
         where: {
             id: payload.sub 
         },
+        include: {
+          team: true,
+        },
       });
     } else if (payload.role === Role.TEAM) {
       user = await this.prisma.team.findUnique({
         where: {
             id: payload.sub 
+        },
+        include: {
+          players: true,
         },
       });
     }

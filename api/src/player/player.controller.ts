@@ -4,9 +4,13 @@ import { GetUser, Roles } from 'src/auth/decorator/index';
 import { Player } from '@prisma/client';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { PlayerService } from './player.service';
-import { UpdatePlayerDto } from 'src/dto/player.dto';
+import { UpdatePlayerDto } from 'src/dtos/player.dto';
+import { PlayerDto, PlayerResponseDto } from 'src/dtos/player/player.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('player')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class PlayerController {
     
@@ -15,8 +19,16 @@ export class PlayerController {
     @Roles(["PLAYER"])
     @HttpCode(HttpStatus.OK)
     @Get('me')
-    getMe(@GetUser('') player: Player) {
-        return player;
+    getMe(@GetUser('') player: PlayerDto): PlayerResponseDto {
+        return plainToInstance(PlayerResponseDto, {
+            ...player,
+            profilePicture: player.profilePicture ?? undefined,
+            birthDate: player.birthDate ?? undefined,
+            phoneNumber: player.phoneNumber ?? undefined,
+            team: player.team 
+              ? { id: player.team.id, name: player.team.teamName } 
+              : null,
+          });
     }
 
     @Roles(["PLAYER"])

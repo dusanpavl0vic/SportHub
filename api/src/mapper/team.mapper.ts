@@ -1,5 +1,5 @@
 import { Team } from "@prisma/client";
-import { CreateTeamDto, ShowTeamCardDto, ShowTeamDto, TeamDto, UpdateTeamDto } from "src/dto/dto";
+import { CreateTeamDto, ShowTeamCardDto, ShowTeamDto, TeamDto, UpdateTeamDto } from "src/dtos/dto";
 
 export class TeamMapper {
     static toTeamDto(team: Team): TeamDto {

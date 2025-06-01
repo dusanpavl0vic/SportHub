@@ -1,5 +1,5 @@
 import { Player } from "@prisma/client";
-import { PlayerDto, ReturnPlayerDto, CreatePlayerDto, UpdatePlayerDto } from "src/dto/dto";
+import { PlayerDto, ReturnPlayerDto, CreatePlayerDto, UpdatePlayerDto } from "src/dtos/dto";
 
 export class PlayerMapper {
     static toPlayerDto(player: Player): PlayerDto {

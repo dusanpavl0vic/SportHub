@@ -4,9 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { Role } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import * as argon from 'argon2';
-import { AuthDto } from 'src/dto/auth.dto';
-import { CreatePlayerDto, PlayerDto, ReturnPlayerDto } from 'src/dto/player.dto';
-import { CreateTeamDto } from 'src/dto/team.dto';
+import { AuthDto } from 'src/dtos/auth.dto';
+import { CreatePlayerDto, PlayerDto, ReturnPlayerDto } from 'src/dtos/player.dto';
+import { CreateTeamDto } from 'src/dtos/team.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable({})
