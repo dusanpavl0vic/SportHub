@@ -1,114 +1,119 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { Role } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import * as argon from 'argon2';
-import { AuthDto } from 'src/dtos/auth.dto';
-import { CreatePlayerDto, PlayerDto, ReturnPlayerDto } from 'src/dtos/player.dto';
-import { CreateTeamDto } from 'src/dtos/team.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { CoachService } from 'src/coach/coach.service';
+import { RegisterCoachDto } from 'src/coach/dto/create-coach.dto';
+import { RegisterPlayerDto } from 'src/player/dto/create-player.dto';
+import { PlayerService } from 'src/player/player.service';
+import { RegisterTeamDto } from 'src/team/dto/create-team.dto';
+import { TeamService } from 'src/team/team.service';
+import { UserService } from 'src/user/user.service';
+import { LoginDto } from './dto/login.dto';
+
 
 @Injectable({})
 export class AuthService {
     constructor(
-        private prisma: PrismaService,
         private jwt: JwtService,
         private configService: ConfigService,
-    ) {}
+        private playerService: PlayerService,
+        private userService: UserService,
+        private teamService: TeamService,
+        private coachService: CoachService,
+    ) { }
 
-    async signInPlayer(
-        dto: AuthDto
-    ): Promise<{access_token: string}> {
+    async login(
+        dto: LoginDto
+    ): Promise<{ access_token: string }> {
 
-        const player = await this.prisma.player.findUnique({
-            where: {
-                email: dto.email,
-            },
-        });
+        // find email from user in database
+        const user = await this.userService.getUserByEmail(dto.email);
 
-        console.log(player);
+        console.log(user);
 
-        if (!player)
+        if (!user)
             throw new ForbiddenException('Invalid credentials');
 
-        const passwordMatch = await argon.verify(player.password, dto.password);
+        const passwordMatch = await argon.verify(user.password, dto.password);
 
         if (!passwordMatch)
             throw new ForbiddenException('Invalid credentials');
 
-        return this.signToken(player.id, player.email, player.role);
-    
-    }
-
-    async signInTeam(
-        dto: AuthDto
-    ): Promise<{access_token: string}> {
-
-        const team = await this.prisma.team.findUnique({
-            where: {
-                email: dto.email,
-            },
-        });
-
-        if (!team)
-            throw new ForbiddenException('Invalid credentials');
-
-        const passwordMatch = await argon.verify(team.password, dto.password);
-
-        if (!passwordMatch)
-            throw new ForbiddenException('Invalid credentials');
-
-        return this.signToken(team.id, team.email, team.role);
+        return this.signToken(user.id, user.email, user.role);
 
     }
 
-    async signUpPlayer(
-        dto: CreatePlayerDto,
-    ): Promise<{access_token: string}> {
+
+
+    async registerPlayer(
+        dto: RegisterPlayerDto,
+    ): Promise<{ access_token: string }> {
 
         const hash = await argon.hash(dto.password);
 
-        const player = await this.prisma.player.create({
-            data: {
-                email: dto.email,
-                password: hash,
-                firstName: dto.firstName,
-                lastName: dto.lastName,
-                role: Role.PLAYER,
-                city: dto.city,
-            },
+        const player = await this.playerService.create({
+            email: dto.email,
+            password: hash,
+            firstname: dto.firstname,
+            lastname: dto.lastname,
+            city: dto.city,
+            birthdate: dto.birthdate,
         });
 
+        if (!player) {
+            throw new ForbiddenException('Player already exists');
+        }
+
+        return { access_token: "cao" };
         return this.signToken(player.id, player.email, player.role);
     }
 
-    async signUpTeam(
-        dto: CreateTeamDto,
-    ): Promise<{access_token: string}> {
+    async registerTeam(
+        dto: RegisterTeamDto,
+    ): Promise<{ access_token: string }> {
 
         const hash = await argon.hash(dto.password);
 
-        const team = await this.prisma.team.create({
-            data: {
-                email: dto.email,
-                password: hash,
-                teamName: dto.teamName,
-                sport: dto.sport,
-                role: Role.TEAM,
-                city: dto.city,
-                numberOfPlayers: 0,
-            },
+        const team = await this.teamService.create({
+            email: dto.email,
+            password: hash,
+            name: dto.name,
+            city: dto.city,
         });
+
+        if (!team) {
+            throw new ForbiddenException('Team already exists');
+        }
 
         return this.signToken(team.id, team.email, team.role);
     }
 
+    async registerCoach(
+        dto: RegisterCoachDto,
+    ): Promise<{ access_token: string }> {
+
+        const hash = await argon.hash(dto.password);
+
+        const coach = await this.coachService.create({
+            email: dto.email,
+            password: hash,
+            firstname: dto.firstname,
+            lastname: dto.lastname,
+            city: dto.city,
+            teamId: dto.teamId,
+        });
+
+        return this.signToken(coach.id, coach.email, coach.role);
+    }
+
+
+    // TODO: access token make a proble in code
     async signToken(
         userId: number,
         email: string,
-        role: Role,
-    ): Promise<{access_token: string}> {
+        role: string,
+    ): Promise<{ access_token: string }> {
 
         const payload = {
             sub: userId,

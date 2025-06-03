@@ -1,26 +1,25 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { PlayerModule } from './player/player.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { CoachModule } from './coach/coach.module';
+import { PlayerModule } from './player/player.module';
+import { SportModule } from './sport/sport.module';
 import { TeamModule } from './team/team.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { ScheduleModule } from './schedule/schedule.module';
-import { AnnouncementModule } from './announcement/announcement.module';
-import { AppController } from './app.controller';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    
+
     AuthModule,
+    UserModule,
     PlayerModule,
     TeamModule,
-    PrismaModule,
-    ScheduleModule,
-    AnnouncementModule,
+    CoachModule,
+    SportModule,
   ],
-  
+
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,38 +1,28 @@
-import { Body, Controller, Get, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guard';
-import { RolesGuard } from 'src/auth/guard/roles.guard';
+import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
-
-
 
 @Controller('team')
 export class TeamController {
+  constructor(private readonly teamService: TeamService) { }
 
-    constructor(private teamService: TeamService) {}
+  @Get()
+  findAll() {
+    return this.teamService.findAll();
+  }
 
-    @Get('teamsFilters')
-    getTeamsFilters(
-        @Query('page', ParseIntPipe) page: number,
-        @Query('take', ParseIntPipe) take: number,
-        @Query('sport') sport?: string,
-        @Query('city') city?: string,
-        @Query('sort') sort?: 'a-z' | 'z-a' | 'memberCountAsc' | 'memberCountDesc',
-    ) {
-        return this.teamService.getTeamsFilters(
-            page,
-            take,
-            sport,
-            city,
-            sort,
-        );
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.teamService.findOne(+id);
+  }
 
-    @Get('teamInfo')
-    getTeamInfo(
-        @Query('teamId', ParseIntPipe) teamId: number,
-    ) {
-        return this.teamService.getTeamInfo(teamId);
-    }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
+    return this.teamService.update(+id, updateTeamDto);
+  }
 
-
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.teamService.remove(+id);
+  }
 }

@@ -1,13 +1,13 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpExceptionFilter } from './util/filters/http-exception.filter';
+import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ //globalni pipe za validaciju
-    transform: true, 
+    transform: true,
     whitelist: true, //striktno elementi koji su u dto
     skipMissingProperties: false,
   }));
@@ -18,12 +18,12 @@ async function bootstrap() {
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  
+
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  app.useGlobalFilters(new HttpExceptionFilter());
-  
+  app.useGlobalFilters(new AllExceptionsFilter());
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

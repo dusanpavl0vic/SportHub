@@ -1,160 +1,45 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Player } from '@prisma/client';
-import { PlayerDto, ReturnPlayerDto, UpdatePlayerDto } from 'src/dtos/player.dto';
-import { PlayerMapper } from 'src/mapper/mapper';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { cleanData } from 'src/util/clean-data.util';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
+import { Repository } from 'typeorm';
+import { RegisterPlayerDto } from './dto/create-player.dto';
+import { UpdatePlayerDto } from './dto/update-player.dto';
+import { Player } from './entities/player.entity';
 
 @Injectable()
 export class PlayerService {
-    
-    constructor(private prisma: PrismaService) {}
+  constructor(@Inject('PLAYER_REPOSITORY') private repo: Repository<Player>) { }
 
-    async getPlayerById(
-        playerId: number
-    ): Promise<ReturnPlayerDto> {
-        const player = await this.prisma.player.findUniqueOrThrow({
-            where: {
-                id: playerId,
-            },
-        });
 
-        if (!player) {
-            throw new NotFoundException(`Player with ID ${playerId} not found.`);
-        }
+  async create(createPlayerDto: RegisterPlayerDto) {
+    const player = this.repo.create(createPlayerDto);
+    return this.repo.save(player);
+  }
 
-        return PlayerMapper.toReturnPlayerDto(player);
+  async findById(id: number): Promise<Player> {
+    const player = await this.repo.findOne({
+      where: { id },
+    });
+
+    if (!player) {
+      throw new NotFoundException(`Player with ID ${id} not found`);
     }
 
-    async getTeam(
-        player: Player
-    ): Promise<number> {
-        if (!player.teamId) {
-            throw new NotFoundException('You are not in a team.');
-        }
+    return player;
+  }
 
-        return player.teamId;
-    }
+  findAll() {
+    return `This action returns all player`;
+  }
 
-    async getPlayersByIdArray(
-        playerIdArray: number[]
-    ): Promise<ReturnPlayerDto[]> {
-        const players = await this.prisma.player.findMany({
-            where: {
-                id: { in: playerIdArray },
-            },
-        });
+  findOne(id: number) {
+    return `This action returns a #${id} player`;
+  }
 
-        if (!players) {
-            throw new NotFoundException(`Player with ID ${playerIdArray} not found.`);
-        }
+  update(id: number, updatePlayerDto: UpdatePlayerDto) {
+    return `This action updates a #${id} player`;
+  }
 
-        return players.map(PlayerMapper.toReturnPlayerDto);
-    }
-    
-    async updatePlayer(
-        playerData: UpdatePlayerDto, 
-        playerId: number
-    ): Promise<ReturnPlayerDto> {
-        const cleanedData = cleanData(playerData);
-        
-        const player = await this.prisma.player.update({
-            where: {
-                id: playerId,
-            },
-            data: cleanedData,
-        });
-
-        if (!player) {
-            throw new NotFoundException(`Player with ID ${playerId} not found.`);
-        }
-
-        return PlayerMapper.toReturnPlayerDto(player);
-    }
-
-    async updateProfilePicture(
-        profilePicture: string, 
-        playerId: number
-    ): Promise<ReturnPlayerDto> {
-        const player = await this.prisma.player.update({
-            where: {
-                id: playerId,
-            },
-            data: {
-                profilePicture: profilePicture,
-            },
-        });
-
-        if (!player) {
-            throw new NotFoundException(`Player with ID ${playerId} not found.`);
-        }
-
-        return PlayerMapper.toReturnPlayerDto(player);
-    }
-
-    async joinTeam(
-        playerId: number, 
-        teamId: number
-    ): Promise<ReturnPlayerDto> {
-        const team = await this.prisma.team.findUnique({
-            where: { id: teamId },
-        });
-        
-        if (!team) {
-            throw new NotFoundException(`Team with ID ${teamId} not found.`);
-        }
-        
-        const updatedPlayer = await this.prisma.player.update({
-            where: {
-                id: playerId,
-            },
-            data: {
-                teamId: teamId,
-            },
-        });
-
-
-        return PlayerMapper.toReturnPlayerDto(updatedPlayer);
-    }
-
-    async exitTeam(
-        playerId: number,
-        teamId: number
-    ): Promise<ReturnPlayerDto> {
-        const player = await this.prisma.player.update({
-            where: {
-                id: playerId,
-                teamId: teamId,
-            },
-            data: {
-                teamId: null,
-            },
-        });
-
-        if (!player) {
-            throw new NotFoundException(`Player with ID ${playerId} not found.`);
-        }
-
-        return PlayerMapper.toReturnPlayerDto(player);
-    }
-
-    async showTeammates(
-        teamId: number
-    ): Promise<ReturnPlayerDto[]> {
-        if (teamId == undefined) {
-            throw new Error('You must provide teamId');
-        }
-
-        const teammates = await this.prisma.player.findMany({
-            where: {
-                teamId: teamId,
-            },
-        });
-
-        return teammates.map(PlayerMapper.toReturnPlayerDto);
-    }
-
-    async showTeamSchedule() {
-        // TODO: Implement this method
-    }
+  remove(id: number) {
+    return `This action removes a #${id} player`;
+  }
 }

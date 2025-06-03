@@ -1,36 +1,37 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { RegisterCoachDto } from 'src/coach/dto/create-coach.dto';
+import { RegisterPlayerDto } from 'src/player/dto/create-player.dto';
+import { RegisterTeamDto } from 'src/team/dto/create-team.dto';
 import { AuthService } from './auth.service';
-import { AuthDto } from 'src/dtos/dto';
-import { CreatePlayerDto } from 'src/dtos/player.dto';
-import { CreateTeamDto } from 'src/dtos/team.dto';
+import { LoginDto } from './dto/login.dto';
 
 
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) {}
-
-    @HttpCode(HttpStatus.CREATED)
-    @Post('signUpPlayer')
-    signUpPlayer(@Body() dto: CreatePlayerDto) {
-        return this.authService.signUpPlayer(dto);
-    }
+    constructor(private authService: AuthService) { }
 
     @HttpCode(HttpStatus.OK)
-    @Post('signInPlayer')
-    signInPlayer(@Body() dto: AuthDto) {
-        return this.authService.signInPlayer(dto);
+    @Post('login')
+    loginPlayer(@Body() dto: LoginDto) {
+        return this.authService.login(dto);
     }
 
     @HttpCode(HttpStatus.CREATED)
-    @Post('signUpTeam')
-    signUpTeam(@Body() dto: CreateTeamDto) {
-        return this.authService.signUpTeam(dto);
+    @Post('registerPlayer')
+    registerPlayer(@Body() dto: RegisterPlayerDto) {
+        return this.authService.registerPlayer(dto);
     }
 
-    @HttpCode(HttpStatus.OK)
-    @Post('signInTeam')
-    signInTeam(@Body() dto: AuthDto) {
-        return this.authService.signInTeam(dto);
+    @HttpCode(HttpStatus.CREATED)
+    @Post('registerTeam')
+    registerTeam(@Body() dto: RegisterTeamDto) {
+        return this.authService.registerTeam(dto);
+    }
+
+    @HttpCode(HttpStatus.CREATED)
+    @Post('registerCoach')
+    registerCoach(@Body() dto: RegisterCoachDto) {
+        return this.authService.registerCoach(dto);
     }
 }

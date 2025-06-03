@@ -1,16 +1,23 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Player, Role, Team} from '@prisma/client';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { CoachService } from 'src/coach/coach.service';
+import { Role } from 'src/enum/role.enum';
+import { PlayerService } from 'src/player/player.service';
+import { TeamService } from 'src/team/team.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(
-    Strategy,
-    'jwt',
+  Strategy,
+  'jwt',
 ) {
-  constructor(config: ConfigService, private prisma: PrismaService) {
+  constructor(
+    config: ConfigService,
+    private coachService: CoachService,
+    private playerService: PlayerService,
+    private teamService: TeamService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get<string>('JWT_SECRET') || 'defaultSecret',
@@ -19,28 +26,26 @@ export class JwtStrategy extends PassportStrategy(
 
   async validate(payload: any) {
 
-    let user: Player | Team | null = null;
+    const { sub: id, role } = payload;
 
-    if (payload.role === Role.PLAYER) {
-      user = await this.prisma.player.findUnique({
-        where: {
-            id: payload.sub 
-        },
-        include: {
-          team: true,
-        },
-      });
-    } else if (payload.role === Role.TEAM) {
-      user = await this.prisma.team.findUnique({
-        where: {
-            id: payload.sub 
-        },
-        include: {
-          players: true,
-        },
-      });
+    switch (role) {
+      case Role.COACH:
+        const coach = await this.coachService.findById(id);
+        if (!coach) throw new UnauthorizedException('Coach not found');
+        return coach;
+
+      case Role.PLAYER:
+        const player = await this.playerService.findById(id);
+        if (!player) throw new UnauthorizedException('Player not found');
+        return player;
+
+      case Role.TEAM:
+        const team = await this.teamService.findById(id);
+        if (!team) throw new UnauthorizedException('Team not found');
+        return team;
+
+      default:
+        throw new UnauthorizedException('Invalid role');
     }
-
-    return user;
   }
 }

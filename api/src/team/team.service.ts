@@ -1,76 +1,44 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { Team } from '@prisma/client';
-import { ShowTeamCardDto, ShowTeamDto } from 'src/dtos/team.dto';
-import { TeamMapper } from 'src/mapper/mapper';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { RegisterTeamDto } from './dto/create-team.dto';
+import { UpdateTeamDto } from './dto/update-team.dto';
+import { Team } from './entities/team.entity';
 
 @Injectable()
 export class TeamService {
 
-    constructor(private prisma: PrismaService) {}
-    
-    async getTeamsFilters(
-        page: number,
-        take: number,
-        sport?: string,
-        city?: string,
-        sort?: 'a-z' | 'z-a' | 'memberCountAsc' | 'memberCountDesc',
-    ): Promise<ShowTeamCardDto[]> {
+  constructor(@Inject('TEAM_REPOSITORY') private repo: Repository<Team>) { }
 
-            const orderBy = this.getSortingOrder(sort);
+  async create(createTeamDto: RegisterTeamDto) {
+    const team = this.repo.create(createTeamDto);
+    return this.repo.save(team);
+  }
 
-            if (page == undefined && take == undefined) {
-                throw new Error('You must provide skip and take parameters');
-            }
+  async findById(id: number) {
+    const team = this.repo.findOne({
+      where: { id },
+    });
 
-            const teams: Team[] = await this.prisma.team.findMany({
-                skip: page * take,
-                take: take,
-                where: {
-                    sport: {
-                        contains: sport,
-                    },
-                    city: {
-                        contains: city,
-                    },
-                },
-                orderBy,
-            });
-
-            if (!teams) {
-                throw new NotFoundException('No teams found');
-            }
-
-            return teams.map(TeamMapper.toShowTeamCardDto);
-
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${id} not found`);
     }
 
-    async getTeamInfo(teamId: number): Promise<ShowTeamDto> {
+    return team;
+  }
 
-            const team = await this.prisma.team.findUnique({
-                where: {
-                    id: teamId,
-                },
-            });
+  findAll() {
+    return `This action returns all team`;
+  }
 
-            if (!team) {
-                throw new NotFoundException(`Team with ID ${teamId} not found`);
-            }
+  findOne(id: number) {
+    return `This action returns a #${id} team`;
+  }
 
-            return TeamMapper.toShowTeamDto(team);
-    }
+  update(id: number, updateTeamDto: UpdateTeamDto) {
+    return `This action updates a #${id} team`;
+  }
 
-    
-    private getSortingOrder(sort?: string) {
-        switch (sort) {
-            case 'a-z':
-                return { teamName: 'asc' } as const;
-            case 'z-a':
-                return { teamName: 'desc' } as const;
-            case 'memberCountAsc':
-                return { numberOfPlayers: 'asc' } as const;
-            case 'memberCountDesc':
-                return { numberOfPlayers: 'desc' } as const;
-        }
-    }
+  remove(id: number) {
+    return `This action removes a #${id} team`;
+  }
 }
