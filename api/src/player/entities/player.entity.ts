@@ -1,11 +1,17 @@
 import { PlayerStatus } from 'src/enum/player_status.enum';
-import { Role } from 'src/enum/role.enum';
 import { Team } from 'src/team/entities/team.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Column, PrimaryColumn, OneToOne, JoinColumn, ManyToOne, ChildEntity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@ChildEntity(Role.PLAYER)
-export class Player extends User {
+@Entity()
+export class Player {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @OneToOne(() => User)
+    @JoinColumn()
+    user: User;
+
     @Column()
     firstname: string;
 
@@ -27,6 +33,7 @@ export class Player extends User {
     @Column({ type: 'enum', enum: PlayerStatus, default: PlayerStatus.FREE })
     status: PlayerStatus;
 
-    @ManyToOne(() => Team, (team) => team.players)
-    team: Team;
+    @ManyToOne(() => Team, (team) => team.players, { nullable: true })
+    team: Team | null;
+
 }

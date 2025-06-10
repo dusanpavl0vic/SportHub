@@ -1,5 +1,6 @@
+import { ICON_BASE_URL } from 'src/config/constants';
 import { Team } from 'src/team/entities/team.entity';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 
 @Entity()
@@ -11,8 +12,12 @@ export class Sport {
     name: string;
 
     @Column({ nullable: true })
-    iconUrl: string;
+    iconFilename: string;
 
     @OneToMany(() => Team, (team) => team.sport)
     teams: Team[];
+
+    get iconUrl(): string | null {
+        return this.iconFilename ? ICON_BASE_URL + this.iconFilename : null;
+    }
 }

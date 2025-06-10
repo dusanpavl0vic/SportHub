@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { CoachModule } from 'src/coach/coach.module';
 import { PlayerModule } from 'src/player/player.module';
+import { SportModule } from 'src/sport/sport.module';
 import { TeamModule } from 'src/team/team.module';
 import { UserModule } from 'src/user/user.module';
 import { AuthController } from './auth.controller';
@@ -16,6 +17,7 @@ import { JwtStrategy } from './strategy';
     TeamModule,
     CoachModule,
     UserModule,
+    SportModule,
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController]

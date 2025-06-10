@@ -1,11 +1,16 @@
-import { Role } from 'src/enum/role.enum';
 import { Team } from 'src/team/entities/team.entity';
 import { User } from 'src/user/entities/user.entity';
-import { ChildEntity, Column, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
+export class Coach {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-@ChildEntity(Role.COACH)
-export class Coach extends User {
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
+
   @Column()
   firstname: string;
 
@@ -23,4 +28,5 @@ export class Coach extends User {
 
   @ManyToOne(() => Team, (team) => team.coaches)
   team: Team;
+
 }

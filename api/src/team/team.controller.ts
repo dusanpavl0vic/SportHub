@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { Player } from 'src/player/entities/player.entity';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamService } from './team.service';
 
-@Controller('team')
+@UseInterceptors(ClassSerializerInterceptor)
+@Controller('teams')
 export class TeamController {
   constructor(private readonly teamService: TeamService) { }
 
@@ -24,5 +26,21 @@ export class TeamController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.teamService.remove(+id);
+  }
+
+  @Post(':teamId/players')
+  async addPlayerByEmail(
+    @Body('email') email: string,
+    @Param('teamId', ParseIntPipe) teamId: number,
+  ): Promise<Player> {
+    return this.teamService.addPlayerByEmail(teamId, email);
+  }
+
+  @Delete(':teamId/players/:playerId')
+  async removePlayerFromTeam(
+    @Param('teamId', ParseIntPipe) teamId: number,
+    @Param('playerId', ParseIntPipe) playerId: number,
+  ): Promise<Player> {
+    return this.teamService.removePlayerFromTeam(teamId, playerId);
   }
 }

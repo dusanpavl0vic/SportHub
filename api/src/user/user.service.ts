@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -22,7 +23,19 @@ export class UserService {
         where: { email },
       }
     );
+  }
 
+  // async create(createUserDto: CreateUserDto): Promise<User> {
+  //   const user = this.repo.create(createUserDto);
+  //   return this.repo.save(user);
+  // }
+
+  async create(createUserDto: CreateUserDto, manager?: EntityManager) {
+    const user = this.repo.create(createUserDto);
+    if (manager) {
+      return manager.save(User, user);
+    }
+    return this.repo.save(user);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

@@ -1,19 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { CreateSportDto } from './dto/create-sport.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { UpdateSportDto } from './dto/update-sport.dto';
+import { Sport } from './entities/sport.entity';
 
 @Injectable()
 export class SportService {
-  create(createSportDto: CreateSportDto) {
-    return 'This action adds a new sport';
+  constructor(@Inject('SPORT_REPOSITORY') private repo: Repository<Sport>) { }
+
+  async create(name: string, iconFilename: string): Promise<Sport> {
+    const sport = this.repo.create({ name, iconFilename });
+    return this.repo.save(sport);
   }
 
-  findAll() {
-    return `This action returns all sport`;
+  async findByName(name: string): Promise<Sport | null> {
+    return this.repo.findOne({ where: { name } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} sport`;
+  async findAll(): Promise<Sport[]> {
+    return this.repo.find();
+  }
+
+  async findById(id: number) {
+    return this.repo.findOne({
+      where: { id },
+    });
   }
 
   update(id: number, updateSportDto: UpdateSportDto) {
@@ -23,4 +33,6 @@ export class SportService {
   remove(id: number) {
     return `This action removes a #${id} sport`;
   }
+
+
 }

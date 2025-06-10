@@ -1,6 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, UseInterceptors } from '@nestjs/common';
 import { CoachService } from './coach.service';
 import { UpdateCoachDto } from './dto/update-coach.dto';
+
+@UseInterceptors(ClassSerializerInterceptor)
 
 @Controller('coach')
 export class CoachController {

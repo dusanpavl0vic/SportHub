@@ -1,4 +1,6 @@
-import { IsDateString, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, MinLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsDateString, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, ValidateNested } from 'class-validator';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 export class CreatePlayerDto {
   @IsNotEmpty()
@@ -23,12 +25,7 @@ export class CreatePlayerDto {
 }
 
 export class RegisterPlayerDto extends CreatePlayerDto {
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(8)
-  password: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
+  @ValidateNested()
+  @Type(() => CreateUserDto)
+  user: CreateUserDto;
 }

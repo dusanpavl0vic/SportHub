@@ -1,9 +1,9 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { RegisterCoachDto } from 'src/coach/dto/create-coach.dto';
 import { RegisterPlayerDto } from 'src/player/dto/create-player.dto';
-import { RegisterTeamDto } from 'src/team/dto/create-team.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { TeamWithSportIdDto } from 'src/team/dto/create-team.dto';
 
 
 
@@ -25,7 +25,7 @@ export class AuthController {
 
     @HttpCode(HttpStatus.CREATED)
     @Post('registerTeam')
-    registerTeam(@Body() dto: RegisterTeamDto) {
+    registerTeam(@Body() dto: TeamWithSportIdDto) {
         return this.authService.registerTeam(dto);
     }
 

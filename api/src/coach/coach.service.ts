@@ -21,8 +21,7 @@ export class CoachService {
     }
 
     const coach = this.repo.create({
-      email: createCoachDto.email,
-      password: createCoachDto.password,
+      user: createCoachDto.user,
       firstname: createCoachDto.firstname,
       lastname: createCoachDto.lastname,
       city: createCoachDto.city,
@@ -34,7 +33,8 @@ export class CoachService {
 
   async findById(id: number): Promise<Coach> {
     const coach = await this.repo.findOne({
-      where: { id },
+      where: { user: { id } },
+      relations: ['user', 'team'],
     });
 
     if (!coach) {
