@@ -8,8 +8,6 @@ export class UpdatePlayerDto extends PartialType(CreatePlayerDto) { }
 export class ReturnPlayerDto extends UpdatePlayerDto {
   @IsNotEmpty()
   id: number;
-
-  profilePicture: string;
 }
 
 export class UpdatePlayerProfileImageDto {

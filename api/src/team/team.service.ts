@@ -1,11 +1,14 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { TEAM_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
 import { PlayerStatus } from 'src/enum/player_status.enum';
 import { Membership } from 'src/membership/entities/membership.entity';
+import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { TeamCardDto } from './dto/card-team.dto';
 import { RegisterTeamDto } from './dto/create-team.dto';
 import { FilterTeamDto } from './dto/filter.dto';
+import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
 import { FilterByCityStrategy } from './filters/filter-by-city.filters';
 import { FilterBySportStrategy } from './filters/filter-by-sport.filters';
@@ -244,4 +247,55 @@ export class TeamService {
 
 
   }
+
+  async uploadImage(
+    teamId: number,
+    imageName: string,
+  ): Promise<UpdateTeamProfileImageDto> {
+    const team = await this.findById(teamId);
+    if (!team)
+      throw new NotFoundException('Player not found');
+    await this.repo.update(team.id, { profilePicture: TEAM_PROFILEIMAGE_BASE_URL + teamId + "/" + imageName });
+    console.log("Team profile picture updated:", team.profilePicture);
+    return {
+      id: team.id,
+      profileImage: TEAM_PROFILEIMAGE_BASE_URL + teamId + "/" + imageName,
+    };
+  }
+
+  async updateTeam(
+    teamId: number,
+    updateTeamDto: UpdateTeamDto,
+  ): Promise<ReturnTeamDto> {
+    const team = await this.findById(teamId);
+    if (!team)
+      throw new NotFoundException('Team not found');
+
+    Object.assign(team, updateTeamDto);
+
+    const update = await this.repo.save(team);
+
+    return {
+      id: update.id,
+      name: update.name,
+      city: update.city,
+    }
+  }
+
+  async changePassword(
+    playerId: number,
+    passwords: ChangePasswordDto
+  ): Promise<{ message: string }> {
+    const team = await this.findById(playerId);
+    if (!team)
+      throw new NotFoundException('Player not found');
+
+
+    if (!this.userService.changePassword(team.user, passwords)) {
+      throw new BadRequestException({ message: 'Failed to change password' });
+    }
+
+    return { message: 'Password changed successfully' };
+  }
+
 }

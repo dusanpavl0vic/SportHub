@@ -1,8 +1,11 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import * as argon from 'argon2';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+
+import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
 
 @Injectable()
 export class UserService {
@@ -71,5 +74,26 @@ export class UserService {
     }
 
     return await this.repo.remove(user);
+  }
+
+  async changePassword(
+    user: User,
+    passwords: ChangePasswordDto
+  ) {
+    const { oldPassword, newPassword } = passwords;
+
+    const valid = await argon.verify(user.password, oldPassword);
+    if (!valid) {
+      throw new BadRequestException('Old password is incorrect');
+    }
+
+
+    const hash = await argon.hash(newPassword);
+
+    await this.repo.update(user.id, {
+      password: hash
+    })
+
+    return true;
   }
 }

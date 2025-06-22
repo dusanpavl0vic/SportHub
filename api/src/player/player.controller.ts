@@ -6,6 +6,7 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { PLAYER_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
 import { MembershipService } from 'src/membership/membership.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { ReturnPlayerDto, UpdatePlayerDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './player.service';
@@ -142,5 +143,14 @@ export class PlayerController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Player> {
     return this.playerService.removePlayer(id);
+  }
+
+  @Patch(':id/password')
+  async changePassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() passwords: ChangePasswordDto,
+
+  ): Promise<{ message: string }> {
+    return await this.playerService.changePassword(id, passwords);
   }
 }

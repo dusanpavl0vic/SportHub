@@ -1,7 +1,15 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, forwardRef, Get, HttpCode, Inject, Param, ParseIntPipe, Post, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, forwardRef, Get, HttpCode, Inject, Param, ParseIntPipe, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import { TEAM_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
 import { MembershipService } from 'src/membership/membership.service';
+import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
 import { TeamCardDto } from './dto/card-team.dto';
 import { FilterTeamDto } from './dto/filter.dto';
+import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
 import { TeamService } from './team.service';
 
@@ -93,5 +101,84 @@ export class TeamController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Team> {
     return this.teamService.removeTeam(id);
+  }
+
+  @Post(':teamId/uploadImage')
+  @ApiOperation({ summary: 'Upload team image' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Upload image',
+    schema: {
+      type: 'object',
+      properties: {
+        profileImage: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Team successfully upload profile image' })
+  @UseInterceptors(
+    FileInterceptor('profileImage', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const teamId = req.params.teamId;
+          const teamFolder = join(process.cwd(), TEAM_PROFILEIMAGE_STORAGE_PATH, teamId);
+
+          if (!existsSync(teamFolder)) {
+            mkdirSync(teamFolder, { recursive: true });
+          }
+
+          console.log(`Player folder created at: ${teamFolder}`);
+
+          cb(null, teamFolder);
+        },
+        filename: (req, file, cb) => {
+          const ext = extname(file.originalname);
+          const teamId = req.params.playerId;
+          const teamFolder = join(process.cwd(), TEAM_PROFILEIMAGE_STORAGE_PATH, teamId);
+
+          if (existsSync(teamFolder)) {
+            const files = readdirSync(teamFolder);
+            for (const f of files) {
+              if (f.startsWith('team_logo')) {
+                unlinkSync(join(teamFolder, f));
+              }
+            }
+          }
+
+          cb(null, `profile_image${ext}`);
+        },
+      }),
+    }),
+  )
+  async uploadTeamImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('teamId', ParseIntPipe) teamId: number,
+  ): Promise<UpdateTeamProfileImageDto> {
+    if (!file) throw new BadRequestException('Team image is required');
+    const team = await this.teamService.uploadImage(
+      teamId,
+      file.filename,
+    );
+    return team;
+  }
+
+  @Patch(':id')
+  async updateTeam(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateTeamDto: UpdateTeamDto,
+  ): Promise<ReturnTeamDto> {
+    return this.teamService.updateTeam(id, updateTeamDto);
+  }
+
+  @Patch(':id/password')
+  async changePassword(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() passwords: ChangePasswordDto,
+
+  ): Promise<{ message: string }> {
+    return await this.teamService.changePassword(id, passwords);
   }
 }

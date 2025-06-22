@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
-import * as argon from 'argon2';
 import { PLAYER_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
 import { Membership } from 'src/membership/entities/membership.entity';
 import { Team } from 'src/team/entities/team.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { RegisterPlayerDto } from './dto/create-player.dto';
 import { ReturnPlayerDto, UpdatePlayerDto, UpdatePlayerProfileImageDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
@@ -111,7 +111,6 @@ export class PlayerService {
       phoneNumber: update.phoneNumber,
       birthdate: update.birthdate,
       city: update.city,
-      profilePicture: update.profilePicture,
     }
   }
 
@@ -150,22 +149,18 @@ export class PlayerService {
 
   async changePassword(
     playerId: number,
-    confirmOldPassword: string,
-    newPassword: string,
-  ): Promise<Player> {
+    passwords: ChangePasswordDto
+  ): Promise<{ message: string }> {
     const player = await this.findById(playerId);
     if (!player)
       throw new NotFoundException('Player not found');
 
-    const valid = await argon.verify(player.user.password, confirmOldPassword);
-    if (!valid) {
-      throw new BadRequestException('Old password is incorrect');
+
+    if (!this.userService.changePassword(player.user, passwords)) {
+      throw new BadRequestException({ message: 'Failed to change password' });
     }
 
-    const hash = await argon.hash(newPassword);
-    player.user.password = hash;
-    await this.repo.save(player.user);
-    return player;
+    return { message: 'Password changed successfully' };
   }
 
   async uploadImage(
