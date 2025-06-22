@@ -12,8 +12,9 @@ services:
     depends_on:
       - db
     volumes:
-      - ./api/prisma:/usr/src/app/prisma
       - ./api/src:/usr/src/app/src
+      - ./api/public:/usr/src/app/public
+      - ./api/uploads:/usr/src/app/uploads
   db:
     image: postgres
     container_name: sporthub_postgresql

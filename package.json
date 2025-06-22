@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@nestjs/mapped-types": "^2.1.0",
+    "@nestjs/serve-static": "^5.0.3",
     "pg-connection-string": "^2.9.0"
   }
 }

@@ -21,8 +21,9 @@ export class SportService {
   }
 
   async findById(id: number) {
+    console.log('Tražim sport sa ID:', id);
     return this.repo.findOne({
-      where: { id },
+      where: { id: id },
     });
   }
 

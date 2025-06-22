@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
@@ -57,8 +57,9 @@ export class SportController {
     };
   }
 
-  @Get(':name')
+  @Get('/name/:name')
   async getByName(@Param('name') name: string) {
+    console.log('Tražim sport po imenu:', name);
     const sport = await this.sportService.findByName(name);
     if (!sport) throw new BadRequestException('Sport not found');
     return {
@@ -73,8 +74,18 @@ export class SportController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.sportService.findById(+id);
+  async findById(@Param('id', ParseIntPipe) id: number) {
+    console.log('Searching for sport with ID:', id);
+    try {
+      const sport = await this.sportService.findById(id);
+      if (!sport) {
+        throw new NotFoundException(`Sport with ID ${id} not found`);
+      }
+      return sport;
+    } catch (error) {
+      console.error(`Error finding sport with ID ${id}:`, error);
+      throw error;
+    }
   }
 
   @Patch(':id')

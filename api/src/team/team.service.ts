@@ -1,17 +1,22 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Player } from 'src/player/entities/player.entity';
-import { PlayerService } from 'src/player/player.service';
-import { EntityManager, Repository } from 'typeorm';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { PlayerStatus } from 'src/enum/player_status.enum';
+import { Membership } from 'src/membership/entities/membership.entity';
+import { UserService } from 'src/user/user.service';
+import { Repository } from 'typeorm';
+import { TeamCardDto } from './dto/card-team.dto';
 import { RegisterTeamDto } from './dto/create-team.dto';
-import { UpdateTeamDto } from './dto/update-team.dto';
+import { FilterTeamDto } from './dto/filter.dto';
 import { Team } from './entities/team.entity';
+import { FilterByCityStrategy } from './filters/filter-by-city.filters';
+import { FilterBySportStrategy } from './filters/filter-by-sport.filters';
+import { SortByNameStrategy } from './filters/sort-by-name.filter';
 
 @Injectable()
 export class TeamService {
 
   constructor(
     @Inject('TEAM_REPOSITORY') private repo: Repository<Team>,
-    private playerService: PlayerService
+    private userService: UserService
   ) { }
 
   // async create(createTeamDto: RegisterTeamDto) {
@@ -19,18 +24,38 @@ export class TeamService {
   //   return this.repo.save(team);
   // }
 
-  async create(createTeamDto: RegisterTeamDto, manager?: EntityManager) {
+  async create(
+    createTeamDto: RegisterTeamDto,
+  ) {
+
     const team = await this.repo.create(createTeamDto);
-    if (manager) {
-      return manager.save(Team, team);
-    }
+
     return this.repo.save(team);
   }
 
-  async findById(id: number) {
+  async findByUserId(
+    userId: number,
+
+  ): Promise<Team> {
+
+    const team = await this.repo.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+    if (!team) {
+      throw new NotFoundException(`Team with user ID ${userId} not found`);
+    }
+    return team;
+  }
+
+  async findById(
+    id: number,
+
+  ) {
+
     const team = await this.repo.findOne({
       where: { id: id },
-      relations: ['user'],
+      relations: ['user', 'sport'],
     });
 
     if (!team) {
@@ -40,88 +65,183 @@ export class TeamService {
     return team;
   }
 
+  async findByIdWithMemberships(
+    id: number,
+  ) {
 
-
-  async findPlayersByTeam(teamId: number): Promise<Player[]> {
     const team = await this.repo.findOne({
-      where: { id: teamId },
-      relations: ['players'],
+      where: { id: id },
+      relations: ['user', 'memberships', 'sport'],
     });
 
     if (!team) {
-      throw new NotFoundException('Team not found');
+      throw new NotFoundException(`Team with ID ${id} not found`);
     }
 
-    if (!team.players || team.players.length === 0) {
-      throw new NotFoundException('No players found for this team');
-    }
-
-    return team.players;
+    return team;
   }
 
-  async findAll() {
+  async findAll(
+  ) {
     return this.repo.find({
       relations: ['user', 'sport'],
     });
   }
 
+  async findAllWithMemberships(
 
-  findOne(id: number) {
-    return `This action returns a #${id} team`;
-  }
+  ) {
 
-  update(id: number, updateTeamDto: UpdateTeamDto) {
-    return `This action updates a #${id} team`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} team`;
-  }
-
-  async addPlayerByEmail(teamId: number, playerEmail: string): Promise<Player> {
-    const team = await this.findById(teamId);
-
-    if (!team)
-      throw new NotFoundException('Team not found');
-
-    let player = await this.playerService.findByEmail(playerEmail);
-    if (player.team)
-      throw new BadRequestException('Player already in a team');
-
-    player = await this.playerService.assignToTeam(player.id, team);
-    team.numberOfPlayers += 1;
-    await this.repo.save(team);
-
-    return player;
-  }
-
-  async removePlayerFromTeam(teamId: number, playerId: number): Promise<Player> {
-    const team = await this.repo.findOne({
-      where: { id: teamId },
-      relations: ['players'],
+    return this.repo.find({
+      relations: ['user', 'sport', 'memberships'],
     });
+  }
 
-    if (!team) throw new NotFoundException('Team not found');
+  async addMembership(
+    teamId: number,
+    membership: Membership,
 
-    let player = await this.playerService.findById(playerId);
+  ): Promise<Team> {
 
-    if (!player) throw new NotFoundException('Player not found');
-
-    if (!player.team || player.team.id !== team.id) {
-      throw new BadRequestException('Player does not belong to this team');
+    const team = await this.findByIdWithMemberships(teamId);
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${teamId} not found`);
     }
 
-    team.players = team.players?.filter(p => p.id !== player.id);
+    team.memberships.push(membership);
+    return this.repo.save(team);
+  }
+
+  async incrementPlayerCount(
+    teamId: number,
+
+  ): Promise<void> {
+
+    const team = await this.findById(teamId);
+    if (!team) {
+      throw new NotFoundException('Team not found');
+    }
+
+    team.numberOfPlayers += 1;
+    await this.repo.update(team.id, {
+      numberOfPlayers: team.numberOfPlayers,
+    });
+  }
+
+  async decrementPlayerCount(
+    teamId: number,
+
+  ): Promise<void> {
+
+    const team = await this.findById(teamId);
+    if (!team) {
+      throw new NotFoundException('Team not found');
+    }
 
     team.numberOfPlayers -= 1;
-    if (team.numberOfPlayers < 0) {
-      throw new BadRequestException('Team cannot have negative number of players');
+    await this.repo.update(team.id, {
+      numberOfPlayers: team.numberOfPlayers,
+    });
+  }
+
+  async findAllTeamPlayersActive(
+    teamId: number,
+  ): Promise<Membership[]> {
+    const team = await this.findByIdWithMemberships(teamId);
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${teamId} not found`);
     }
 
-    await this.repo.save(team);
+    return team.memberships.filter(membership => membership.status === PlayerStatus.IN_TEAM);
+  }
 
-    player = await this.playerService.removeFromTeam(playerId);
+  async findAllTeamPlayersInactive(
+    teamId: number,
+  ): Promise<Membership[]> {
+    const team = await this.findByIdWithMemberships(teamId);
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${teamId} not found`);
+    }
 
-    return player;
+    return team.memberships.filter(membership => membership.status === PlayerStatus.LEFT);
+  }
+
+  async findAllTeamPlayersPending(
+    teamId: number,
+  ): Promise<Membership[]> {
+    const team = await this.findByIdWithMemberships(teamId);
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${teamId} not found`);
+    }
+
+    return team.memberships.filter(membership => membership.status === PlayerStatus.PENDING);
+  }
+
+  async getFilteredTeams(
+    filterDto: FilterTeamDto
+  ): Promise<{
+    data: TeamCardDto[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const query = this.repo.createQueryBuilder('team')
+      .leftJoinAndSelect('team.sport', 'sport');
+
+    const strategies = [
+      new FilterBySportStrategy(),
+      new FilterByCityStrategy(),
+      new SortByNameStrategy(),
+    ];
+
+    for (const strategy of strategies) {
+      strategy.apply(query, filterDto);
+    }
+
+
+    const page = filterDto.page ?? 1;
+    const limit = filterDto.limit ?? 10;
+
+    query.skip((page - 1) * limit).take(limit);
+
+    const [teams, total] = await query.getManyAndCount();
+    // console.log('First team:', teams);
+
+    return {
+      data:
+        (await teams).map(team => ({
+          id: team.id,
+          name: team.name,
+          profilePicture: team.profilePicture,
+          city: team.city,
+          numberOfPlayers: team.numberOfPlayers,
+          sportName: team.sport.name,
+          sportImage: team.sport.iconFilename,
+        })),
+      total,
+      page,
+      limit
+    }
+  }
+
+  async removeTeam(
+    teamId: number,
+  ): Promise<Team> {
+    const team = await this.repo
+      .createQueryBuilder('team')
+      .leftJoinAndSelect('team.user', 'user')
+      .where('team.id = :id', { id: teamId })
+      .getOne();
+
+    if (!team) {
+      throw new NotFoundException('Player not found');
+    }
+
+    await this.repo.remove(team);
+    await this.userService.remove(team.user.id);
+
+    return team;
+
+
   }
 }

@@ -1,5 +1,5 @@
-import { Coach } from "src/coach/entities/coach.entity";
-import { Player } from "src/player/entities/player.entity";
+// import { Coach } from "src/coach/entities/coach.entity";
+import { Membership } from "src/membership/entities/membership.entity";
 import { Sport } from "src/sport/entities/sport.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
@@ -29,10 +29,7 @@ export class Team {
   @JoinColumn()
   sport: Sport;
 
-  @OneToMany(() => Player, (player) => player.team)
-  players?: Player[];
-
-  @OneToMany(() => Coach, (coach) => coach.team)
-  coaches?: Coach[];
+  @OneToMany(() => Membership, (membership) => membership.team)
+  memberships: Membership[];
 
 }

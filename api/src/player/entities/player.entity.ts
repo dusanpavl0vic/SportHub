@@ -1,14 +1,13 @@
-import { PlayerStatus } from 'src/enum/player_status.enum';
-import { Team } from 'src/team/entities/team.entity';
+import { Membership } from 'src/membership/entities/membership.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Player {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => User)
+    @OneToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn()
     user: User;
 
@@ -30,10 +29,10 @@ export class Player {
     @Column()
     city: string;
 
-    @Column({ type: 'enum', enum: PlayerStatus, default: PlayerStatus.FREE })
-    status: PlayerStatus;
+    @OneToMany(() => Membership, (membership) => membership.player)
+    memberships: Membership[];
 
-    @ManyToOne(() => Team, (team) => team.players, { nullable: true })
-    team: Team | null;
-
+    // get profilePictureUrl(): string | null {
+    //     return PLAYER_PROFILEIMAGE_BASE_URL + this.profilePicture + '/' + this.id;
+    // }
 }

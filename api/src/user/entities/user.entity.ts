@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { MinLength } from 'class-validator';
-import { Coach } from 'src/coach/entities/coach.entity';
+// import { Coach } from 'src/coach/entities/coach.entity';
 import { Role } from 'src/enum/role.enum';
 import { Player } from 'src/player/entities/player.entity';
 import { Team } from 'src/team/entities/team.entity';
@@ -27,12 +27,12 @@ export class User {
   @Column({ type: 'enum', enum: Role })
   role: Role;
 
-  @OneToOne(() => Player, (player) => player.user)
+  @OneToOne(() => Player, (player) => player.user, { onDelete: 'CASCADE' })
   player: Player;
 
   @OneToOne(() => Team, (team) => team.user)
   team: Team;
 
-  @OneToOne(() => Coach, (coach) => coach.user)
-  coach: Coach;
+  // @OneToOne(() => Coach, (coach) => coach.user)
+  // coach: Coach;
 }

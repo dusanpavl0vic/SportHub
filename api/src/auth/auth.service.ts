@@ -2,8 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
-import { CoachService } from 'src/coach/coach.service';
-import { RegisterCoachDto } from 'src/coach/dto/create-coach.dto';
+// import { CoachService } from 'src/coach/coach.service';
 import { Role } from 'src/enum/role.enum';
 import { RegisterPlayerDto } from 'src/player/dto/create-player.dto';
 import { PlayerService } from 'src/player/player.service';
@@ -22,7 +21,7 @@ export class AuthService {
         private playerService: PlayerService,
         private userService: UserService,
         private teamService: TeamService,
-        private coachService: CoachService,
+        // private coachService: CoachService,
         private sportService: SportService,
     ) { }
 
@@ -119,34 +118,34 @@ export class AuthService {
         return this.signToken(team.user.id, team.user.email, team.user.role);
     }
 
-    async registerCoach(
-        dto: RegisterCoachDto,
-    ): Promise<{ access_token: string }> {
+    // async registerCoach(
+    //     dto: RegisterCoachDto,
+    // ): Promise<{ access_token: string }> {
 
-        const existingUser = await this.userService.getUserByEmail(dto.user.email);
+    //     const existingUser = await this.userService.getUserByEmail(dto.user.email);
 
-        if (existingUser) {
-            throw new ForbiddenException('User already exists');
-        }
+    //     if (existingUser) {
+    //         throw new ForbiddenException('User already exists');
+    //     }
 
-        const hash = await argon.hash(dto.user.password);
+    //     const hash = await argon.hash(dto.user.password);
 
-        const user = await this.userService.create({
-            email: dto.user.email,
-            password: hash,
-            role: Role.COACH,
-        });
+    //     const user = await this.userService.create({
+    //         email: dto.user.email,
+    //         password: hash,
+    //         role: Role.COACH,
+    //     });
 
-        const coach = await this.coachService.create({
-            user: user,
-            firstname: dto.firstname,
-            lastname: dto.lastname,
-            city: dto.city,
-            teamId: dto.teamId,
-        });
+    //     const coach = await this.coachService.create({
+    //         user: user,
+    //         firstname: dto.firstname,
+    //         lastname: dto.lastname,
+    //         city: dto.city,
+    //         teamId: dto.teamId,
+    //     });
 
-        return this.signToken(coach.user.id, coach.user.email, coach.user.role);
-    }
+    //     return this.signToken(coach.user.id, coach.user.email, coach.user.role);
+    // }
 
 
     async signToken(
