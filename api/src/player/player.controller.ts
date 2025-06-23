@@ -109,8 +109,6 @@ export class PlayerController {
   }
 
   @Post('request/:playerId/:teamId')
-  @ApiOperation({ summary: 'Player requests to join a team' })
-  @ApiResponse({ status: 201, description: 'Membership created with pending status' })
   async requestToJoinTeam(
     @Param('playerId', ParseIntPipe) playerId: number,
     @Param('teamId', ParseIntPipe) teamId: number,
@@ -121,8 +119,6 @@ export class PlayerController {
 
 
   @Post('leave/:teamId/:playerId')
-  @ApiOperation({ summary: 'Player leaves a team' })
-  @ApiResponse({ status: 200, description: 'Player marked as left the team' })
   async leaveTeam(
     @Param('teamId', ParseIntPipe) teamId: number,
     @Param('playerId', ParseIntPipe) playerId: number,
@@ -152,5 +148,11 @@ export class PlayerController {
 
   ): Promise<{ message: string }> {
     return await this.playerService.changePassword(id, passwords);
+  }
+
+  @Get('all')
+  async allPlayers(
+  ): Promise<{ players: Player[]; count: number }> {
+    return await this.playerService.findAll();
   }
 }

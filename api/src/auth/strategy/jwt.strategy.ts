@@ -27,22 +27,17 @@ export class JwtStrategy extends PassportStrategy(
 
     const { sub: id, role } = payload;
 
-    // TODO: Think about findByUserId only return the id of entity and not entier entity
     switch (role) {
-      // case Role.COACH:
-      //   const coach = await this.coachService.findByUserId(id);
-      //   if (!coach) throw new UnauthorizedException('Coach not found');
-      //   return coach;
 
       case Role.PLAYER:
-        const player = await this.playerService.findByUserId(id);
-        if (!player) throw new UnauthorizedException('Player not found');
-        return player;
+        const playerId = await this.playerService.findByUserId(id);
+        if (!playerId) throw new UnauthorizedException('Player not found');
+        return playerId;
 
       case Role.TEAM:
-        const team = await this.teamService.findByUserId(id);
-        if (!team) throw new UnauthorizedException('Team not found');
-        return team;
+        const teamId = await this.teamService.findByUserId(id);
+        if (!teamId) throw new UnauthorizedException('Team not found');
+        return teamId;
 
       default:
         throw new UnauthorizedException('Invalid role');

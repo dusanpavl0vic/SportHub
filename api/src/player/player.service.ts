@@ -70,7 +70,7 @@ export class PlayerService {
 
   async findByUserId(
     userId: number,
-  ): Promise<Player> {
+  ): Promise<number> {
     const player = await this.repo.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
@@ -78,7 +78,7 @@ export class PlayerService {
     if (!player) {
       throw new NotFoundException(`Player with user ID ${userId} not found`);
     }
-    return player;
+    return player.id;
   }
 
 
@@ -90,6 +90,16 @@ export class PlayerService {
     });
     if (!player) throw new NotFoundException('Player not found');
     return player;
+  }
+
+  async findAll(): Promise<{ players: Player[]; count: number }> {
+    const [players, count] = await this.repo.findAndCount({
+      relations: ['user']
+    });
+    if (!players) {
+      throw new NotFoundException('No players found');
+    }
+    return { players, count };
   }
 
   async updatePlayer(
