@@ -1,4 +1,6 @@
 // import { Coach } from "src/coach/entities/coach.entity";
+import { Announcement } from "src/announcement/entities/announcement.entity";
+import { Group } from "src/group/entities/group.entity";
 import { Membership } from "src/membership/entities/membership.entity";
 import { Sport } from "src/sport/entities/sport.entity";
 import { User } from "src/user/entities/user.entity";
@@ -32,4 +34,13 @@ export class Team {
   @OneToMany(() => Membership, (membership) => membership.team)
   memberships: Membership[];
 
+  @OneToMany(() => Announcement, (announcement) => announcement.team, {
+    cascade: ['remove'],
+  })
+  announcements: Announcement[];
+
+  @OneToMany(() => Group, (group) => group.team, {
+    cascade: ['remove'],
+  })
+  groups: Group[];
 }

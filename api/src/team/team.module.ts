@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { AnnouncementModule } from 'src/announcement/announcement.module';
 import { DatabaseModule } from 'src/database/database.module';
 import { MembershipModule } from 'src/membership/membership.module';
 import { UserModule } from 'src/user/user.module';
@@ -10,7 +11,8 @@ import { TeamService } from './team.service';
   imports: [
     DatabaseModule,
     forwardRef(() => MembershipModule),
-    UserModule
+    UserModule,
+    AnnouncementModule
   ],
   controllers: [TeamController],
   providers: [TeamService, ...teamProviders],

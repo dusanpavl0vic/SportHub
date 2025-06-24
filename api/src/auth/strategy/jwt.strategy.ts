@@ -13,7 +13,6 @@ export class JwtStrategy extends PassportStrategy(
 ) {
   constructor(
     config: ConfigService,
-    // private coachService: CoachService,
     private playerService: PlayerService,
     private teamService: TeamService,
   ) {

@@ -4,6 +4,7 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
+import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
 import { TEAM_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
 import { MembershipService } from 'src/membership/membership.service';
 import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
@@ -180,5 +181,31 @@ export class TeamController {
 
   ): Promise<{ message: string }> {
     return await this.teamService.changePassword(id, passwords);
+  }
+
+
+  @Post(':id/announcement')
+  async uploadAnnouncement(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CreateAnnouncementDto,
+  ) {
+    console.log("ovde 1");
+    return await this.teamService.uploadAnnouncement(id, dto);
+  }
+
+  @Get(':id/full')
+  async returnTeamFull(
+    @Param('id', ParseIntPipe) id: number
+  ) {
+    return this.teamService.findByIdFull(id);
+  }
+
+  @Delete(':id/announcement/:annId')
+  async deleteAnnouncement(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('annId', ParseIntPipe) annId: number,
+  ) {
+    console.log(id, annId);
+    return await this.teamService.deleteAnnouncement(id, annId);
   }
 }

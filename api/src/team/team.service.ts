@@ -1,4 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { AnnouncementService } from 'src/announcement/announcement.service';
+import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
 import { TEAM_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
 import { PlayerStatus } from 'src/enum/player_status.enum';
 import { Membership } from 'src/membership/entities/membership.entity';
@@ -19,7 +21,8 @@ export class TeamService {
 
   constructor(
     @Inject('TEAM_REPOSITORY') private repo: Repository<Team>,
-    private userService: UserService
+    private userService: UserService,
+    private annService: AnnouncementService
   ) { }
 
   // async create(createTeamDto: RegisterTeamDto) {
@@ -53,7 +56,6 @@ export class TeamService {
 
   async findById(
     id: number,
-
   ) {
 
     const team = await this.repo.findOne({
@@ -65,6 +67,36 @@ export class TeamService {
       throw new NotFoundException(`Team with ID ${id} not found`);
     }
 
+    return team;
+  }
+
+  async findByIdWithAnn(
+    id: number,
+  ) {
+
+    const team = await this.repo.findOne({
+      where: { id: id },
+      relations: ['user', 'sport', 'announcements'],
+    });
+
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${id} not found`);
+    }
+
+    return team;
+  }
+
+  async findByIdFull(
+    id: number,
+  ) {
+    const team = await this.repo.findOne({
+      where: { id: id },
+      relations: ['sport', 'announcements', 'groups',],
+    });
+
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${id} not found`);
+    }
     return team;
   }
 
@@ -283,12 +315,12 @@ export class TeamService {
   }
 
   async changePassword(
-    playerId: number,
+    teamId: number,
     passwords: ChangePasswordDto
   ): Promise<{ message: string }> {
-    const team = await this.findById(playerId);
+    const team = await this.findById(teamId);
     if (!team)
-      throw new NotFoundException('Player not found');
+      throw new NotFoundException('Team not found');
 
 
     if (!this.userService.changePassword(team.user, passwords)) {
@@ -296,6 +328,46 @@ export class TeamService {
     }
 
     return { message: 'Password changed successfully' };
+  }
+
+
+  async uploadAnnouncement(
+    teamId: number,
+    createAnnouncementDto: CreateAnnouncementDto
+  ) {
+    console.log("ovde 2");
+
+    const team = await this.findById(teamId);
+
+    if (!team) {
+      throw new NotFoundException('Team not found');
+    }
+    console.log("ovde 3");
+
+
+    return await this.annService.create({ team, ...createAnnouncementDto });
+  }
+
+  async deleteAnnouncement(
+    teamId: number,
+    annId: number
+  ) {
+    const team = await this.findByIdWithAnn(teamId);
+
+    if (!team) {
+      throw new NotFoundException('Team not found');
+    }
+
+    console.log("deleteAnnouncement 1");
+    const find = team.announcements.some(ann => ann.id == annId);
+
+    console.log(find);
+
+    if (!team.announcements.some(ann => ann.id == annId)) {
+      throw new NotFoundException('Team dont have this announcement');
+    }
+
+    return await this.annService.remove(annId);
   }
 
 }

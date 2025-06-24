@@ -1,3 +1,4 @@
+import { OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Sport } from 'src/sport/entities/sport.entity';
@@ -14,7 +15,7 @@ export class CreateTeamDto {
   @IsNotEmpty()
   city: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   sport: Sport;
 
 }
@@ -26,7 +27,7 @@ export class RegisterTeamDto extends CreateTeamDto {
 }
 
 
-export class TeamWithSportIdDto extends RegisterTeamDto {
+export class TeamWithSportIdDto extends OmitType(RegisterTeamDto, ['sport'] as const) {
   @IsNotEmpty()
   sportId: number;
 }
