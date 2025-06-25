@@ -1,15 +1,22 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AnnouncementService } from 'src/announcement/announcement.service';
 import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
+import { UpdateAnnouncementDto } from 'src/announcement/dto/update-announcement.dto';
 import { TEAM_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
 import { PlayerStatus } from 'src/enum/player_status.enum';
+import { CreateGroupDto } from 'src/group/dto/create-group.dto';
+import { UpdateGroupDto } from 'src/group/dto/update-group.dto';
+import { GroupService } from 'src/group/group.service';
 import { Membership } from 'src/membership/entities/membership.entity';
 import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
+import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
+import { UpdateScheduleDto } from 'src/schedule/dto/update-schedule.dto';
+import { ScheduleService } from 'src/schedule/schedule.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { TeamCardDto } from './dto/card-team.dto';
 import { RegisterTeamDto } from './dto/create-team.dto';
-import { FilterTeamDto } from './dto/filter.dto';
+import { FilterTeamDto, Pagination } from './dto/filter.dto';
 import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
 import { FilterByCityStrategy } from './filters/filter-by-city.filters';
@@ -22,7 +29,9 @@ export class TeamService {
   constructor(
     @Inject('TEAM_REPOSITORY') private repo: Repository<Team>,
     private userService: UserService,
-    private annService: AnnouncementService
+    private annService: AnnouncementService,
+    private groupService: GroupService,
+    private scheduleService: ScheduleService,
   ) { }
 
   // async create(createTeamDto: RegisterTeamDto) {
@@ -77,6 +86,22 @@ export class TeamService {
     const team = await this.repo.findOne({
       where: { id: id },
       relations: ['user', 'sport', 'announcements'],
+    });
+
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${id} not found`);
+    }
+
+    return team;
+  }
+
+  async findByIdWithGroups(
+    id: number,
+  ) {
+
+    const team = await this.repo.findOne({
+      where: { id: id },
+      relations: ['user', 'sport', 'groups', 'groups.schedules'],
     });
 
     if (!team) {
@@ -358,16 +383,149 @@ export class TeamService {
       throw new NotFoundException('Team not found');
     }
 
-    console.log("deleteAnnouncement 1");
-    const find = team.announcements.some(ann => ann.id == annId);
-
-    console.log(find);
-
     if (!team.announcements.some(ann => ann.id == annId)) {
       throw new NotFoundException('Team dont have this announcement');
     }
 
     return await this.annService.remove(annId);
+  }
+
+  async allAnouncements(
+    teamId: number,
+    pag: Pagination
+  ) {
+    const team = await this.findById(teamId);
+
+    if (!team) {
+      throw new NotFoundException('Team not found');
+    }
+
+    return await this.annService.allAnnouncements(teamId, pag);
+  }
+
+  async updateAnouncements(
+    teamId: number,
+    annId: number,
+    dto: UpdateAnnouncementDto
+  ) {
+    const team = await this.findByIdWithAnn(teamId);
+
+    if (!team) {
+      throw new NotFoundException('Team not found');
+    }
+
+    if (!team.announcements.some(ann => ann.id == annId)) {
+      throw new NotFoundException('Team dont have this announcement');
+    }
+
+    return await this.annService.update(annId, dto);
+  }
+
+
+  async createGroup(
+    teamId: number,
+    dto: CreateGroupDto
+  ) {
+    const team = await this.findByIdWithGroups(teamId);
+
+    return await this.groupService.create({ team, ...dto });
+  }
+
+  async updateGroup(
+    teamId: number,
+    groupId: number,
+    dto: UpdateGroupDto
+  ) {
+    const team = await this.findByIdWithGroups(teamId);
+
+    if (!team.groups.some(group => group.id == groupId)) {
+      throw new NotFoundException('Team dont have this group');
+    }
+
+    return await this.groupService.update(groupId, dto);
+  }
+
+  async deleteGroup(
+    teamId: number,
+    groupId: number
+  ) {
+    const team = await this.findByIdWithGroups(teamId);
+
+    if (!team.groups.some(group => group.id == groupId)) {
+      throw new NotFoundException('Team dont have this group');
+    }
+
+    return await this.groupService.remove(groupId);
+  }
+
+  async allGroups(
+    teamId: number
+  ) {
+    const team = await this.findByIdWithGroups(teamId);
+
+    return team.groups;
+  }
+
+  async createSchedule(
+    teamId: number,
+    groupId: number,
+    dto: CreateScheduleDto
+  ) {
+    const team = await this.findByIdWithGroups(teamId);
+
+    if (!team.groups.some(group => group.id == groupId)) {
+      throw new NotFoundException('Team dont have this group');
+    }
+
+    const group = await this.groupService.findOne(groupId);
+
+    const schedule = await this.scheduleService.create({ group, ...dto })
+
+    return schedule;
+  }
+
+  async updateSchedule(
+    teamId: number,
+    groupId: number,
+    scheduleId: number,
+    dto: UpdateScheduleDto
+  ) {
+    const team = await this.findByIdWithGroups(teamId);
+
+    if (!team.groups.some(group => group.id == groupId)) {
+      throw new NotFoundException('Team dont have this group');
+    }
+
+    console.log("updateSchedule 1");
+    const group = await this.groupService.findOne(groupId);
+
+    if (!group.schedules.some(schedule => schedule.id == scheduleId)) {
+      throw new NotFoundException('Group dont have this schedule');
+    }
+    console.log("updateSchedule 2");
+
+    return await this.scheduleService.update(scheduleId, dto);
+
+  }
+
+  async deleteSchedule(
+    teamId: number,
+    groupId: number,
+    scheduleId: number
+  ) {
+    const team = await this.findByIdWithGroups(teamId);
+
+    if (!team.groups.some(group => group.id == groupId)) {
+      throw new NotFoundException('Team dont have this group');
+    }
+
+    const group = await this.groupService.findOne(groupId);
+
+    if (!group.schedules.some(schedule => schedule.id == scheduleId)) {
+      throw new NotFoundException('Group dont have this schedule');
+    }
+
+    return await this.scheduleService.remove(scheduleId);
   }
 
 }

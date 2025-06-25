@@ -1,6 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { Pagination } from 'src/team/dto/filter.dto';
 import { Repository } from 'typeorm';
-import { CreateAnnouncementWithTeamDto } from './dto/create-announcement.dto';
+import { CreateAnnouncementWithTeamDto, ReturnAnnouncementDto } from './dto/create-announcement.dto';
+import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
 import { Announcement } from './entities/announcement.entity';
 
 @Injectable()
@@ -45,4 +48,41 @@ export class AnnouncementService {
     });
   }
 
+  async update(
+    id: number,
+    dto: UpdateAnnouncementDto
+  ) {
+    const ann = await this.findOne(id);
+
+    if (!ann) {
+      throw new NotFoundException('Announcement not found');
+    }
+    Object.assign(ann, dto);
+
+    return await this.repo.save(ann);
+  }
+
+
+  async allAnnouncements(
+    teamId: number,
+    pag: Pagination
+  ) {
+    const page = pag.page ?? 1;
+    const limit = pag.limit ?? 10;
+
+    const [items, total] = await this.repo.createQueryBuilder('announcement')
+      .leftJoinAndSelect('announcement.team', 'team')
+      .where('team.id = :teamId', { teamId })
+      .orderBy('announcement.date', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      data: plainToInstance(ReturnAnnouncementDto, items, { excludeExtraneousValues: true }),
+      total,
+      page,
+      limit
+    };
+  }
 }

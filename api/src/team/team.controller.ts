@@ -5,9 +5,14 @@ import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
+import { UpdateAnnouncementDto } from 'src/announcement/dto/update-announcement.dto';
 import { TEAM_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
+import { CreateGroupDto } from 'src/group/dto/create-group.dto';
+import { UpdateGroupDto } from 'src/group/dto/update-group.dto';
 import { MembershipService } from 'src/membership/membership.service';
 import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
+import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
+import { UpdateScheduleDto } from 'src/schedule/dto/update-schedule.dto';
 import { TeamCardDto } from './dto/card-team.dto';
 import { FilterTeamDto } from './dto/filter.dto';
 import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
@@ -207,5 +212,85 @@ export class TeamController {
   ) {
     console.log(id, annId);
     return await this.teamService.deleteAnnouncement(id, annId);
+  }
+
+  @Get(':id/announcement/:page/:limit')
+  async allAnouncements(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('page', ParseIntPipe) page: number,
+    @Param('limit', ParseIntPipe) limit: number,
+  ) {
+    return await this.teamService.allAnouncements(id, { page, limit });
+  }
+
+  @Patch(':id/announcement/:annId')
+  async updateAnouncements(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('annId', ParseIntPipe) annId: number,
+    @Body() dto: UpdateAnnouncementDto
+  ) {
+    return await this.teamService.updateAnouncements(id, annId, dto);
+  }
+
+  @Post(':id/group')
+  async createGroup(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: CreateGroupDto,
+  ) {
+    return await this.teamService.createGroup(id, dto);
+  }
+
+  @Get(':id/group')
+  async allGroups(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.teamService.allGroups(id);
+  }
+
+  @Patch(':id/group/:groupId')
+  async updateGroup(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Body() dto: UpdateGroupDto
+  ) {
+    return await this.teamService.updateGroup(id, groupId, dto);
+  }
+
+  @Delete(':id/group/:groupId')
+  async deleteGroup(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
+  ) {
+    console.log(id, groupId);
+    return await this.teamService.deleteGroup(id, groupId);
+  }
+
+  @Post(':id/group/:groupId/schedule')
+  async createSchedule(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Body() dto: CreateScheduleDto,
+  ) {
+    return await this.teamService.createSchedule(id, groupId, dto);
+  }
+
+  @Patch(':id/group/:groupId/schedule/:scheduleId')
+  async updateSchedule(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+    @Body() dto: UpdateScheduleDto
+  ) {
+    return await this.teamService.updateSchedule(id, groupId, scheduleId, dto);
+  }
+
+  @Delete(':id/group/:groupId/schedule/:scheduleId')
+  async deleteSchedule(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+  ) {
+    console.log(id, groupId);
+    return await this.teamService.deleteSchedule(id, groupId, scheduleId);
   }
 }

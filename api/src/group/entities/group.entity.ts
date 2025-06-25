@@ -13,8 +13,7 @@ export class Group {
   @ManyToOne(() => Team, (team) => team.groups, {
     onDelete: 'CASCADE',
   })
-
-  @JoinColumn({ name: 'teamId' })
+  @JoinColumn()
   team: Team;
 
   @OneToMany(() => Schedule, (schedule) => schedule.group, {
