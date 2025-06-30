@@ -24,6 +24,7 @@ export class JwtStrategy extends PassportStrategy(
 
   async validate(payload: any) {
 
+    console.log("jwt.strategy");
     const { sub: id, role } = payload;
 
     switch (role) {
@@ -31,12 +32,12 @@ export class JwtStrategy extends PassportStrategy(
       case Role.PLAYER:
         const playerId = await this.playerService.findByUserId(id);
         if (!playerId) throw new UnauthorizedException('Player not found');
-        return playerId;
+        return { id: playerId, role: role };
 
       case Role.TEAM:
         const teamId = await this.teamService.findByUserId(id);
         if (!teamId) throw new UnauthorizedException('Team not found');
-        return teamId;
+        return { id: teamId, role: role };
 
       default:
         throw new UnauthorizedException('Invalid role');

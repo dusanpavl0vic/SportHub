@@ -18,7 +18,15 @@ async function bootstrap() {
     .setTitle('SportHub API')
     .setDescription('The SportHub API description')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+      },
+      'jwt',
+    )
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

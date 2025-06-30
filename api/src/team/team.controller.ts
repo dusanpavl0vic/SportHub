@@ -1,12 +1,16 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, forwardRef, Get, HttpCode, Inject, Param, ParseIntPipe, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, forwardRef, Get, HttpCode, Inject, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
 import { UpdateAnnouncementDto } from 'src/announcement/dto/update-announcement.dto';
+import { GetUser, Roles } from 'src/auth/decorator';
+import { JwtAuthGuard } from 'src/auth/guard';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { TEAM_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
+import { Role } from 'src/enum/role.enum';
 import { CreateGroupDto } from 'src/group/dto/create-group.dto';
 import { UpdateGroupDto } from 'src/group/dto/update-group.dto';
 import { MembershipService } from 'src/membership/membership.service';
@@ -28,60 +32,81 @@ export class TeamController {
     private readonly membershipService: MembershipService,
   ) { }
 
-  // @Get()
-  // findAll() {
-  //   return this.teamService.findAll();
-  // }
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Get('me')
+  getMe(
+    @GetUser('id') teamId: number
+  ) {
+    return teamId;
+  }
 
-
-
-  @Post(':teamId/accept/:playerId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Post('me/accept/:playerId')
   async acceptPlayer(
-    @Param('teamId', ParseIntPipe) teamId: number,
+    @GetUser('id') teamId: number,
     @Param('playerId', ParseIntPipe) playerId: number,
   ) {
     console.log(typeof teamId, typeof playerId);
     return this.membershipService.acceptPlayer(teamId, playerId);
   }
 
-  @Delete(':teamId/refuse/:playerId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Delete('me/refuse/:playerId')
   @HttpCode(204)
   async refusePlayer(
-    @Param('teamId', ParseIntPipe) teamId: number,
+    @GetUser('id') teamId: number,
     @Param('playerId', ParseIntPipe) playerId: number,
   ) {
     return await this.membershipService.refusePlayer(teamId, playerId);
   }
 
-  @Delete(':teamId/left/:playerId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Delete('me/left/:playerId')
   @HttpCode(204)
   async leftPlayer(
-    @Param('teamId', ParseIntPipe) teamId: number,
+    @GetUser('id') teamId: number,
     @Param('playerId', ParseIntPipe) playerId: number,
   ) {
     return await this.membershipService.leftPlayer(teamId, playerId);
   }
 
-  @Get(':teamId/active-memberships')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Get('me/active-memberships')
   @HttpCode(200)
   async getTeamActiveMemberships(
-    @Param('teamId', ParseIntPipe) teamId: number,
+    @GetUser('id') teamId: number,
   ): Promise<any> {
     return await this.teamService.findAllTeamPlayersActive(teamId);
   }
 
-  @Get(':teamId/inactive-memberships')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Get('me/inactive-memberships')
   @HttpCode(200)
   async getTeamInactiveMemberships(
-    @Param('teamId', ParseIntPipe) teamId: number,
+    @GetUser('id') teamId: number,
   ): Promise<any> {
     return await this.teamService.findAllTeamPlayersInactive(teamId);
   }
 
-  @Get(':teamId/pending-memberships')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Get('me/pending-memberships')
   @HttpCode(200)
   async getTeamPendingMemberships(
-    @Param('teamId', ParseIntPipe) teamId: number,
+    @GetUser('id') teamId: number,
   ): Promise<any> {
     return await this.teamService.findAllTeamPlayersPending(teamId);
   }
@@ -102,14 +127,21 @@ export class TeamController {
   }
 
 
-  @Delete(':id')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Delete('me/player')
   async removePlayer(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
   ): Promise<Team> {
-    return this.teamService.removeTeam(id);
+    return this.teamService.removeTeam(teamId);
   }
 
-  @Post(':teamId/uploadImage')
+  //TODO Razmisli kako ovde sa GetUSer      @GetUser('id') teamId: number,
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Post('me/uploadImage')
   @ApiOperation({ summary: 'Upload team image' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -129,7 +161,9 @@ export class TeamController {
     FileInterceptor('profileImage', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const teamId = req.params.teamId;
+
+          const teamId = JSON.parse(JSON.stringify(req.user)).id.toString();
+          console.log(teamId + "hvala kurcu");
           const teamFolder = join(process.cwd(), TEAM_PROFILEIMAGE_STORAGE_PATH, teamId);
 
           if (!existsSync(teamFolder)) {
@@ -142,7 +176,8 @@ export class TeamController {
         },
         filename: (req, file, cb) => {
           const ext = extname(file.originalname);
-          const teamId = req.params.playerId;
+          const teamId = JSON.parse(JSON.stringify(req.user)).id.toString();
+
           const teamFolder = join(process.cwd(), TEAM_PROFILEIMAGE_STORAGE_PATH, teamId);
 
           if (existsSync(teamFolder)) {
@@ -161,9 +196,11 @@ export class TeamController {
   )
   async uploadTeamImage(
     @UploadedFile() file: Express.Multer.File,
-    @Param('teamId', ParseIntPipe) teamId: number,
+    @GetUser('id') teamId: number,
   ): Promise<UpdateTeamProfileImageDto> {
-    if (!file) throw new BadRequestException('Team image is required');
+    if (!file)
+      throw new BadRequestException('Team image is required');
+
     const team = await this.teamService.uploadImage(
       teamId,
       file.filename,
@@ -171,47 +208,61 @@ export class TeamController {
     return team;
   }
 
-  @Patch(':id')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Patch('me')
   async updateTeam(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Body() updateTeamDto: UpdateTeamDto,
   ): Promise<ReturnTeamDto> {
-    return this.teamService.updateTeam(id, updateTeamDto);
+    return this.teamService.updateTeam(teamId, updateTeamDto);
   }
 
-  @Patch(':id/password')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Patch('me/password')
   async changePassword(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Body() passwords: ChangePasswordDto,
 
   ): Promise<{ message: string }> {
-    return await this.teamService.changePassword(id, passwords);
+    return await this.teamService.changePassword(teamId, passwords);
   }
 
 
-  @Post(':id/announcement')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Post('me/announcement')
   async uploadAnnouncement(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Body() dto: CreateAnnouncementDto,
   ) {
     console.log("ovde 1");
-    return await this.teamService.uploadAnnouncement(id, dto);
+    return await this.teamService.uploadAnnouncement(teamId, dto);
   }
 
-  @Get(':id/full')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Get('me/full')
   async returnTeamFull(
-    @Param('id', ParseIntPipe) id: number
+    @GetUser('id') teamId: number,
   ) {
-    return this.teamService.findByIdFull(id);
+    return this.teamService.findByIdFull(teamId);
   }
 
-  @Delete(':id/announcement/:annId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Delete('me/announcement/:annId')
   async deleteAnnouncement(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Param('annId', ParseIntPipe) annId: number,
   ) {
-    console.log(id, annId);
-    return await this.teamService.deleteAnnouncement(id, annId);
+    return await this.teamService.deleteAnnouncement(teamId, annId);
   }
 
   @Get(':id/announcement/:page/:limit')
@@ -223,74 +274,96 @@ export class TeamController {
     return await this.teamService.allAnouncements(id, { page, limit });
   }
 
-  @Patch(':id/announcement/:annId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Patch('me/announcement/:annId')
   async updateAnouncements(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Param('annId', ParseIntPipe) annId: number,
     @Body() dto: UpdateAnnouncementDto
   ) {
-    return await this.teamService.updateAnouncements(id, annId, dto);
+    return await this.teamService.updateAnouncements(teamId, annId, dto);
   }
 
-  @Post(':id/group')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Post('me/group')
   async createGroup(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Body() dto: CreateGroupDto,
   ) {
-    return await this.teamService.createGroup(id, dto);
+    return await this.teamService.createGroup(teamId, dto);
   }
 
-  @Get(':id/group')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Get('me/group')
   async allGroups(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
   ) {
-    return await this.teamService.allGroups(id);
+    return await this.teamService.allGroups(teamId);
   }
 
-  @Patch(':id/group/:groupId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Patch('me/group/:groupId')
   async updateGroup(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Param('groupId', ParseIntPipe) groupId: number,
     @Body() dto: UpdateGroupDto
   ) {
-    return await this.teamService.updateGroup(id, groupId, dto);
+    return await this.teamService.updateGroup(teamId, groupId, dto);
   }
 
-  @Delete(':id/group/:groupId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Delete('me/group/:groupId')
   async deleteGroup(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Param('groupId', ParseIntPipe) groupId: number,
   ) {
-    console.log(id, groupId);
-    return await this.teamService.deleteGroup(id, groupId);
+    return await this.teamService.deleteGroup(teamId, groupId);
   }
 
-  @Post(':id/group/:groupId/schedule')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Post('me/group/:groupId/schedule')
   async createSchedule(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Param('groupId', ParseIntPipe) groupId: number,
     @Body() dto: CreateScheduleDto,
   ) {
-    return await this.teamService.createSchedule(id, groupId, dto);
+    return await this.teamService.createSchedule(teamId, groupId, dto);
   }
 
-  @Patch(':id/group/:groupId/schedule/:scheduleId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Patch('me/group/:groupId/schedule/:scheduleId')
   async updateSchedule(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Param('groupId', ParseIntPipe) groupId: number,
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
     @Body() dto: UpdateScheduleDto
   ) {
-    return await this.teamService.updateSchedule(id, groupId, scheduleId, dto);
+    return await this.teamService.updateSchedule(teamId, groupId, scheduleId, dto);
   }
 
-  @Delete(':id/group/:groupId/schedule/:scheduleId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.TEAM])
+  @Delete('me/group/:groupId/schedule/:scheduleId')
   async deleteSchedule(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') teamId: number,
     @Param('groupId', ParseIntPipe) groupId: number,
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
   ) {
-    console.log(id, groupId);
-    return await this.teamService.deleteSchedule(id, groupId, scheduleId);
+    return await this.teamService.deleteSchedule(teamId, groupId, scheduleId);
   }
 }

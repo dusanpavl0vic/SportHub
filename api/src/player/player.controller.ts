@@ -1,11 +1,14 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, forwardRef, Get, Inject, Param, ParseIntPipe, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
+import { GetUser, Roles } from 'src/auth/decorator';
+import { JwtAuthGuard } from 'src/auth/guard';
+import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { PLAYER_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
-import { MembershipService } from 'src/membership/membership.service';
+import { Role } from 'src/enum/role.enum';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ReturnPlayerDto, UpdatePlayerDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
@@ -17,36 +20,27 @@ import { PlayerService } from './player.service';
 export class PlayerController {
   constructor(
     private readonly playerService: PlayerService,
-    @Inject(forwardRef(() => MembershipService))
-    private readonly membershipService: MembershipService,
   ) { }
 
 
-  @Get(':id/memberships')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
+  @Get('me/memberships')
   async getPlayerMemberships(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') playerId: number,
   ): Promise<any> {
-    const player = await this.playerService.findByIdWithMemberships(id);
+    const player = await this.playerService.findByIdWithMemberships(playerId);
     if (!player) {
-      throw new BadRequestException(`Player with ID ${id} not found`);
+      throw new BadRequestException(`Player with ID ${playerId} not found`);
     }
     return player.memberships;
   }
 
-
-
-  // @Delete(':id')
-  // async deletePlayer(@Param('id', ParseIntPipe) id: number): Promise<Player> {
-  //   const player = await this.playerService.findById(id);
-
-  //   if (player.team) {
-  //     await this.teamService.removePlayerFromTeam(player.team.id, player.id);
-  //   }
-
-  //   return this.playerService.removePlayer(id);
-  // }
-
-  @Post(':playerId/uploadImage')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
+  @Post('me/uploadImage')
   @ApiOperation({ summary: 'Upload profile image' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -66,7 +60,7 @@ export class PlayerController {
     FileInterceptor('profileImage', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const playerId = req.params.playerId;
+          const playerId = JSON.parse(JSON.stringify(req.user)).id.toString();
           const playerFolder = join(process.cwd(), PLAYER_PROFILEIMAGE_STORAGE_PATH, playerId);
 
           if (!existsSync(playerFolder)) {
@@ -79,7 +73,7 @@ export class PlayerController {
         },
         filename: (req, file, cb) => {
           const ext = extname(file.originalname);
-          const playerId = req.params.playerId;
+          const playerId = JSON.parse(JSON.stringify(req.user)).id.toString();
           const playerFolder = join(process.cwd(), PLAYER_PROFILEIMAGE_STORAGE_PATH, playerId);
 
           if (existsSync(playerFolder)) {
@@ -98,7 +92,7 @@ export class PlayerController {
   )
   async uploadPlayerImage(
     @UploadedFile() file: Express.Multer.File,
-    @Param('playerId', ParseIntPipe) playerId: number,
+    @GetUser('id') playerId: number,
   ) {
     if (!file) throw new BadRequestException('Player image is required');
     const player = await this.playerService.uploadImage(
@@ -108,46 +102,61 @@ export class PlayerController {
     return player;
   }
 
-  @Post('request/:playerId/:teamId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
+  @Post('me/request/team/:teamId')
   async requestToJoinTeam(
-    @Param('playerId', ParseIntPipe) playerId: number,
+    @GetUser('id') playerId: number,
     @Param('teamId', ParseIntPipe) teamId: number,
   ) {
-    console.log(`Player ${playerId} requesting to join team ${teamId}`);
-    return this.membershipService.requestToJoinTeam(playerId, teamId);
+    //console.log(`Player ${playerId} requesting to join team ${teamId}`);
+    return this.playerService.requestToJoinTeam(playerId, teamId);
   }
 
 
-  @Post('leave/:teamId/:playerId')
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
+  @Post('me/leave/team/:teamId/')
   async leaveTeam(
     @Param('teamId', ParseIntPipe) teamId: number,
-    @Param('playerId', ParseIntPipe) playerId: number,
+    @GetUser('id') playerId: number,
   ) {
-    return this.membershipService.leftPlayer(teamId, playerId);
+    return this.playerService.leaveTeam(teamId, playerId);
   }
 
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
   @Patch(':id')
   async updatePlayer(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') playerId: number,
     @Body() updatePlayerDto: UpdatePlayerDto,
   ): Promise<ReturnPlayerDto> {
-    return this.playerService.updatePlayer(id, updatePlayerDto);
+    return this.playerService.updatePlayer(playerId, updatePlayerDto);
   }
 
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
   @Delete(':id')
   async removePlayer(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') playerId: number,
   ): Promise<Player> {
-    return this.playerService.removePlayer(id);
+    return this.playerService.removePlayer(playerId);
   }
 
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
   @Patch(':id/password')
   async changePassword(
-    @Param('id', ParseIntPipe) id: number,
+    @GetUser('id') playerId: number,
     @Body() passwords: ChangePasswordDto,
 
   ): Promise<{ message: string }> {
-    return await this.playerService.changePassword(id, passwords);
+    return await this.playerService.changePassword(playerId, passwords);
   }
 
   @Get('all')
@@ -155,4 +164,31 @@ export class PlayerController {
   ): Promise<{ players: Player[]; count: number }> {
     return await this.playerService.findAll();
   }
+
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
+  @Get(':playerId/:teamId/group')
+  async allGroups(
+    @GetUser('id') playerId: number,
+    @Param('teamId') teamId: number,
+  ) {
+    return this.playerService.allGroups(playerId, teamId)
+  }
+
+  @Get(':playerId/profile')
+  async playerProfile(
+    @Param('playerId') playerId: number,
+  ) {
+    return this.playerService.returnPlayerProfile(playerId);
+  }
+
+
+  // @Get(':playerId/team/:teamId/teammates')
+  // async showTeammates(
+  //   @Param('playerId') playerId: number,
+  //   @Param('teamId') teamId: number,
+  // ) {
+  //   return this.playerService.showTeammates(playerId, teamId);
+  // }
 }

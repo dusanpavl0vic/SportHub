@@ -1,6 +1,7 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PlayerStatus } from 'src/enum/player_status.enum';
 import { PlayerService } from 'src/player/player.service';
+import { TeamCardDto } from 'src/team/dto/card-team.dto';
 import { TeamService } from 'src/team/team.service';
 import { In, Repository } from 'typeorm';
 import { MembershipDto } from './dto/membership.dto';
@@ -144,7 +145,7 @@ export class MembershipService {
 
 
 
-  private async activeMembership(
+  async activeMembership(
     playerId: number,
     teamId: number,
   ) {
@@ -155,6 +156,38 @@ export class MembershipService {
         status: In([PlayerStatus.PENDING, PlayerStatus.IN_TEAM]),
       },
     });
+  }
+
+  async playerInTeam(
+    playerId: number
+  ): Promise<Promise<Omit<TeamCardDto, 'numberOfPlayers'> | null>> {
+    const in_team = await this.repo.findOne({
+      where: {
+        player: { id: playerId },
+        status: PlayerStatus.IN_TEAM
+      },
+      relations: {
+        team: {
+          sport: true
+        }
+      }
+    });
+
+    if (!in_team) {
+      return null;
+    }
+    else if (!in_team.team) {
+      throw new NotFoundException('No team in membership');
+    }
+
+    return {
+      id: in_team.team.id,
+      name: in_team.team.name,
+      city: in_team.team.city,
+      profilePicture: in_team.team.profilePicture,
+      sportName: in_team.team.sport.name,
+      sportImage: in_team.team.sport.iconFilename,
+    };
   }
 
 

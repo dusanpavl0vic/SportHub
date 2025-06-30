@@ -1,13 +1,16 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, forwardRef, Injectable, NotFoundException } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { PLAYER_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
+import { PlayerStatus } from 'src/enum/player_status.enum';
 import { Membership } from 'src/membership/entities/membership.entity';
+import { MembershipService } from 'src/membership/membership.service';
 import { Team } from 'src/team/entities/team.entity';
+import { TeamService } from 'src/team/team.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { RegisterPlayerDto } from './dto/create-player.dto';
-import { ReturnPlayerDto, UpdatePlayerDto, UpdatePlayerProfileImageDto } from './dto/update-player.dto';
+import { PlayerInfoDto, ReturnPlayerDto, UpdatePlayerDto, UpdatePlayerProfileImageDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
 
 
@@ -17,6 +20,9 @@ export class PlayerService {
     @Inject('PLAYER_REPOSITORY') private repo: Repository<Player>,
     @Inject('TEAM_REPOSITORY') private repoT: Repository<Team>,
     private userService: UserService,
+    private teamService: TeamService,
+    @Inject(forwardRef(() => MembershipService))
+    private readonly membershipService: MembershipService,
   ) { }
 
   async findById(
@@ -204,4 +210,67 @@ export class PlayerService {
     return this.repo.save(player);
   }
 
+  async allGroups(
+    playerId: number,
+    teamId: number
+  ) {
+    await this.myTeam(playerId, teamId);
+
+    return this.teamService.allGroups(teamId);
+  }
+
+  async showTeammates(
+    playerId: number,
+    teamId: number
+  ) {
+    this.myTeam(playerId, teamId);
+
+    const teammates = this.teamService.findAllTeamPlayersActive(teamId);
+
+    return (await teammates).map(teammate => teammate.player);
+  }
+
+  async requestToJoinTeam(
+    playerId: number,
+    teamId: number,
+  ) {
+    return this.membershipService.requestToJoinTeam(playerId, teamId);
+  }
+
+  async leaveTeam(
+    teamId: number,
+    playerId: number,
+  ) {
+    return this.membershipService.leftPlayer(teamId, playerId);
+  }
+
+  private async myTeam(
+    playerId: number,
+    teamId: number
+  ) {
+    const membership = await this.membershipService.activeMembership(playerId, teamId);
+
+    if (!membership || membership.status !== PlayerStatus.IN_TEAM) {
+      throw new ForbiddenException('Player is not part of this team');
+    }
+
+    return membership;
+  }
+
+  async returnPlayerProfile(
+    playerId: number
+  ): Promise<PlayerInfoDto> {
+    const player = await this.findById(playerId);
+
+    const team = await this.membershipService.playerInTeam(playerId);
+
+    return {
+      id: player.id,
+      firstname: player.firstname,
+      lastname: player.lastname,
+      birthdate: player.birthdate,
+      city: player.city,
+      team: team
+    }
+  }
 }

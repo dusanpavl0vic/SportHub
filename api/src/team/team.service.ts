@@ -51,7 +51,7 @@ export class TeamService {
   async findByUserId(
     userId: number,
 
-  ): Promise<Team> {
+  ): Promise<number> {
 
     const team = await this.repo.findOne({
       where: { user: { id: userId } },
@@ -60,7 +60,7 @@ export class TeamService {
     if (!team) {
       throw new NotFoundException(`Team with user ID ${userId} not found`);
     }
-    return team;
+    return team.id;
   }
 
   async findById(
