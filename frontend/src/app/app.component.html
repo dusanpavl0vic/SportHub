@@ -29,3 +29,17 @@
 
 
 </div>
+
+<div>
+  <ng-container *ngIf="isAuthenticated$ | async; loggedOutContent">
+    <p>Welcome back, <strong>{{userName$ | async }}</strong></p>
+    <button class="btn btn-danger" (click)="logoutUser()">Logout</button>
+  </ng-container>
+  <ng-template #loggedOutContent>
+    <div class="alert alert-warning" role="alert">
+      You are not logged in. Please log in to add wishes.
+    </div>
+    <button class="btn btn-primary" (click)="loginUser()">Login</button>
+  </ng-template>
+
+</div>
