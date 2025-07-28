@@ -13,7 +13,7 @@ import { appReducer } from './app.reducer';
   imports: [
     BrowserModule,
     FormsModule,
-    StoreModule.forRoot({ appReducer }),
+    StoreModule.forRoot(appReducer),
   ],
   providers: [],
   bootstrap: [AppComponent]
