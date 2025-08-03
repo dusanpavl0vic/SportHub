@@ -32,3 +32,8 @@ export class TeamWithSportIdDto extends OmitType(RegisterTeamDto, ['sport'] as c
   sportId: number;
 }
 
+export class PlayerDto extends CreateTeamDto {
+  @IsNotEmpty()
+  id: number;
+}
+

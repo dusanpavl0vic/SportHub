@@ -10,9 +10,10 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe({ //globalni pipe za validaciju
     transform: true,
-    whitelist: true, //striktno elementi koji su u dto
+    whitelist: true,
     skipMissingProperties: false,
   }));
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('SportHub API')

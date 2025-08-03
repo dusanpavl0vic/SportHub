@@ -1,0 +1,16 @@
+<p>login works!</p>
+<h2>Login</h2>
+<div *ngIf="player$ | async as player">
+  <p>Ime igrača: {{ player.firstname }}</p>
+</div>
+<div *ngIf="team$ | async as team">
+  <p>Ime igrača: {{ team.name }}</p>
+</div>
+
+
+
+<form (ngSubmit)="onSubmit()">
+  <input type="email" [(ngModel)]="email" name="email" required>
+  <input type="password" [(ngModel)]="password" name="password" required>
+  <button type="submit">Login</button>
+</form>

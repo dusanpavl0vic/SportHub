@@ -25,6 +25,26 @@ export class PlayerService {
     private readonly membershipService: MembershipService,
   ) { }
 
+  async findByIdWithOutUser(
+    id: number,
+  ): Promise<Player> {
+    const player = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    if (!player) {
+      console.log("Player not found with ID:", id);
+      throw new NotFoundException(`Player with ID ${id} not found`);
+    }
+    console.log("Player found:", player);
+
+    if (!player) {
+      throw new NotFoundException(`Player with ID ${id} not found`);
+    }
+
+    return player;
+  }
+
   async findById(
     id: number,
   ): Promise<Player> {

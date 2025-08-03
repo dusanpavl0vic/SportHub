@@ -79,6 +79,22 @@ export class TeamService {
     return team;
   }
 
+  async findByIdWithOutUser(
+    id: number,
+  ) {
+
+    const team = await this.repo.findOne({
+      where: { id: id },
+      relations: ['sport'],
+    });
+
+    if (!team) {
+      throw new NotFoundException(`Team with ID ${id} not found`);
+    }
+
+    return team;
+  }
+
   async findByIdWithAnn(
     id: number,
   ) {

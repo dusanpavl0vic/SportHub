@@ -39,7 +39,7 @@ export class TeamController {
   getMe(
     @GetUser('id') teamId: number
   ) {
-    return teamId;
+    return this.teamService.findByIdWithOutUser(teamId);
   }
 
   @ApiBearerAuth('jwt')

@@ -10,6 +10,7 @@ import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { PLAYER_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
 import { Role } from 'src/enum/role.enum';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { PlayerDto } from './dto/create-player.dto';
 import { ReturnPlayerDto, UpdatePlayerDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './player.service';
@@ -21,6 +22,20 @@ export class PlayerController {
   constructor(
     private readonly playerService: PlayerService,
   ) { }
+
+  @ApiBearerAuth('jwt')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([Role.PLAYER])
+  @Get('me')
+  async getPlayer(
+    @GetUser('id') playerId: number,
+  ): Promise<PlayerDto> {
+    const player = await this.playerService.findByIdWithOutUser(playerId);
+    if (!player) {
+      throw new BadRequestException(`Player with ID ${playerId} not found`);
+    }
+    return player;
+  }
 
 
   @ApiBearerAuth('jwt')

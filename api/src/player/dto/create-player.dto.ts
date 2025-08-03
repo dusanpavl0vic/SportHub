@@ -27,4 +27,13 @@ export class RegisterPlayerDto extends CreatePlayerDto {
 }
 
 
+export class PlayerDto extends CreatePlayerDto {
+  @IsNotEmpty()
+  id: number;
+
+  @IsOptional()
+  profilePicture: string;
+}
+
+
 

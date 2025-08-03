@@ -1,5 +1,5 @@
 services:
-  api:
+  aci:
     container_name: sporthub_api
     image: sporthub_api
     build:
