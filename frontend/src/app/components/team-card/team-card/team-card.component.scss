@@ -1,0 +1,61 @@
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .logo {
+      width: 60px;
+      height: auto;
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  .info-box {
+    background: #fff2db;
+    border-radius: 15px;
+    padding: 16px;
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      color: #000;
+
+      mat-icon {
+        font-size: 20px;
+        color: #000;
+      }
+    }
+
+    .more-btn {
+      background: #ed8b5c;
+      color: #fff;
+      border-radius: 25px;
+      font-weight: bold;
+      margin-top: 10px;
+      align-self: center;
+
+      &:hover {
+        background: #d97a4d;
+      }
+    }
+  }
+}

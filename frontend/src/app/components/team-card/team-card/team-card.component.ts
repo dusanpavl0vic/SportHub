@@ -1,0 +1,35 @@
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { BrowserModule } from '@angular/platform-browser';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { AppState } from 'src/app/app.state';
+import { TeamService } from 'src/app/core/services/team.service';
+import { Team } from 'src/interfaces/team/team.dto';
+
+@Component({
+  selector: 'team-card',
+  imports: [
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    BrowserModule,
+    FormsModule,
+  ],
+  templateUrl: './team-card.component.html',
+  styleUrl: './team-card.component.scss',
+  standalone: true
+})
+export class TeamCardComponent {
+
+  url = "http://localhost:3000"
+  team$!: Observable<Team | null>;
+  constructor(private store: Store<AppState>, private teamService: TeamService) {
+    this.team$ = this.store.select(state => state.auth.team);
+
+
+  }
+}

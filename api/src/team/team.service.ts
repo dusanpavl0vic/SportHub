@@ -4,6 +4,7 @@ import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.
 import { UpdateAnnouncementDto } from 'src/announcement/dto/update-announcement.dto';
 import { TEAM_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
 import { PlayerStatus } from 'src/enum/player_status.enum';
+import { SortOrder } from 'src/enum/sort.enum';
 import { CreateGroupDto } from 'src/group/dto/create-group.dto';
 import { UpdateGroupDto } from 'src/group/dto/update-group.dto';
 import { GroupService } from 'src/group/group.service';
@@ -254,7 +255,11 @@ export class TeamService {
   }
 
   async getFilteredTeams(
-    filterDto: FilterTeamDto
+    page?: number,
+    limit?: number,
+    city?: string,
+    sportId?: number,
+    sort?: SortOrder,
   ): Promise<{
     data: TeamCardDto[];
     total: number;
@@ -263,6 +268,14 @@ export class TeamService {
   }> {
     const query = this.repo.createQueryBuilder('team')
       .leftJoinAndSelect('team.sport', 'sport');
+
+    const filterDto: FilterTeamDto = {
+      city,
+      sportId,
+      sort,
+      page: page,
+      limit: limit,
+    };
 
     const strategies = [
       new FilterBySportStrategy(),
@@ -275,10 +288,10 @@ export class TeamService {
     }
 
 
-    const page = filterDto.page ?? 1;
-    const limit = filterDto.limit ?? 10;
+    const pageR = filterDto.page ?? 1;
+    const limitR = filterDto.limit ?? 10;
 
-    query.skip((page - 1) * limit).take(limit);
+    query.skip((pageR - 1) * limitR).take(limitR);
 
     const [teams, total] = await query.getManyAndCount();
     // console.log('First team:', teams);
@@ -295,8 +308,8 @@ export class TeamService {
           sportImage: team.sport.iconFilename,
         })),
       total,
-      page,
-      limit
+      page: pageR,
+      limit: limitR
     }
   }
 

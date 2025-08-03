@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { isDevMode, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserModule } from '@angular/platform-browser';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -9,6 +10,8 @@ import { AppComponent } from './app.component';
 import { appReducer } from './app.reducer';
 import { LoginComponent } from './components/login/login.component';
 import { AuthEffects } from './store/auth/auth.effects';
+import { TeamCardComponent } from "./components/team-card/team-card/team-card.component";
+
 
 
 @NgModule({
@@ -22,7 +25,9 @@ import { AuthEffects } from './store/auth/auth.effects';
     StoreModule.forRoot(appReducer),
     EffectsModule.forRoot([AuthEffects]),
     LoginComponent,
-  ],
+    MatSlideToggleModule,
+    TeamCardComponent
+],
   providers: [
     provideStoreDevtools({
       maxAge: 25, // Retains last 25 states
