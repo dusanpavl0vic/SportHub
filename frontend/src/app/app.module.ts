@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { isDevMode, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -8,10 +8,12 @@ import { StoreModule } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AppComponent } from './app.component';
 import { appReducer } from './app.reducer';
+import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
-import { AuthEffects } from './store/auth/auth.effects';
 import { TeamCardComponent } from "./components/team-card/team-card/team-card.component";
-
+import { TeamsListComponent } from "./components/teams-list/teams-list/teams-list.component";
+import { AuthInterceptor } from './core/interceptor/auth.interceptor';
+import { AuthEffects } from './store/auth/auth.effects';
 
 
 @NgModule({
@@ -26,8 +28,10 @@ import { TeamCardComponent } from "./components/team-card/team-card/team-card.co
     EffectsModule.forRoot([AuthEffects]),
     LoginComponent,
     MatSlideToggleModule,
-    TeamCardComponent
-],
+    TeamCardComponent,
+    TeamsListComponent,
+    HeaderComponent,
+  ],
   providers: [
     provideStoreDevtools({
       maxAge: 25, // Retains last 25 states
@@ -36,7 +40,12 @@ import { TeamCardComponent } from "./components/team-card/team-card/team-card.co
       trace: false, //  If set to true, will include stack trace for every dispatched action, so you can see it in trace tab jumping directly to that part of code
       traceLimit: 75, // maximum stack trace frames to be stored (in case trace option was provided as true)
       connectInZone: true // If set to true, the connection is established within the Angular zone
-    })
+    }),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

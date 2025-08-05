@@ -1,10 +1,10 @@
 
-export class Pagination {
+export interface Pagination {
   page?: number;
   limit?: number;
 }
 
-export class FilterTeamDto extends Pagination {
+export interface FilterTeamDto extends Pagination {
   city?: string;
   sportId?: number;
   sort?: 'asc' | 'desc';

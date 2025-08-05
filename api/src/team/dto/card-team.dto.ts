@@ -21,3 +21,18 @@ export class TeamCardDto extends OmitType(CreateTeamDto, ['sport'] as const) {
   @IsNotEmpty()
   sportImage: string;
 }
+
+export class TeamCardSportDto extends CreateTeamDto {
+
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  numberOfPlayers: number;
+
+  @IsNotEmpty()
+  override profilePicture: string;
+
+}

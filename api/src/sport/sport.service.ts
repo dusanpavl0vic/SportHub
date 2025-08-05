@@ -35,5 +35,8 @@ export class SportService {
     return `This action removes a #${id} sport`;
   }
 
+  // async getSports(): Promise<Sport[]> {
+  //   return this.repo.find();
+  // }
 
 }

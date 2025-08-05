@@ -13,7 +13,10 @@
 
     .logo {
       width: 60px;
-      height: auto;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
     }
 
     h2 {

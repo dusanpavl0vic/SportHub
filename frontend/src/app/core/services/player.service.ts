@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Player } from "src/interfaces/player/player.dto";
@@ -10,9 +10,9 @@ export class PlayerService {
   constructor(private http: HttpClient) { }
 
   getMe(): Observable<Player> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    });
-    return this.http.get<Player>(`${this.apiUrl}/me`, { headers });
+    // const headers = new HttpHeaders({
+    //   'Authorization': `Bearer ${localStorage.getItem('token')}`
+    // });
+    return this.http.get<Player>(`${this.apiUrl}/me`);
   }
 }

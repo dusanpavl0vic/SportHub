@@ -25,7 +25,10 @@
     </ul>
   </ng-template> -->
 
+<app-header></app-header>
 <p>Dusan</p>
 <app-login></app-login>
-<team-card></team-card>
+<app-teams-list [sports]=sports [cities]="cities">
+  <p>Teams</p>
+</app-teams-list>
 <mat-slide-toggle>Toggle me!</mat-slide-toggle>

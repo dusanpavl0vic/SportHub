@@ -97,4 +97,10 @@ export class SportController {
   remove(@Param('id') id: string) {
     return this.sportService.remove(+id);
   }
+
+  // @Get('all')
+  // async getSports(): Promise<Sport[]> {
+  //   const sports = await this.sportService.getSports();
+  //   return sports;
+  // }
 }

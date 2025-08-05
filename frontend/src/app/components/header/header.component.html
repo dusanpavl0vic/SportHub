@@ -1,0 +1,41 @@
+<header class="header">
+  <div class="logo">Sport<span>Hub</span></div>
+
+  <ng-container *ngIf="!(isAuthenticated$ | async)">
+    <div class="nav-links">
+      <a routerLink="/teams">Teams</a>
+      <a routerLink="/login">Login</a>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="isAuthenticated$ | async">
+    <div class="nav-links">
+      <a routerLink="/teams">Teams</a>
+
+      <ng-container *ngIf="team$ | async as team; else playerTemplate">
+        <div class="avatar">
+          <img *ngIf="team.profilePicture; else teamInitials" [src]="url + team.profilePicture" alt="team logo" />
+          <ng-template #teamInitials>
+            <span [ngStyle]="{'background-color': getRandomColor()}">
+              {{ team.name[0] | uppercase }}
+            </span>
+          </ng-template>
+        </div>
+      </ng-container>
+
+      <ng-template #playerTemplate>
+        <ng-container *ngIf="player$ | async as player">
+          <div class=" avatar">
+            <img *ngIf="player.profilePicture; else playerInitials" [src]="url + player.profilePicture"
+              alt="player image" />
+            <ng-template #playerInitials>
+              <span [ngStyle]="{'background-color': getRandomColor()}">
+                {{ player.firstname[0] | uppercase }}
+              </span>
+            </ng-template>
+          </div>
+        </ng-container>
+      </ng-template>
+    </div>
+  </ng-container>
+</header>

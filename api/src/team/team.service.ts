@@ -4,7 +4,6 @@ import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.
 import { UpdateAnnouncementDto } from 'src/announcement/dto/update-announcement.dto';
 import { TEAM_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
 import { PlayerStatus } from 'src/enum/player_status.enum';
-import { SortOrder } from 'src/enum/sort.enum';
 import { CreateGroupDto } from 'src/group/dto/create-group.dto';
 import { UpdateGroupDto } from 'src/group/dto/update-group.dto';
 import { GroupService } from 'src/group/group.service';
@@ -15,7 +14,7 @@ import { UpdateScheduleDto } from 'src/schedule/dto/update-schedule.dto';
 import { ScheduleService } from 'src/schedule/schedule.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
-import { TeamCardDto } from './dto/card-team.dto';
+import { TeamCardSportDto } from './dto/card-team.dto';
 import { RegisterTeamDto } from './dto/create-team.dto';
 import { FilterTeamDto, Pagination } from './dto/filter.dto';
 import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
@@ -255,13 +254,9 @@ export class TeamService {
   }
 
   async getFilteredTeams(
-    page?: number,
-    limit?: number,
-    city?: string,
-    sportId?: number,
-    sort?: SortOrder,
+    filterDto: FilterTeamDto
   ): Promise<{
-    data: TeamCardDto[];
+    data: TeamCardSportDto[];
     total: number;
     page: number;
     limit: number;
@@ -269,13 +264,13 @@ export class TeamService {
     const query = this.repo.createQueryBuilder('team')
       .leftJoinAndSelect('team.sport', 'sport');
 
-    const filterDto: FilterTeamDto = {
-      city,
-      sportId,
-      sort,
-      page: page,
-      limit: limit,
-    };
+    // const filterDto: FilterTeamDto = {
+    //   city,
+    //   sportId,
+    //   sort,
+    //   page: page,
+    //   limit: limit,
+    // };
 
     const strategies = [
       new FilterBySportStrategy(),
@@ -304,8 +299,7 @@ export class TeamService {
           profilePicture: team.profilePicture,
           city: team.city,
           numberOfPlayers: team.numberOfPlayers,
-          sportName: team.sport.name,
-          sportImage: team.sport.iconFilename,
+          sport: team.sport
         })),
       total,
       page: pageR,
@@ -555,6 +549,16 @@ export class TeamService {
     }
 
     return await this.scheduleService.remove(scheduleId);
+  }
+
+  async getAllCites(): Promise<string[]> {
+    const cities = await this.repo
+      .createQueryBuilder('team')
+      .select('DISTINCT team.city', 'city')
+      .where('team.city IS NOT NULL')
+      .getRawMany();
+
+    return cities.map(c => c.city);
   }
 
 }

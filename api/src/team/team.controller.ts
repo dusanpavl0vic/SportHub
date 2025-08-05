@@ -11,14 +11,14 @@ import { JwtAuthGuard } from 'src/auth/guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
 import { TEAM_PROFILEIMAGE_STORAGE_PATH } from 'src/config/constants';
 import { Role } from 'src/enum/role.enum';
-import { SortOrder } from 'src/enum/sort.enum';
 import { CreateGroupDto } from 'src/group/dto/create-group.dto';
 import { UpdateGroupDto } from 'src/group/dto/update-group.dto';
 import { MembershipService } from 'src/membership/membership.service';
 import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
 import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
 import { UpdateScheduleDto } from 'src/schedule/dto/update-schedule.dto';
-import { TeamCardDto } from './dto/card-team.dto';
+import { TeamCardSportDto } from './dto/card-team.dto';
+import { FilterTeamDto } from './dto/filter.dto';
 import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
 import { TeamService } from './team.service';
@@ -113,21 +113,16 @@ export class TeamController {
 
 
 
-  @Get('/:city/:sportId/:page/:limit/:sort')
+  @Post()
   async getFilteredTeams(
-    @Param('city') city: string,
-    @Param('sportId', ParseIntPipe) sportId: number,
-    @Param('page', ParseIntPipe) page: number,
-    @Param('limit', ParseIntPipe) limit: number,
-    @Param('sort') sort?: SortOrder,
+    @Body() filterDto: FilterTeamDto
   ): Promise<{
-    data: TeamCardDto[];
+    data: TeamCardSportDto[];
     total: number;
     page: number;
     limit: number;
   }> {
-    //console.log('Filter DTO:', filterDto);
-    return this.teamService.getFilteredTeams(page, limit, city, sportId, sort);
+    return this.teamService.getFilteredTeams(filterDto);
   }
 
 
@@ -141,7 +136,6 @@ export class TeamController {
     return this.teamService.removeTeam(teamId);
   }
 
-  //TODO Razmisli kako ovde sa GetUSer      @GetUser('id') teamId: number,
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles([Role.TEAM])
@@ -369,5 +363,10 @@ export class TeamController {
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
   ) {
     return await this.teamService.deleteSchedule(teamId, groupId, scheduleId);
+  }
+
+  @Get('cities')
+  async getAllCities(): Promise<string[]> {
+    return await this.teamService.getAllCites();
   }
 }

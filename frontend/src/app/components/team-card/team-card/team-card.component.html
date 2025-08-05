@@ -1,21 +1,22 @@
-<mat-card class="card" *ngIf="team$ | async as team">
+<mat-card class="card">
   <div class=" header">
     <img [src]="url + team.profilePicture" alt="{{ team.name }} Logo" class="logo" />
-    <h2>Buffalo Bills</h2>
+    <h2>{{team.name}}</h2>
   </div>
 
   <div class="info-box">
     <div class="info-item">
-      <mat-icon>sports_football</mat-icon>
-      <span>American football</span>
+      <mat-icon><img [src]="url + team.sport.iconFilename" alt="{{ team.sport.iconFilename }} Logo" class="logo" />
+      </mat-icon>
+      <span>{{ team.sport.name}}</span>
     </div>
     <div class="info-item">
       <mat-icon>location_on</mat-icon>
-      <span>Buffalo, New York</span>
+      <span>{{team.city}}</span>
     </div>
     <div class="info-item">
       <mat-icon>group</mat-icon>
-      <span>240</span>
+      <span>{{team.numberOfPlayers}}</span>
     </div>
 
     <button mat-raised-button color="warn" class="more-btn">More info</button>

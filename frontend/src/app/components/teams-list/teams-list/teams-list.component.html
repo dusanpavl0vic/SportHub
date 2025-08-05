@@ -1,0 +1,48 @@
+<mat-form-field appearance="outline">
+  <mat-label>Sport</mat-label>
+  <mat-select [value]="undefined" (selectionChange)="onFilterChange({ sportId: $event.value })">
+    <mat-option [value]="undefined">All sports</mat-option>
+    <mat-option *ngFor="let sport of sports" [value]="sport.id">
+      {{ sport.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>City</mat-label>
+  <mat-select [value]="undefined" (selectionChange)="onFilterChange({ city: $event.value })">
+    <mat-option [value]="undefined">All cities</mat-option>
+    <mat-option *ngFor="let city of cities" [value]="city">
+      {{ city }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+
+<mat-form-field appearance="outline">
+  <mat-label>Sort</mat-label>
+  <mat-select [value]="undefined" (selectionChange)="onFilterChange({ sort: $event.value })">
+    <mat-option [value]="undefined">No sorting</mat-option>
+    <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+      {{ option.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<ng-container *ngIf="teams$ | async as teams">
+  <ng-container *ngIf="teams.length === 0; else teamsList">
+    <div class="no-teams-message">
+      <p>No teams found.</p>
+    </div>
+  </ng-container>
+
+  <ng-template #teamsList>
+    <div class="team-card-container">
+      <team-card *ngFor="let team of teams" [team]="team"></team-card>
+    </div>
+  </ng-template>
+</ng-container>
+
+<mat-paginator [length]="(totalTeams$ | async) || 0" [pageSize]="(pagination$ | async)?.limit"
+  (page)="onPageChange($event)" aria-label="Select page">
+</mat-paginator>
