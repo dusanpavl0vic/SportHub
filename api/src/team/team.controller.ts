@@ -242,12 +242,9 @@ export class TeamController {
     return await this.teamService.uploadAnnouncement(teamId, dto);
   }
 
-  @ApiBearerAuth('jwt')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles([Role.TEAM])
-  @Get('me/full')
+  @Get(':id')
   async returnTeamFull(
-    @GetUser('id') teamId: number,
+    @Param('id') teamId: number,
   ) {
     return this.teamService.findByIdFull(teamId);
   }

@@ -10,8 +10,8 @@ import { AppComponent } from './app.component';
 import { appReducer } from './app.reducer';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
-import { TeamCardComponent } from "./components/team-card/team-card/team-card.component";
-import { TeamsListComponent } from "./components/teams-list/teams-list/teams-list.component";
+import { TeamCardComponent } from "./components/team-card/team-card.component";
+import { TeamsListComponent } from "./components/teams-list/teams-list.component";
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { AuthEffects } from './store/auth/auth.effects';
 

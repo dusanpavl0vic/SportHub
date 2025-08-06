@@ -13,7 +13,7 @@ import { selectFilters, selectPagination, selectTeams, selectTotalTeams } from '
 import { SortOrder } from 'src/enum/sort.enum';
 import { Sport } from 'src/interfaces/sport/sport.dto';
 import { FilterTeamDto } from 'src/interfaces/team/filter.dto';
-import { TeamCardComponent } from "../../team-card/team-card/team-card.component";
+import { TeamCardComponent } from "../team-card/team-card.component";
 
 
 @Component({
