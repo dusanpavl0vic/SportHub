@@ -3,14 +3,17 @@ import { isDevMode, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AppComponent } from './app.component';
 import { appReducer } from './app.reducer';
+import { routes } from './app.routes';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
 import { TeamCardComponent } from "./components/team-card/team-card.component";
+import { TeamDashboardComponent } from './components/team-dashboard/team-dashboard.component';
 import { TeamsListComponent } from "./components/teams-list/teams-list.component";
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { AuthEffects } from './store/auth/auth.effects';
@@ -21,6 +24,7 @@ import { AuthEffects } from './store/auth/auth.effects';
     AppComponent,
   ],
   imports: [
+    RouterModule.forRoot(routes),
     BrowserModule,
     FormsModule,
     HttpClientModule,
@@ -31,6 +35,7 @@ import { AuthEffects } from './store/auth/auth.effects';
     TeamCardComponent,
     TeamsListComponent,
     HeaderComponent,
+    TeamDashboardComponent
   ],
   providers: [
     provideStoreDevtools({

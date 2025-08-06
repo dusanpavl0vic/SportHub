@@ -19,6 +19,6 @@
       <span>{{team.numberOfPlayers}}</span>
     </div>
 
-    <button mat-raised-button color="warn" class="more-btn">More info</button>
+    <button (click)="goToTeam(team.id)" mat-raised-button color="warn" class="more-btn">More info</button>
   </div>
 </mat-card>

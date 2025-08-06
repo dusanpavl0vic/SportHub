@@ -1,0 +1,82 @@
+.team-dashboard {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+
+  .team-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+
+    .team-logo {
+      width: 120px;
+      height: auto;
+    }
+
+    .team-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .team-name {
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .team-sport {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+      }
+
+      .btn-orange {
+        background-color: #e77c5c !important;
+        color: #fff;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .team-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+    }
+  }
+
+  .team-actions {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 32px;
+
+    .btn-orange {
+      background-color: #e77c5c !important;
+      color: #fff;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+  }
+
+  .add-button {
+    text-align: center;
+
+    .add-icon {
+      font-size: 40px;
+      color: #000;
+    }
+  }
+}

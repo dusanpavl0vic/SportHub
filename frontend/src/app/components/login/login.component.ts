@@ -1,6 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/app.state';
@@ -15,7 +15,7 @@ import { Team } from 'src/interfaces/team/team.dto';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
   imports: [
-    BrowserModule,
+    CommonModule,
     FormsModule,
   ],
   standalone: true

@@ -1,9 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, switchMap, tap } from 'rxjs';
 import { AppState } from 'src/app/app.state';
@@ -19,7 +20,8 @@ import { TeamCardComponent } from "../team-card/team-card.component";
 @Component({
   selector: 'app-teams-list',
   imports: [
-    BrowserModule,
+    RouterModule,
+    CommonModule,
     FormsModule,
     TeamCardComponent,
     MatPaginatorModule,
@@ -83,7 +85,4 @@ export class TeamsListComponent implements OnInit {
 
     this.store.dispatch(setFilters({ filters }));
   }
-
-
-  //TODO: popravi da kada izaberes filter da se ne brise prethodni
 }

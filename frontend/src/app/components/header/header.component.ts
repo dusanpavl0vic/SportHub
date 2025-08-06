@@ -1,6 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/app.state';
@@ -10,7 +10,7 @@ import { Team } from 'src/interfaces/team/team.dto';
 @Component({
   selector: 'app-header',
   imports: [
-    BrowserModule,
+    CommonModule,
     FormsModule,
   ],
   templateUrl: './header.component.html',

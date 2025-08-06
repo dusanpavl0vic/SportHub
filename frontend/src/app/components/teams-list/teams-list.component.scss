@@ -1,34 +1,38 @@
-.no-teams-message {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px; // visina da bi poruka bila vertikalno centrirana
-  font-size: 1.5rem;
-  color: #555;
-  background-color: #f4f4f4;
-  border: 2px dashed #ccc;
-  border-radius: 12px;
-  margin: 20px;
-  text-align: center;
-  transition: background-color 0.3s ease;
+.team-list {
+  padding: 20px;
 
-  &:hover {
-    background-color: #eaeaea;
+  .no-teams-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px; // visina da bi poruka bila vertikalno centrirana
+    font-size: 1.5rem;
+    color: #555;
+    background-color: #f4f4f4;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    margin: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #eaeaea;
+    }
   }
-}
 
-.team-card-container {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  .team-card-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
 
-  align-items: center;
-  justify-content: center;
-}
+    align-items: center;
+    justify-content: center;
+  }
 
-.filters {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
+  .filters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
 }
