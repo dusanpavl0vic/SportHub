@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { SortOrder } from "src/enum/sort.enum";
+import { FilterTeamDto } from "src/interfaces/team/filter.dto";
 import { Team } from "src/interfaces/team/team.dto";
 
 export const setTeams = createAction(
@@ -9,7 +9,7 @@ export const setTeams = createAction(
 
 export const setFilters = createAction(
   '[Team] Set Filters',
-  props<{ filters: { city?: string, sportId?: number, sort?: SortOrder; } }>()
+  props<{ filters: FilterTeamDto }>()
 );
 
 export const setPagination = createAction(

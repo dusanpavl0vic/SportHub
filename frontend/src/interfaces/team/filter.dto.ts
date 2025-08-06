@@ -1,3 +1,4 @@
+import { SortOrder } from "src/enum/sort.enum";
 
 export interface Pagination {
   page?: number;
@@ -7,5 +8,5 @@ export interface Pagination {
 export interface FilterTeamDto extends Pagination {
   city?: string;
   sportId?: number;
-  sort?: 'asc' | 'desc';
+  sort?: SortOrder;
 }

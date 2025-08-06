@@ -12,6 +12,7 @@ import { setFilters, setPagination, setTeams } from 'src/app/store/team/team.act
 import { selectFilters, selectPagination, selectTeams, selectTotalTeams } from 'src/app/store/team/team.selector';
 import { SortOrder } from 'src/enum/sort.enum';
 import { Sport } from 'src/interfaces/sport/sport.dto';
+import { FilterTeamDto } from 'src/interfaces/team/filter.dto';
 import { TeamCardComponent } from "../../team-card/team-card/team-card.component";
 
 
@@ -78,7 +79,8 @@ export class TeamsListComponent implements OnInit {
   }
 
   // kada pormenim filter sacuvaju se u store
-  onFilterChange(filters: any) {
+  onFilterChange(filters: FilterTeamDto) {
+
     this.store.dispatch(setFilters({ filters }));
   }
 

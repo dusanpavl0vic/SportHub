@@ -27,7 +27,12 @@ export const teamReducer = createReducer(
   })),
   on(setFilters, (state, { filters }) => ({
     ...state,
-    filters
+    filters: {
+      ...state.filters,
+      // zadrži postojeće filtere
+      ...filters
+      // prepiši samo ono što je prosleđeno
+    }
   })),
   on(setPagination, (state, { page, limit }) => ({
     ...state,
