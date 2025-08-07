@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Sport } from 'src/interfaces/sport/sport.dto';
 import { WishItem } from 'src/shared/models/wishitems';
 import { AppState } from './app.state';
 import { FilterService } from './core/services/filter.service';
@@ -11,23 +10,12 @@ import { FilterService } from './core/services/filter.service';
   styleUrls: ['./app.component.scss'],
   standalone: false
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
 
   constructor(private store: Store<AppState>, private filterService: FilterService) { }
 
-  sports: Sport[] = [];
-  cities: string[] = [];
 
-
-  ngOnInit(): void {
-    this.filterService.getSportsCitys().subscribe(data => {
-      this.sports = data.Sports;
-      this.cities = data.Citys;
-      console.log('Sports:', this.sports);
-      console.log('Cities:', this.cities);
-    });
-  }
 
   title = 'meda';
 

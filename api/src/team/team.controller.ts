@@ -242,12 +242,6 @@ export class TeamController {
     return await this.teamService.uploadAnnouncement(teamId, dto);
   }
 
-  @Get(':id')
-  async returnTeamFull(
-    @Param('id') teamId: number,
-  ) {
-    return this.teamService.findByIdFull(teamId);
-  }
 
   @ApiBearerAuth('jwt')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -362,8 +356,19 @@ export class TeamController {
     return await this.teamService.deleteSchedule(teamId, groupId, scheduleId);
   }
 
+
   @Get('cities')
   async getAllCities(): Promise<string[]> {
     return await this.teamService.getAllCites();
+  }
+
+
+  // redosled kontorlera je bitan u express-u
+  // dinamicki na kraju
+  @Get(':id')
+  async returnTeamFull(
+    @Param('id') teamId: number,
+  ) {
+    return this.teamService.findByIdFull(teamId);
   }
 }

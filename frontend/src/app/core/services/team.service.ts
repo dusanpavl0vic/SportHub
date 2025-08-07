@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { SortOrder } from "src/enum/sort.enum";
-import { FilterTeamDto } from "src/interfaces/team/filter.dto";
 import { Team } from "src/interfaces/team/team.dto";
 
 @Injectable({ providedIn: 'root' })
@@ -29,7 +28,7 @@ export class TeamService {
     sort?: SortOrder,
   ): Observable<{ data: Team[], total: number, page: number, limit: number }> {
 
-    const filter: FilterTeamDto = { city, sportId, page, limit, sort };
+    const filter = { city, sportId, page, limit, sort };
 
     const url = `${this.apiUrl}`;
     return this.http.post<{ data: Team[], total: number, page: number, limit: number }>(url, filter);

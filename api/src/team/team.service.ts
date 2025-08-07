@@ -552,13 +552,15 @@ export class TeamService {
   }
 
   async getAllCites(): Promise<string[]> {
-    const cities = await this.repo
+    const rawCities = await this.repo
       .createQueryBuilder('team')
-      .select('DISTINCT team.city', 'city')
+      .select('team.city', 'city')
       .where('team.city IS NOT NULL')
       .getRawMany();
 
-    return cities.map(c => c.city);
+    return rawCities
+      .map(c => c.city)
+      .filter((city, index, self) => self.indexOf(city) === index);
   }
 
 }

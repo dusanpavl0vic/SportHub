@@ -1,8 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { Store } from "@ngrx/store";
 import { catchError, map, of, switchMap } from "rxjs";
-import { AppState } from "src/app/app.state";
 import { TeamService } from "src/app/core/services/team.service";
 import { SortOrder } from "src/enum/sort.enum";
 import { loadTeams, loadTeamsFailure, setTeams } from "./team.action";
@@ -10,7 +8,7 @@ import { loadTeams, loadTeamsFailure, setTeams } from "./team.action";
 @Injectable()
 export class AuthEffects {
 
-  constructor(private actions$: Actions, private teamService: TeamService, private store: Store<AppState>) { }
+  constructor(private actions$: Actions, private teamService: TeamService) { }
 
 
   loadInitialTeams$ = createEffect(() =>

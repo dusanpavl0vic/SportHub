@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/app.state';
@@ -25,7 +26,7 @@ export class HeaderComponent implements OnInit {
   player$!: Observable<Player | null>;
   team$!: Observable<Team | null>;
 
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>, private router: Router) { }
 
   ngOnInit(): void {
 
@@ -40,6 +41,14 @@ export class HeaderComponent implements OnInit {
     this.team$.subscribe(team => {
       console.log('Team from store:', team);
     });
+  }
+
+  goToLogin() {
+    this.router.navigate(['login']);
+  }
+
+  goToTeams() {
+    this.router.navigate(["teams"]);
   }
 
   getRandomColor(): string {

@@ -1,4 +1,5 @@
 import { IsIn, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { SortOrder } from "src/enum/sort.enum";
 
 export class Pagination {
   @IsOptional()
@@ -23,6 +24,6 @@ export class FilterTeamDto extends Pagination {
 
   @IsOptional()
   @IsIn(['asc', 'desc'])
-  sort?: 'asc' | 'desc';
+  sort?: SortOrder;
 
 }

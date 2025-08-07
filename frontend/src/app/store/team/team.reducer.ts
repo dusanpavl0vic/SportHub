@@ -9,7 +9,7 @@ export const initialState: TeamState = {
   totalTeams: 0,
   filters: {
     city: undefined,
-    sportId: undefined,
+    sport: undefined,
     sort: SortOrder.ASC
   },
   pagination: {

@@ -3,8 +3,8 @@
 
   <ng-container *ngIf="!(isAuthenticated$ | async)">
     <div class="nav-links">
-      <a routerLink="/teams">Teams</a>
-      <a routerLink="/login">Login</a>
+      <a (click)="goToTeams()">Teams</a>
+      <a (click)="goToLogin()">Login</a>
     </div>
   </ng-container>
 

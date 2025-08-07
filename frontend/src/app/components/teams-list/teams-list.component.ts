@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { combineLatest, switchMap, tap } from 'rxjs';
 import { AppState } from 'src/app/app.state';
+import { FilterService } from 'src/app/core/services/filter.service';
 import { TeamService } from 'src/app/core/services/team.service';
 import { setFilters, setPagination, setTeams } from 'src/app/store/team/team.action';
 import { selectFilters, selectPagination, selectTeams, selectTotalTeams } from 'src/app/store/team/team.selector';
@@ -34,7 +35,7 @@ import { TeamCardComponent } from "../team-card/team-card.component";
 })
 export class TeamsListComponent implements OnInit {
 
-  constructor(private teamService: TeamService, private store: Store<AppState>) { }
+  constructor(private teamService: TeamService, private store: Store<AppState>, private filterService: FilterService) { }
 
 
 
@@ -44,8 +45,11 @@ export class TeamsListComponent implements OnInit {
   totalTeams$ = this.store.select(selectTotalTeams);
 
 
-  @Input() sports: Sport[] = [];
-  @Input() cities: string[] = [];
+  sports: Sport[] = [];
+  cities: string[] = [];
+
+
+
 
 
   sortOptions = [
@@ -55,13 +59,20 @@ export class TeamsListComponent implements OnInit {
 
 
   ngOnInit() {
+    this.filterService.getSportsCitys().subscribe(data => {
+      this.sports = data.Sports;
+      this.cities = data.Citys;
+      console.log('Sports:', this.sports);
+      console.log('Cities:', this.cities);
+    });
+
     combineLatest([this.filters$, this.pagination$])
       .pipe(
         // ako se desi pormena sprecava prvi i izvrsava drugu da ne dodje do duplog poziva
         switchMap(([filters, pagination]) =>
           this.teamService.getTeamsFiltered(
             filters.city,
-            filters.sportId,
+            filters.sport?.id,
             pagination.page,
             pagination.limit,
             filters.sort
@@ -82,7 +93,10 @@ export class TeamsListComponent implements OnInit {
 
   // kada pormenim filter sacuvaju se u store
   onFilterChange(filters: FilterTeamDto) {
-
     this.store.dispatch(setFilters({ filters }));
   }
+
+  // dodao sam ovo da mi uporedjuje tipove jer radim sa objektom Sport a u ovoj gotovoj komponenti koristi === 
+  compareSports = (a: Sport, b: Sport): boolean => a && b ? a.id === b.id : a === b;
+
 }
