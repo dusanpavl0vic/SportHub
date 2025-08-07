@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { Action } from "@ngrx/store";
-import { catchError, from, map, mergeMap, Observable, of } from "rxjs";
+import { catchError, from, map, mergeMap, Observable, of, tap } from "rxjs";
 import { JwtService } from "src/app/core/services/jwt.service";
 import { Role } from "src/enum/role.enum";
 import { Player } from "src/interfaces/player/player.dto";
 import { Team } from "src/interfaces/team/team.dto";
 
+import { Router } from "@angular/router";
 import { AuthService } from "src/app/core/services/auth.service";
 import { PlayerService } from "src/app/core/services/player.service";
 import { TeamService } from "src/app/core/services/team.service";
@@ -14,7 +15,14 @@ import * as AuthActions from './auth.action';
 
 @Injectable()
 export class AuthEffects {
-  constructor(private actions$: Actions, private authService: AuthService, private playerService: PlayerService, private teamService: TeamService, private jwtService: JwtService) { }
+  constructor(
+    private actions$: Actions,
+    private authService: AuthService,
+    private playerService: PlayerService,
+    private teamService: TeamService,
+    private jwtService: JwtService,
+    private router: Router
+  ) { }
 
 
   login$ = createEffect(() =>
@@ -96,4 +104,52 @@ export class AuthEffects {
       )
     )
   );
+
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          localStorage.removeItem('token'); // ako već nije obrisan
+          this.router.navigate(['/login']); // ili '/home'
+        })
+      ),
+    { dispatch: false }
+  );
+
+  autoLogin$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.autoLogin),
+      mergeMap(({ token, role }) => {
+        let userObservable: Observable<Player | Team>;
+
+        if (role === Role.PLAYER) {
+          userObservable = this.playerService.getMe();
+        } else if (role === Role.TEAM) {
+          userObservable = this.teamService.getMe();
+        } else {
+          return of(AuthActions.loginFailure({ error: 'Unknown role' }));
+        }
+
+        return userObservable.pipe(
+          map(user => {
+            const actions: Action[] = [
+              AuthActions.loginSuccess({ token, role }),
+            ];
+
+            if (role === Role.PLAYER) {
+              actions.push(AuthActions.loadPlayerSuccess({ user: user as Player }));
+            } else if (role === Role.TEAM) {
+              actions.push(AuthActions.loadTeamSuccess({ user: user as Team }));
+            }
+
+            return actions;
+          }),
+          mergeMap(actions => from(actions)),
+          catchError(error => of(AuthActions.loginFailure({ error })))
+        );
+      })
+    )
+  );
+
 }

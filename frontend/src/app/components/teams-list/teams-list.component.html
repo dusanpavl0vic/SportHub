@@ -48,6 +48,6 @@
   </ng-container>
 
   <mat-paginator [length]="(totalTeams$ | async) || 0" [pageSize]="(pagination$ | async)?.limit"
-    (page)="onPageChange($event)" aria-label="Select page">
+    [pageIndex]="(pagination$ | async)!.page - 1" (page)="onPageChange($event)" aria-label="Select page">
   </mat-paginator>
 </div>

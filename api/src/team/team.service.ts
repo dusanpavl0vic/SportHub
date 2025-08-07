@@ -1,7 +1,6 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { AnnouncementService } from 'src/announcement/announcement.service';
-import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
-import { UpdateAnnouncementDto } from 'src/announcement/dto/update-announcement.dto';
+import { CreateAnnouncementDto, ReturnAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
 import { TEAM_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
 import { PlayerStatus } from 'src/enum/player_status.enum';
 import { CreateGroupDto } from 'src/group/dto/create-group.dto';
@@ -16,7 +15,7 @@ import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { TeamCardSportDto } from './dto/card-team.dto';
 import { RegisterTeamDto } from './dto/create-team.dto';
-import { FilterTeamDto, Pagination } from './dto/filter.dto';
+import { FilterTeamDto } from './dto/filter.dto';
 import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
 import { FilterByCityStrategy } from './filters/filter-by-city.filters';
@@ -413,24 +412,22 @@ export class TeamService {
     return await this.annService.remove(annId);
   }
 
-  async allAnouncements(
+  async allAnoun(
     teamId: number,
-    pag: Pagination
-  ) {
+  ): Promise<ReturnAnnouncementDto[]> {
     const team = await this.findById(teamId);
 
     if (!team) {
       throw new NotFoundException('Team not found');
     }
 
-    return await this.annService.allAnnouncements(teamId, pag);
+    return await this.annService.allAnnoun(teamId);
   }
 
-  async updateAnouncements(
+  async getAnouncements(
     teamId: number,
     annId: number,
-    dto: UpdateAnnouncementDto
-  ) {
+  ): Promise<ReturnAnnouncementDto> {
     const team = await this.findByIdWithAnn(teamId);
 
     if (!team) {
@@ -441,7 +438,7 @@ export class TeamService {
       throw new NotFoundException('Team dont have this announcement');
     }
 
-    return await this.annService.update(annId, dto);
+    return await this.annService.findOne(annId);
   }
 
 

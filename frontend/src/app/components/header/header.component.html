@@ -10,15 +10,17 @@
 
   <ng-container *ngIf="isAuthenticated$ | async">
     <div class="nav-links">
-      <a routerLink="/teams">Teams</a>
+      <a (click)="goToTeams()">Teams</a>
 
       <ng-container *ngIf="team$ | async as team; else playerTemplate">
         <div class="avatar">
-          <img *ngIf="team.profilePicture; else teamInitials" [src]="url + team.profilePicture" alt="team logo" />
-          <ng-template #teamInitials>
-            <span [ngStyle]="{'background-color': getRandomColor()}">
-              {{ team.name[0] | uppercase }}
-            </span>
+          <div *ngIf="team.profilePicture !== null; else letterCircle">
+            <img [src]="url + team.profilePicture" alt="{{ team.name }} Logo" class="logo" />
+          </div>
+          <ng-template #letterCircle>
+            <div class="circle-avatar" [ngStyle]="{ 'background-color': '#0B348C' }">
+              {{ team.name[0].toUpperCase() }}
+            </div>
           </ng-template>
         </div>
       </ng-container>
@@ -26,10 +28,11 @@
       <ng-template #playerTemplate>
         <ng-container *ngIf="player$ | async as player">
           <div class=" avatar">
-            <img *ngIf="player.profilePicture; else playerInitials" [src]="url + player.profilePicture"
-              alt="player image" />
+            <div *ngIf="player.profilePicture !== null; else playerInitials">
+              <img [src]="url + player.profilePicture" alt="{{ player.firstname }} Logo" class="logo" />
+            </div>
             <ng-template #playerInitials>
-              <span [ngStyle]="{'background-color': getRandomColor()}">
+              <span class="circle-avatar" [ngStyle]="{ 'background-color': '#0B348C' }">
                 {{ player.firstname[0] | uppercase }}
               </span>
             </ng-template>

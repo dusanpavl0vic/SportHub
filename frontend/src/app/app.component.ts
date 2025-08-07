@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { WishItem } from 'src/shared/models/wishitems';
 import { AppState } from './app.state';
-import { FilterService } from './core/services/filter.service';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,12 +11,18 @@ import { FilterService } from './core/services/filter.service';
   styleUrls: ['./app.component.scss'],
   standalone: false
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+
+  private activatedRoute = inject(ActivatedRoute);
 
 
-  constructor(private store: Store<AppState>, private filterService: FilterService) { }
+  constructor(private store: Store<AppState>,
+    private authService: AuthService) { }
 
-
+  ngOnInit(): void {
+    console.log(this.activatedRoute);
+    this.authService.checkToken();
+  }
 
   title = 'meda';
 
@@ -37,4 +44,7 @@ export class AppComponent {
     item.isComplete = !item.isComplete
     console.log(item)
   }
+
+
+
 }

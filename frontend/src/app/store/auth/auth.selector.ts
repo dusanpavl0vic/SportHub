@@ -14,3 +14,18 @@ export const selectUserId = createSelector(
   (state: AuthState) => state.userId
 );
 
+export const selectRole = createSelector(
+  selectAuthState,
+  (state: AuthState) => state.role
+);
+
+export const selectPlayer = createSelector(
+  selectAuthState,
+  (state: AuthState) => state.player
+);
+
+export const selectTeam = createSelector(
+  selectAuthState,
+  (state: AuthState) => state.team
+);
+

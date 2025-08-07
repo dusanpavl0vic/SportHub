@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.state';
+import { TeamService } from 'src/app/core/services/team.service';
 import { selectUserId } from 'src/app/store/auth/auth.selector';
+import { Team } from 'src/interfaces/team/team.dto';
 
 @Component({
   selector: 'app-team-dashboard',
@@ -21,27 +23,29 @@ import { selectUserId } from 'src/app/store/auth/auth.selector';
   styleUrl: './team-dashboard.component.scss',
   standalone: true
 })
-export class TeamDashboardComponent implements OnChanges {
+export class TeamDashboardComponent implements OnInit {
 
   teamId!: number;
+  team!: Team;
   isMyTeam = false;
 
-  constructor(private store: Store<AppState>, private route: ActivatedRoute) { }
+  private route = inject(ActivatedRoute);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['teamId']) {
-      const newTeamId = changes['teamId'].currentValue;
+  constructor(
+    private store: Store<AppState>,
+    private teamService: TeamService
+  ) { }
 
-      this.store.select(selectUserId).subscribe(userId => {
-        this.isMyTeam = userId === newTeamId;
-      });
-    }
+  ngOnInit(): void {
+    this.teamId = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.route.paramMap.subscribe(param => {
-      this.teamId = Number(param.get('id'));
-      console.log("Ruta na teams:id", this.teamId);
-    })
+    //this.team = this.teamService.
+    console.log("Team dashboard", this.teamId)
+    console.log("Team dashboard is mine", this.isMyTeam)
 
+    this.store.select(selectUserId).subscribe(userId => {
+      this.isMyTeam = userId == this.teamId;
+    });
   }
 
 

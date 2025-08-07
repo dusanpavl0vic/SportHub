@@ -27,7 +27,9 @@ export class AnnouncementService {
   async remove(
     id: number
   ) {
-    const ann = await this.findOne(id);
+    const ann = await this.repo.findOne({
+      where: { id: id }
+    });
 
     if (!ann) {
       throw new NotFoundException('Announcement not found');
@@ -42,10 +44,21 @@ export class AnnouncementService {
 
   async findOne(
     id: number
-  ) {
-    return await this.repo.findOne({
+  ): Promise<ReturnAnnouncementDto> {
+    const ann = await this.repo.findOne({
       where: { id: id }
     });
+
+    if (!ann) {
+      throw new NotFoundException('Announcement not found');
+    }
+
+    return {
+      id: ann.id,
+      title: ann.title,
+      description: ann.description,
+      date: ann.date
+    }
   }
 
   async update(
@@ -84,5 +97,27 @@ export class AnnouncementService {
       page,
       limit
     };
+  }
+
+  async allAnnoun(
+    teamId: number
+  ): Promise<ReturnAnnouncementDto[]> {
+    const items = await this.repo.createQueryBuilder('announcement')
+      .leftJoinAndSelect('announcement.team', 'team')
+      .where('team.id = :teamId', { teamId })
+      .orderBy('announcement.date', 'DESC')
+      .getMany();
+
+    const shortened = items.map(item => ({
+      ...item,
+      description:
+        typeof item.description === 'string' && item.description.length > 100
+          ? item.description.slice(0, 100) + '...'
+          : item.description
+    }));
+
+    return plainToInstance(ReturnAnnouncementDto, shortened, {
+      excludeExtraneousValues: true,
+    });
   }
 }

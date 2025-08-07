@@ -1,6 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { jwtDecode } from "jwt-decode";
 import { Observable, tap } from 'rxjs';
+import { AppState } from 'src/app/app.state';
+import { autoLogin, logout } from 'src/app/store/auth/auth.action';
+import { Role } from 'src/enum/role.enum';
 
 export interface LoginRequest {
   email: string;
@@ -34,13 +40,25 @@ export interface AuthResponse {
   token: string;
 }
 
+interface JwtPayload {
+  exp: number;
+  sub: string;
+  role: string;
+  email: string
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = 'http://localhost:3000/auth'; // prilagodi ako backend radi na drugom portu
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private store: Store<AppState>,
+    private router: Router
+  ) { }
 
   login(data: LoginRequest): Observable<{ access_token: string }> {
     return this.http.post<{ token: string }>(`${this.apiUrl}/login`, data).pipe(
@@ -68,16 +86,29 @@ export class AuthService {
     );
   }
 
+  checkToken(): void {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      try {
+        const decoded = jwtDecode<JwtPayload>(token);
+        const now = Date.now() / 1000;
+
+        if (decoded.exp > now) {
+          const role = decoded.role as Role;
+          this.store.dispatch(autoLogin({ token, role }));
+        } else {
+          this.logout();
+        }
+      } catch (e) {
+        this.logout();
+      }
+    }
+  }
+
   logout(): void {
-    localStorage.removeItem('token');
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    this.store.dispatch(logout());
+    this.router.navigate(['/login']);
   }
 }
 

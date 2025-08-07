@@ -6,9 +6,6 @@ import { Team } from "src/interfaces/team/team.dto";
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {
-  getTeams(filters: { city?: string; sportId?: number; search?: string; }, pagination: { pageIndex: number; pageSize: number; }) {
-    throw new Error('Method not implemented.');
-  }
   private apiUrl = 'http://localhost:3000/teams';
 
   constructor(private http: HttpClient) { }
@@ -33,6 +30,8 @@ export class TeamService {
     const url = `${this.apiUrl}`;
     return this.http.post<{ data: Team[], total: number, page: number, limit: number }>(url, filter);
   }
+
+  getTeam() { }
 }
 
 

@@ -10,7 +10,7 @@ export class Announcement {
   title: string;
 
   @Column({ nullable: true })
-  description?: string;
+  description: string;
 
   @CreateDateColumn()
   date: Date;

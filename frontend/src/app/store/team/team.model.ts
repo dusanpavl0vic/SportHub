@@ -12,8 +12,8 @@ export interface TeamState {
     sort?: SortOrder;
   };
   pagination: {
-    page?: number;
-    limit?: number;
+    page: number;
+    limit: number;
   };
 }
 

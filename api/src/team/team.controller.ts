@@ -4,8 +4,7 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse } from '
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
-import { CreateAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
-import { UpdateAnnouncementDto } from 'src/announcement/dto/update-announcement.dto';
+import { CreateAnnouncementDto, ReturnAnnouncementDto } from 'src/announcement/dto/create-announcement.dto';
 import { GetUser, Roles } from 'src/auth/decorator';
 import { JwtAuthGuard } from 'src/auth/guard';
 import { RolesGuard } from 'src/auth/guard/roles.guard';
@@ -230,9 +229,7 @@ export class TeamController {
   }
 
 
-  @ApiBearerAuth('jwt')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles([Role.TEAM])
+
   @Post('me/announcement')
   async uploadAnnouncement(
     @GetUser('id') teamId: number,
@@ -254,25 +251,20 @@ export class TeamController {
     return await this.teamService.deleteAnnouncement(teamId, annId);
   }
 
-  @Get(':id/announcement/:page/:limit')
+  @Get(':id/announcement')
   async allAnouncements(
     @Param('id', ParseIntPipe) id: number,
-    @Param('page', ParseIntPipe) page: number,
-    @Param('limit', ParseIntPipe) limit: number,
-  ) {
-    return await this.teamService.allAnouncements(id, { page, limit });
+  ): Promise<ReturnAnnouncementDto[]> {
+    return await this.teamService.allAnoun(id);
   }
 
-  @ApiBearerAuth('jwt')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles([Role.TEAM])
-  @Patch('me/announcement/:annId')
-  async updateAnouncements(
-    @GetUser('id') teamId: number,
+
+  @Get(':id/announcement/:annId')
+  async getAnouncements(
+    @Param('id') teamId: number,
     @Param('annId', ParseIntPipe) annId: number,
-    @Body() dto: UpdateAnnouncementDto
   ) {
-    return await this.teamService.updateAnouncements(teamId, annId, dto);
+    return await this.teamService.getAnouncements(teamId, annId);
   }
 
   @ApiBearerAuth('jwt')
