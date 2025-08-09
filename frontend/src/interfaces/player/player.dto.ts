@@ -12,4 +12,6 @@ export interface Player {
   birthdate: Date;
 
   city: string;
+
+  teamId: number
 }

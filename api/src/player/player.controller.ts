@@ -34,6 +34,7 @@ export class PlayerController {
     if (!player) {
       throw new BadRequestException(`Player with ID ${playerId} not found`);
     }
+    console.log("Get me", player);
     return player;
   }
 

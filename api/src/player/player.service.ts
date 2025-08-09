@@ -9,7 +9,7 @@ import { TeamService } from 'src/team/team.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { RegisterPlayerDto } from './dto/create-player.dto';
+import { PlayerDto, RegisterPlayerDto } from './dto/create-player.dto';
 import { PlayerInfoDto, ReturnPlayerDto, UpdatePlayerDto, UpdatePlayerProfileImageDto } from './dto/update-player.dto';
 import { Player } from './entities/player.entity';
 
@@ -27,22 +27,26 @@ export class PlayerService {
 
   async findByIdWithOutUser(
     id: number,
-  ): Promise<Player> {
+  ): Promise<PlayerDto> {
     const player = await this.repo.findOne({
       where: { id: id },
     });
 
-    if (!player) {
-      console.log("Player not found with ID:", id);
-      throw new NotFoundException(`Player with ID ${id} not found`);
-    }
-    console.log("Player found:", player);
+    // if (!player) {
+    //   console.log("Player not found with ID:", id);
+    //   throw new NotFoundException(`Player with ID ${id} not found`);
+    // }
+    // console.log("Player found:", player);
 
     if (!player) {
       throw new NotFoundException(`Player with ID ${id} not found`);
     }
 
-    return player;
+    const team = await this.membershipService.playerInTeam(id);
+
+    const playerdto: PlayerDto = { ...player, teamId: team?.id }
+
+    return playerdto;
   }
 
   async findById(

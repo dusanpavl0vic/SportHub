@@ -33,6 +33,9 @@ export class PlayerDto extends CreatePlayerDto {
 
   @IsOptional()
   profilePicture: string;
+
+  @IsOptional()
+  teamId?: number;
 }
 
 
