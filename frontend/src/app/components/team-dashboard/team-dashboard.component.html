@@ -1,16 +1,19 @@
-<div class="team-dashboard mat-elevation-z2">
+<div class="team-dashboard mat-elevation-z2" *ngIf="team$ | async as team">
   <div class="team-header">
-    <img src="" alt="Team Logo" class="team-logo" />
+    <img [src]="'http://localhost:3000' + team.profilePicture" alt="Team Logo" class="team-logo" />
 
     <div class="team-info">
-      <h2 class="team-name">Buffalo Bills</h2>
+      <h2 class="team-name">{{ team.name }}</h2>
       <div class="team-sport">
         <mat-icon>sports_football</mat-icon>
-        <span>American football</span>
+        <span>{{ team.sport.name }}</span>
       </div>
 
-      <button *ngIf="isMyTeam" mat-raised-button color="primary" class="btn-orange">
+      <button *ngIf="meTeam" mat-raised-button color="primary" class="btn-orange">
         Change profile
+      </button>
+      <button *ngIf="!meTeam && !playerTeam" mat-raised-button color="primary" class="btn-orange">
+        Join
       </button>
     </div>
   </div>
@@ -18,7 +21,7 @@
   <div class="team-details">
     <div class="detail-item">
       <mat-icon>groups</mat-icon>
-      <span>240</span>
+      <span>{{ team.numberOfPlayers }}</span>
     </div>
     <div class="detail-item">
       <mat-icon>call</mat-icon>
@@ -30,7 +33,7 @@
     </div>
   </div>
 
-  <div *ngIf="isMyTeam" class="team-actions">
+  <div *ngIf="meTeam || playerTeam" class="team-actions">
     <button mat-raised-button color="primary" class="btn-orange">
       <mat-icon>person_add</mat-icon>
       Players
@@ -40,10 +43,11 @@
       Schedule
     </button>
   </div>
-
-  <div class="add-button">
-    <button mat-icon-button>
-      <mat-icon class="add-icon">add_circle</mat-icon>
-    </button>
-  </div>
 </div>
+
+
+<div *ngIf="!hasChildRoute">
+  <app-ann></app-ann>
+</div>
+
+<router-outlet></router-outlet>

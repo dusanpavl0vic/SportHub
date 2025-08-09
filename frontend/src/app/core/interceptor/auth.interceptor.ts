@@ -28,7 +28,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return handler.handle(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          // Izloguj korisnika
+
           localStorage.removeItem('token');
           this.store.dispatch(logout());
           this.router.navigate(['/login']);

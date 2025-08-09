@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { combineLatest, map, Observable } from "rxjs";
+import { combineLatest, filter, map, Observable, take } from "rxjs";
 import { AppState } from "src/app/app.state";
-import { selectPlayer, selectRole, selectTeam } from "src/app/store/auth/auth.selector";
+import { selectPlayer, selectRole } from "src/app/store/auth/auth.selector";
 import { Role } from "src/enum/role.enum";
 
 @Injectable({
@@ -13,22 +13,22 @@ export class TeamMembershipGuard implements CanActivate {
   constructor(private store: Store<AppState>, private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
-    const routeTeamId = Number(route.paramMap.get('teamId'));
+    const routeTeamId = Number(route.parent?.paramMap.get('teamId'));
+
+    console.log("TeamMembershipGuard:", routeTeamId);
 
     return combineLatest([
       this.store.select(selectRole),
       this.store.select(selectPlayer),
-      this.store.select(selectTeam)
     ]).pipe(
-      map(([role, player, team]) => {
-        if (
-          (role === Role.PLAYER && player?.teamId === routeTeamId) ||
-          (role === Role.TEAM && team?.id === routeTeamId)
-        ) {
+      // cekam da mi se napuni store jer se prvo izvrsava ruta i kada promenim url sotr se vrati na initialState
+      filter(([role, player]) => role !== null && player !== null),
+      take(1),
+      map(([role, player]) => {
+        if (role === Role.PLAYER && player?.teamId === routeTeamId) {
           return true;
         }
-
-        this.router.navigate(['/unauthorized']); // ili neka druga stranica
+        this.router.navigate(['/login']);
         return false;
       })
     );

@@ -9,6 +9,7 @@ export const loginSuccess = createAction('[Auth] Login Success', props<{ token: 
 export const loginFailure = createAction('[Auth] Login Failure', props<{ error: string }>());
 
 export const registerPlayer = createAction('[Auth] Register Player', props<{ data: RegisterPlayerRequest }>());
+//TODO: dodaj Role u register action
 export const registerPlayerSuccess = createAction('[Auth] Register Player Success', props<{ token: string }>());
 export const registerPlayerFailure = createAction('[Auth] Register Player Failure', props<{ error: string }>());
 

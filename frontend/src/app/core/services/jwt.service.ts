@@ -15,4 +15,18 @@ export class JwtService {
     const decoded = this.decodeToken(token);
     return decoded?.role || null;
   }
+
+  isTokenExpired(token: string | null): boolean {
+    if (!token) {
+      return true;
+    }
+
+    const decoded: any = this.decodeToken(token);
+    if (!decoded || !decoded.exp) {
+      return true;
+    }
+
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decoded.exp < currentTime;
+  }
 }

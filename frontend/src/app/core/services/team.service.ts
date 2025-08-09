@@ -1,7 +1,8 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { SortOrder } from "src/enum/sort.enum";
+import { ReturnAnnouncementDto } from "src/interfaces/team/ann.dto";
 import { Team } from "src/interfaces/team/team.dto";
 
 @Injectable({ providedIn: 'root' })
@@ -11,10 +12,17 @@ export class TeamService {
   constructor(private http: HttpClient) { }
 
   getMe(): Observable<Team> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    });
-    return this.http.get<Team>(`${this.apiUrl}/me`, { headers });
+    // const headers = new HttpHeaders({
+    //   'Authorization': `Bearer ${localStorage.getItem('token')}`
+    // });
+    return this.http.get<Team>(`${this.apiUrl}/me`);
+  }
+
+  getTeam(teamId: number): Observable<Team> {
+    // const headers = new HttpHeaders({
+    //   'Authorization': `Bearer ${localStorage.getItem('token')}`
+    // });
+    return this.http.get<Team>(`${this.apiUrl}/${teamId}`);
   }
 
   getTeamsFiltered(
@@ -31,7 +39,10 @@ export class TeamService {
     return this.http.post<{ data: Team[], total: number, page: number, limit: number }>(url, filter);
   }
 
-  getTeam() { }
+  getTeamAnn(teamId: number)
+    : Observable<ReturnAnnouncementDto[]> {
+    return this.http.get<ReturnAnnouncementDto[]>(`${this.apiUrl}/${teamId}/announcement`);
+  }
 }
 
 

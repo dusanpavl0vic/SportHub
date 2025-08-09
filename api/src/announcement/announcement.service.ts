@@ -108,16 +108,8 @@ export class AnnouncementService {
       .orderBy('announcement.date', 'DESC')
       .getMany();
 
-    const shortened = items.map(item => ({
-      ...item,
-      description:
-        typeof item.description === 'string' && item.description.length > 100
-          ? item.description.slice(0, 100) + '...'
-          : item.description
-    }));
 
-    return plainToInstance(ReturnAnnouncementDto, shortened, {
-      excludeExtraneousValues: true,
-    });
+
+    return items;
   }
 }

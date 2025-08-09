@@ -10,10 +10,16 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AppComponent } from './app.component';
 import { appReducer } from './app.reducer';
 import { routes } from './app.routes';
+import { AnnComponent } from './components/ann/ann.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
+import { NotfoundComponent } from './components/notfound/notfound.component';
+import { TeamAddAnnComponent } from './components/team-add-ann/team-add-ann.component';
 import { TeamCardComponent } from "./components/team-card/team-card.component";
 import { TeamDashboardComponent } from './components/team-dashboard/team-dashboard.component';
+import { TeamMembersComponent } from './components/team-members/team-members.component';
+import { TeamScheduleComponent } from './components/team-schedule/team-schedule.component';
+import { TeamSettingsComponent } from './components/team-settings/team-settings.component';
 import { TeamsListComponent } from "./components/teams-list/teams-list.component";
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { AuthEffects } from './store/auth/auth.effects';
@@ -35,7 +41,13 @@ import { AuthEffects } from './store/auth/auth.effects';
     TeamCardComponent,
     TeamsListComponent,
     HeaderComponent,
-    TeamDashboardComponent
+    TeamDashboardComponent,
+    TeamAddAnnComponent,
+    TeamScheduleComponent,
+    TeamMembersComponent,
+    TeamSettingsComponent,
+    AnnComponent,
+    NotfoundComponent,
   ],
   providers: [
     provideStoreDevtools({

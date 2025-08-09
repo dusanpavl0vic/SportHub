@@ -33,14 +33,14 @@ export class HeaderComponent implements OnInit {
     this.isAuthenticated$ = this.store.select(state => state.auth.isAuthenticated);
     this.player$ = this.store.select(state => state.auth.player);
 
-    this.player$.subscribe(player => {
-      console.log('Player from store:', player);
-    });
+    // this.player$.subscribe(player => {
+    //   console.log('Player from store:', player);
+    // });
     this.team$ = this.store.select(state => state.auth.team);
 
-    this.team$.subscribe(team => {
-      console.log('Team from store:', team);
-    });
+    // this.team$.subscribe(team => {
+    //   console.log('Team from store:', team);
+    // });
   }
 
   goToLogin() {

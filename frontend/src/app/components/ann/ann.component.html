@@ -1,0 +1,11 @@
+<div class="announcements-container">
+  <mat-card *ngFor="let ann of ann">
+    <mat-card-header>
+      <mat-card-title>{{ ann.title }}</mat-card-title>
+      <mat-card-subtitle>{{ ann.date | date: 'mediumDate' }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ ann.description }}</p>
+    </mat-card-content>
+  </mat-card>
+</div>
