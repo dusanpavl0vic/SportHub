@@ -1,13 +1,12 @@
-import { BadRequestException, ForbiddenException, forwardRef, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Injectable, NotFoundException } from '@nestjs/common';
 import { Inject } from '@nestjs/common/decorators/core/inject.decorator';
 import { PLAYER_PROFILEIMAGE_BASE_URL } from 'src/config/constants';
-import { PlayerStatus } from 'src/enum/player_status.enum';
 import { Membership } from 'src/membership/entities/membership.entity';
 import { MembershipService } from 'src/membership/membership.service';
 import { Team } from 'src/team/entities/team.entity';
 import { TeamService } from 'src/team/team.service';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { PlayerDto, RegisterPlayerDto } from './dto/create-player.dto';
 import { PlayerInfoDto, ReturnPlayerDto, UpdatePlayerDto, UpdatePlayerProfileImageDto } from './dto/update-player.dto';
@@ -31,12 +30,6 @@ export class PlayerService {
     const player = await this.repo.findOne({
       where: { id: id },
     });
-
-    // if (!player) {
-    //   console.log("Player not found with ID:", id);
-    //   throw new NotFoundException(`Player with ID ${id} not found`);
-    // }
-    // console.log("Player found:", player);
 
     if (!player) {
       throw new NotFoundException(`Player with ID ${id} not found`);
@@ -91,10 +84,12 @@ export class PlayerService {
     return player;
   }
 
-  async create(
-    createPlayerDto: RegisterPlayerDto,
-  ) {
+  async create(createPlayerDto: RegisterPlayerDto, manager?: EntityManager) {
     const player = this.repo.create(createPlayerDto);
+    if (manager) {
+      return manager.save(Player, player);
+    }
+
     return this.repo.save(player);
   }
 
@@ -236,20 +231,26 @@ export class PlayerService {
 
   async allGroups(
     playerId: number,
-    teamId: number
   ) {
-    await this.myTeam(playerId, teamId);
+    const team = await this.myTeam(playerId);
 
-    return this.teamService.allGroups(teamId);
+    if (!team) {
+      throw new BadRequestException('Player is not in a team');
+    }
+
+    return this.teamService.allGroups(team.id);
   }
 
   async showTeammates(
     playerId: number,
-    teamId: number
   ) {
-    this.myTeam(playerId, teamId);
+    const team = await this.myTeam(playerId);
 
-    const teammates = this.teamService.findAllTeamPlayersActive(teamId);
+    if (!team) {
+      throw new BadRequestException('Player is not in a team');
+    }
+
+    const teammates = this.teamService.findAllTeamPlayersActive(team.id);
 
     return (await teammates).map(teammate => teammate.player);
   }
@@ -268,17 +269,12 @@ export class PlayerService {
     return this.membershipService.leftPlayer(teamId, playerId);
   }
 
-  private async myTeam(
+  async myTeam(
     playerId: number,
-    teamId: number
   ) {
-    const membership = await this.membershipService.activeMembership(playerId, teamId);
+    const team = await this.membershipService.playerInTeam(playerId);
 
-    if (!membership || membership.status !== PlayerStatus.IN_TEAM) {
-      throw new ForbiddenException('Player is not part of this team');
-    }
-
-    return membership;
+    return team;
   }
 
   async returnPlayerProfile(

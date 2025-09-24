@@ -1,37 +1,36 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
-// import { CoachService } from 'src/coach/coach.service';
 import { Role } from 'src/enum/role.enum';
 import { RegisterPlayerDto } from 'src/player/dto/create-player.dto';
+import { ReturnPlayerDto } from 'src/player/dto/update-player.dto';
 import { PlayerService } from 'src/player/player.service';
 import { SportService } from 'src/sport/sport.service';
-import { TeamWithSportIdDto } from 'src/team/dto/create-team.dto';
+import { ReturnTeamDto, TeamWithSportIdDto } from 'src/team/dto/create-team.dto';
 import { TeamService } from 'src/team/team.service';
 import { UserService } from 'src/user/user.service';
+import { DataSource } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 
 
 @Injectable({})
 export class AuthService {
     constructor(
+        @Inject('DATA_SOURCE')
+        private readonly dataSource: DataSource,
         private jwt: JwtService,
         private configService: ConfigService,
         private playerService: PlayerService,
         private userService: UserService,
         private teamService: TeamService,
-        // private coachService: CoachService,
         private sportService: SportService,
     ) { }
 
     async login(
         dto: LoginDto
     ): Promise<{ access_token: string }> {
-
-        // find email from user in database
         const user = await this.userService.getUserByEmail(dto.email);
-
         console.log(user);
 
         if (!user)
@@ -50,36 +49,75 @@ export class AuthService {
 
     async registerPlayer(
         dto: RegisterPlayerDto,
-    ): Promise<{ access_token: string }> {
-
+    ): Promise<{ access_token: string, player: ReturnPlayerDto }> {
         const existingUser = await this.userService.getUserByEmail(dto.user.email);
-
         if (existingUser) {
             throw new ForbiddenException('User already exists');
         }
 
         const hash = await argon.hash(dto.user.password);
 
-        const user = await this.userService.create({
-            email: dto.user.email,
-            password: hash,
-            role: Role.PLAYER,
-        });
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
 
-        const player = await this.playerService.create({
-            user: user,
-            firstname: dto.firstname,
-            lastname: dto.lastname,
-            city: dto.city,
-            birthdate: dto.birthdate,
-        });
+        let player: ReturnPlayerDto;
+        let token: { access_token: string };
+        let teamId: number | undefined;
+        try {
+            const user = await this.userService.create(
+                {
+                    email: dto.user.email,
+                    password: hash,
+                    role: Role.PLAYER,
+                },
+                queryRunner.manager,
+            );
 
-        return this.signToken(player.user.id, player.user.email, player.user.role);
+            player = await this.playerService.create(
+                {
+                    user: user,
+                    firstname: dto.firstname,
+                    lastname: dto.lastname,
+                    city: dto.city,
+                    birthdate: dto.birthdate,
+                    phoneNumber: dto.phoneNumber,
+                },
+                queryRunner.manager,
+            );
+
+            teamId = (await this.playerService.myTeam(player.id))?.id;
+
+
+            token = await this.signToken(user.id, user.email, user.role);
+            await queryRunner.commitTransaction();
+
+
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
+        }
+        return {
+            access_token: token.access_token,
+            player: {
+                id: player.id,
+                firstname: player.firstname,
+                lastname: player.lastname,
+                phoneNumber: player.phoneNumber,
+                birthdate: player.birthdate,
+                city: player.city,
+                profilePicture: player.profilePicture,
+                teamId: teamId
+            }
+        };
     }
+
 
     async registerTeam(
         dto: TeamWithSportIdDto,
-    ): Promise<{ access_token: string }> {
+    ): Promise<{ access_token: string, team: ReturnTeamDto }> {
 
         const { sportId, ...teamDto } = dto;
         const existingUser = await this.userService.getUserByEmail(teamDto.user.email);
@@ -95,58 +133,51 @@ export class AuthService {
 
         const hash = await argon.hash(teamDto.user.password);
 
-        const user = await this.userService.create({
-            email: teamDto.user.email,
-            password: hash,
-            role: Role.TEAM,
-        });
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        let token;
+        let team;
+        try {
+
+            const user = await this.userService.create({
+                email: teamDto.user.email,
+                password: hash,
+                role: Role.TEAM,
+            });
+
+            const team = await this.teamService.create({
+                user: user,
+                name: teamDto.name,
+                city: teamDto.city,
+                sport: existingSport,
+            });
+
+            if (!team) {
+                throw new ForbiddenException('Team already exists');
+            }
+
+            token = await this.signToken(team.user.id, team.user.email, team.user.role);
 
 
-
-
-        const team = await this.teamService.create({
-            user: user,
-            name: teamDto.name,
-            city: teamDto.city,
-            sport: existingSport,
-        });
-
-        if (!team) {
-            throw new ForbiddenException('Team already exists');
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw err;
+        } finally {
+            await queryRunner.release();
         }
-
-        return this.signToken(team.user.id, team.user.email, team.user.role);
+        return {
+            access_token: token.access_token,
+            team: {
+                id: team.id,
+                name: team.name,
+                city: team.city,
+                profilePicture: team.profilePicture,
+                sport: team.sport,
+            }
+        }
     }
-
-    // async registerCoach(
-    //     dto: RegisterCoachDto,
-    // ): Promise<{ access_token: string }> {
-
-    //     const existingUser = await this.userService.getUserByEmail(dto.user.email);
-
-    //     if (existingUser) {
-    //         throw new ForbiddenException('User already exists');
-    //     }
-
-    //     const hash = await argon.hash(dto.user.password);
-
-    //     const user = await this.userService.create({
-    //         email: dto.user.email,
-    //         password: hash,
-    //         role: Role.COACH,
-    //     });
-
-    //     const coach = await this.coachService.create({
-    //         user: user,
-    //         firstname: dto.firstname,
-    //         lastname: dto.lastname,
-    //         city: dto.city,
-    //         teamId: dto.teamId,
-    //     });
-
-    //     return this.signToken(coach.user.id, coach.user.email, coach.user.role);
-    // }
-
 
     async signToken(
         userId: number,

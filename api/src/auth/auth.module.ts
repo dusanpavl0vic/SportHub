@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { DatabaseModule } from 'src/database/database.module';
 import { MembershipModule } from 'src/membership/membership.module';
 import { PlayerModule } from 'src/player/player.module';
 import { SportModule } from 'src/sport/sport.module';
@@ -15,10 +16,10 @@ import { JwtStrategy } from './strategy';
   }),
     PlayerModule,
     TeamModule,
-    // CoachModule,
     UserModule,
     SportModule,
-    MembershipModule
+    MembershipModule,
+    DatabaseModule,
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController]

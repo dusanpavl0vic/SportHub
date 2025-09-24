@@ -37,3 +37,9 @@ export class PlayerDto extends CreateTeamDto {
   id: number;
 }
 
+
+export class ReturnTeamDto extends CreateTeamDto {
+  @IsNotEmpty()
+  id: number;
+}
+
