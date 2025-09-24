@@ -84,7 +84,9 @@ export class PlayerService {
     return player;
   }
 
-  async create(createPlayerDto: RegisterPlayerDto, manager?: EntityManager) {
+  async create(
+    createPlayerDto: RegisterPlayerDto,
+    manager?: EntityManager) {
     const player = this.repo.create(createPlayerDto);
     if (manager) {
       return manager.save(Player, player);

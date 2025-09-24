@@ -86,6 +86,10 @@ export class AuthService {
                 queryRunner.manager,
             );
 
+            if (!player) {
+                throw new ForbiddenException('Player already exists');
+            }
+
             teamId = (await this.playerService.myTeam(player.id))?.id;
 
 
@@ -137,28 +141,35 @@ export class AuthService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
-        let token;
-        let team;
+        let token: { access_token: string };
+        let team: ReturnTeamDto;
         try {
 
-            const user = await this.userService.create({
-                email: teamDto.user.email,
-                password: hash,
-                role: Role.TEAM,
-            });
+            const user = await this.userService.create(
+                {
+                    email: teamDto.user.email,
+                    password: hash,
+                    role: Role.TEAM,
+                },
+                queryRunner.manager,
+            );
 
-            const team = await this.teamService.create({
-                user: user,
-                name: teamDto.name,
-                city: teamDto.city,
-                sport: existingSport,
-            });
+            team = await this.teamService.create(
+                {
+                    user: user,
+                    name: teamDto.name,
+                    city: teamDto.city,
+                    sport: existingSport,
+                },
+                queryRunner.manager
+            );
 
             if (!team) {
                 throw new ForbiddenException('Team already exists');
             }
 
-            token = await this.signToken(team.user.id, team.user.email, team.user.role);
+            token = await this.signToken(user.id, user.email, user.role);
+            await queryRunner.commitTransaction();
 
 
         } catch (err) {

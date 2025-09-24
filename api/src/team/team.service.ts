@@ -12,11 +12,11 @@ import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
 import { UpdateScheduleDto } from 'src/schedule/dto/update-schedule.dto';
 import { ScheduleService } from 'src/schedule/schedule.service';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { TeamCardSportDto } from './dto/card-team.dto';
-import { RegisterTeamDto } from './dto/create-team.dto';
+import { RegisterTeamDto, ReturnTeamDto } from './dto/create-team.dto';
 import { FilterTeamDto } from './dto/filter.dto';
-import { ReturnTeamDto, UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
+import { UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
 import { FilterByCityStrategy } from './filters/filter-by-city.filters';
 import { FilterBySportStrategy } from './filters/filter-by-sport.filters';
@@ -40,10 +40,13 @@ export class TeamService {
 
   async create(
     createTeamDto: RegisterTeamDto,
+    manager?: EntityManager
   ) {
 
     const team = await this.repo.create(createTeamDto);
-
+    if (manager) {
+      return manager.save(Team, team);
+    }
     return this.repo.save(team);
   }
 
@@ -358,6 +361,8 @@ export class TeamService {
       id: update.id,
       name: update.name,
       city: update.city,
+      profilePicture: update.profilePicture,
+      sport: update.sport,
     }
   }
 
