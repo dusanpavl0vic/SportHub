@@ -97,7 +97,7 @@ export class PlayerService {
 
   async findByUserId(
     userId: number,
-  ): Promise<number> {
+  ): Promise<PlayerDto> {
     const player = await this.repo.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
@@ -105,7 +105,7 @@ export class PlayerService {
     if (!player) {
       throw new NotFoundException(`Player with user ID ${userId} not found`);
     }
-    return player.id;
+    return player;
   }
 
 

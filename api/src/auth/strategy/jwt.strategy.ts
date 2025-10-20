@@ -30,14 +30,14 @@ export class JwtStrategy extends PassportStrategy(
     switch (role) {
 
       case Role.PLAYER:
-        const playerId = await this.playerService.findByUserId(id);
-        if (!playerId) throw new UnauthorizedException('Player not found');
-        return { id: playerId, role: role };
+        const player = await this.playerService.findByUserId(id);
+        if (!player) throw new UnauthorizedException('Player not found');
+        return { id: player.id, role: role };
 
       case Role.TEAM:
-        const teamId = await this.teamService.findByUserId(id);
-        if (!teamId) throw new UnauthorizedException('Team not found');
-        return { id: teamId, role: role };
+        const team = await this.teamService.findByUserId(id);
+        if (!team) throw new UnauthorizedException('Team not found');
+        return { id: team.id, role: role };
 
       default:
         throw new UnauthorizedException('Invalid role');

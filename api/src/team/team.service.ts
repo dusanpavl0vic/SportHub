@@ -14,7 +14,7 @@ import { ScheduleService } from 'src/schedule/schedule.service';
 import { UserService } from 'src/user/user.service';
 import { EntityManager, Repository } from 'typeorm';
 import { TeamCardSportDto } from './dto/card-team.dto';
-import { RegisterTeamDto, ReturnTeamDto } from './dto/create-team.dto';
+import { RegisterTeamDto, ReturnTeamDto, TeamDto } from './dto/create-team.dto';
 import { FilterTeamDto } from './dto/filter.dto';
 import { UpdateTeamDto, UpdateTeamProfileImageDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
@@ -53,7 +53,7 @@ export class TeamService {
   async findByUserId(
     userId: number,
 
-  ): Promise<number> {
+  ): Promise<TeamDto> {
 
     const team = await this.repo.findOne({
       where: { user: { id: userId } },
@@ -62,7 +62,7 @@ export class TeamService {
     if (!team) {
       throw new NotFoundException(`Team with user ID ${userId} not found`);
     }
-    return team.id;
+    return team;
   }
 
   async findById(

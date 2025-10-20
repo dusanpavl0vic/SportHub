@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { Role } from 'src/enum/role.enum';
-import { RegisterPlayerDto } from 'src/player/dto/create-player.dto';
+import { PlayerDto, RegisterPlayerDto } from 'src/player/dto/create-player.dto';
 import { ReturnPlayerDto } from 'src/player/dto/update-player.dto';
 import { PlayerService } from 'src/player/player.service';
 import { SportService } from 'src/sport/sport.service';
-import { ReturnTeamDto, TeamWithSportIdDto } from 'src/team/dto/create-team.dto';
+import { ReturnTeamDto, TeamDto, TeamWithSportIdDto } from 'src/team/dto/create-team.dto';
 import { TeamService } from 'src/team/team.service';
 import { UserService } from 'src/user/user.service';
 import { DataSource } from 'typeorm';
@@ -29,7 +29,7 @@ export class AuthService {
 
     async login(
         dto: LoginDto
-    ): Promise<{ access_token: string }> {
+    ): Promise<{ access_token: string, user: PlayerDto | TeamDto, role: Role }> {
         const user = await this.userService.getUserByEmail(dto.email);
         console.log(user);
 
@@ -41,7 +41,21 @@ export class AuthService {
         if (!passwordMatch)
             throw new ForbiddenException('Invalid credentials');
 
-        return this.signToken(user.id, user.email, user.role);
+        const token = await this.signToken(user.id, user.email, user.role);
+
+        let profile: PlayerDto | TeamDto;
+        if (user.role == Role.PLAYER) {
+            profile = await this.playerService.findByUserId(user.id);
+        }
+        else {
+            profile = await this.teamService.findByUserId(user.id);
+        }
+
+        if (!profile) {
+            throw new ForbiddenException('User profile not found');
+        }
+
+        return { access_token: token.access_token, user: profile, role: user.role };
 
     }
 
@@ -49,7 +63,7 @@ export class AuthService {
 
     async registerPlayer(
         dto: RegisterPlayerDto,
-    ): Promise<{ access_token: string, player: ReturnPlayerDto }> {
+    ): Promise<{ access_token: string, player: ReturnPlayerDto, role: Role }> {
         const existingUser = await this.userService.getUserByEmail(dto.user.email);
         if (existingUser) {
             throw new ForbiddenException('User already exists');
@@ -114,14 +128,15 @@ export class AuthService {
                 city: player.city,
                 profilePicture: player.profilePicture,
                 teamId: teamId
-            }
+            },
+            role: Role.PLAYER
         };
     }
 
 
     async registerTeam(
         dto: TeamWithSportIdDto,
-    ): Promise<{ access_token: string, team: ReturnTeamDto }> {
+    ): Promise<{ access_token: string, team: ReturnTeamDto, role: Role }> {
 
         const { sportId, ...teamDto } = dto;
         const existingUser = await this.userService.getUserByEmail(teamDto.user.email);
@@ -186,7 +201,8 @@ export class AuthService {
                 city: team.city,
                 profilePicture: team.profilePicture,
                 sport: team.sport,
-            }
+            },
+            role: Role.TEAM
         }
     }
 
