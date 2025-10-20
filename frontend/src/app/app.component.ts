@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { WishItem } from 'src/shared/models/wishitems';
 import { AppState } from './app.state';
-import { AuthService } from './core/services/auth.service';
+import { AuthService } from './auth/service/auth.service';
 
 @Component({
   selector: 'app-root',

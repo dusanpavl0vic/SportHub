@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { catchError, Observable, throwError } from "rxjs";
 import { AppState } from "src/app/app.state";
-import { logout } from "src/app/store/auth/auth.action";
+import { logout } from "src/app/auth/store/auth.action";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

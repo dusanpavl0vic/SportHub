@@ -5,13 +5,13 @@ export interface Player {
 
   lastname: string;
 
-  profilePicture: string;
-
   phoneNumber: string;
 
   birthdate: Date;
 
   city: string;
+
+  profilePicture: string;
 
   teamId: number
 }

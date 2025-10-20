@@ -18,7 +18,6 @@ services:
   db:
     image: postgres
     container_name: sporthub_postgresql
-    restart: always
     ports:
       - '5432:5432'
     environment:

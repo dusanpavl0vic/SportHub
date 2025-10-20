@@ -10,6 +10,7 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AppComponent } from './app.component';
 import { appReducer } from './app.reducer';
 import { routes } from './app.routes';
+import { AuthEffects } from './auth/store/auth.effects';
 import { AnnComponent } from './components/ann/ann.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
@@ -22,7 +23,6 @@ import { TeamScheduleComponent } from './components/team-schedule/team-schedule.
 import { TeamSettingsComponent } from './components/team-settings/team-settings.component';
 import { TeamsListComponent } from "./components/teams-list/teams-list.component";
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
-import { AuthEffects } from './store/auth/auth.effects';
 
 
 @NgModule({

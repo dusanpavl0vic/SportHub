@@ -3,7 +3,7 @@ import { CanActivate, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { map, Observable, of, switchMap } from "rxjs";
 import { AppState } from "src/app/app.state";
-import { selectIsAuthenticated, selectRole } from "src/app/store/auth/auth.selector";
+import { selectIsAuthenticated, selectRole } from "src/app/auth/store/auth.selector";
 import { Role } from "src/enum/role.enum";
 
 @Injectable({

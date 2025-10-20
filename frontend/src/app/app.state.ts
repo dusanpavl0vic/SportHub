@@ -1,4 +1,4 @@
-import { AuthState } from "./store/auth/auth.model";
+import { AuthState } from "./auth/store/auth.model";
 import { TeamState } from "./store/team/team.model";
 
 export interface AppState {

@@ -5,10 +5,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { combineLatest, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.state';
 import { TeamService } from 'src/app/core/services/team.service';
-import { selectIsAuthenticated, selectPlayer, selectTeam } from 'src/app/store/auth/auth.selector';
 import { Team } from 'src/interfaces/team/team.dto';
 import { AnnComponent } from '../ann/ann.component';
 
@@ -33,6 +32,7 @@ export class TeamDashboardComponent implements OnInit {
   meTeam = false;
   playerTeam = false;
   isAuth = false;
+  haveTeam = false;
   hasChildRoute = false;
   private subscription!: Subscription;
 
@@ -45,25 +45,25 @@ export class TeamDashboardComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.hasChildRoute = !!this.route.firstChild;
-    //console.log("imam dete", this.hasChildRoute)
+    // this.hasChildRoute = !!this.route.firstChild;
+    // //console.log("imam dete", this.hasChildRoute)
 
-    this.teamId = Number(this.route.snapshot.paramMap.get('teamId'));
-    //console.log("teamId", this.teamId);
+    // this.teamId = Number(this.route.snapshot.paramMap.get('teamId'));
+    // //console.log("teamId", this.teamId);
 
-    this.teamId = Number(this.route.snapshot.paramMap.get('teamId'));
-    this.team$ = this.teamService.getTeam(this.teamId);
+    // this.teamId = Number(this.route.snapshot.paramMap.get('teamId'));
+    // this.team$ = this.teamService.getTeam(this.teamId);
 
-    this.subscription = combineLatest([
-      this.store.select(selectTeam),
-      this.store.select(selectPlayer),
-      this.store.select(selectIsAuthenticated)
-    ]).subscribe(([team, player, auth]) => {
-      this.meTeam = (team?.id === this.teamId);
-      this.playerTeam = (player?.teamId === this.teamId);
-      this.isAuth = auth
-      //console.log("team", this.meTeam, "player", this.playerTeam);
-    });
+    // // pratim vise elementa iz sotra
+    // this.subscription = combineLatest([
+    //   this.store.select(selectTeam),
+    //   this.store.select(selectPlayer),
+    // ]).subscribe(([team, player]) => {
+    //   this.meTeam = (team?.id === this.teamId);
+    //   this.playerTeam = (player?.teamId === this.teamId);
+    //   this.haveTeam = !!(player?.teamId)
+    //   //console.log("team", this.meTeam, "player", this.playerTeam);
+    // });
   }
 
   ngOnDestroy(): void {

@@ -7,6 +7,6 @@
     "pg-connection-string": "^2.9.0"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   }
 }
