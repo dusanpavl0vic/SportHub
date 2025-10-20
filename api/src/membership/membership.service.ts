@@ -160,7 +160,7 @@ export class MembershipService {
 
   async playerInTeam(
     playerId: number
-  ): Promise<Promise<Omit<TeamCardDto, 'numberOfPlayers'> | null>> {
+  ): Promise<Omit<TeamCardDto, 'numberOfPlayers'> | null> {
     const in_team = await this.repo.findOne({
       where: {
         player: { id: playerId },

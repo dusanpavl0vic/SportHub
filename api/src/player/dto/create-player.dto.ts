@@ -10,7 +10,7 @@ export class CreatePlayerDto {
   lastname: string;
 
   @IsOptional()
-  @IsPhoneNumber()
+  @IsPhoneNumber('RS')
   phoneNumber?: string;
 
   @IsDateString()

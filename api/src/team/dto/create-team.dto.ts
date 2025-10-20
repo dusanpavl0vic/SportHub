@@ -1,6 +1,6 @@
 import { OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Sport } from 'src/sport/entities/sport.entity';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
@@ -32,7 +32,17 @@ export class TeamWithSportIdDto extends OmitType(RegisterTeamDto, ['sport'] as c
   sportId: number;
 }
 
-export class PlayerDto extends CreateTeamDto {
+export class TeamDto extends CreateTeamDto {
+  @IsNotEmpty()
+  id: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  numberOfPlayers: number;
+}
+
+
+export class ReturnTeamDto extends CreateTeamDto {
   @IsNotEmpty()
   id: number;
 }

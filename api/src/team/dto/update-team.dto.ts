@@ -4,7 +4,7 @@ import { CreateTeamDto } from './create-team.dto';
 
 export class UpdateTeamDto extends PartialType(OmitType(CreateTeamDto, ['sport'] as const)) { }
 
-export class ReturnTeamDto extends UpdateTeamDto {
+export class ReturnTeamDto extends CreateTeamDto {
   @IsNotEmpty()
   id: number;
 }

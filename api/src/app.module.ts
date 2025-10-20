@@ -25,15 +25,10 @@ import { UserModule } from './user/user.module';
       },
 
     ),
-    // MulterModule.register({
-    //   dest: './public',
-    // }),
-
     AuthModule,
     UserModule,
     PlayerModule,
     TeamModule,
-    // CoachModule,
     SportModule,
     MembershipModule,
     AnnouncementModule,

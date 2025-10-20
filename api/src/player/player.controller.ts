@@ -187,9 +187,8 @@ export class PlayerController {
   @Get(':playerId/:teamId/group')
   async allGroups(
     @GetUser('id') playerId: number,
-    @Param('teamId') teamId: number,
   ) {
-    return this.playerService.allGroups(playerId, teamId)
+    return this.playerService.allGroups(playerId)
   }
 
   @Get(':playerId/profile')

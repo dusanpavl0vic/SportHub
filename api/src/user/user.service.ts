@@ -2,7 +2,6 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import * as argon from 'argon2';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
@@ -10,14 +9,6 @@ import { ChangePasswordDto } from 'src/player/dto/change-password.dto';
 @Injectable()
 export class UserService {
   constructor(@Inject('USER_REPOSITORY') private repo: Repository<User>) { }
-
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
 
   async getUserByEmail(email: string) {
 
@@ -28,21 +19,12 @@ export class UserService {
     );
   }
 
-  // async create(createUserDto: CreateUserDto): Promise<User> {
-  //   const user = this.repo.create(createUserDto);
-  //   return this.repo.save(user);
-  // }
-
   async create(createUserDto: CreateUserDto, manager?: EntityManager) {
     const user = this.repo.create(createUserDto);
     if (manager) {
       return manager.save(User, user);
     }
     return this.repo.save(user);
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
   }
 
   async remove(
@@ -95,5 +77,9 @@ export class UserService {
     })
 
     return true;
+  }
+
+  async createWithManager(manager: EntityManager, dto: CreateUserDto): Promise<User> {
+    return manager.save(User, dto);
   }
 }

@@ -9,6 +9,12 @@ export class UpdatePlayerDto extends PartialType(CreatePlayerDto) { }
 export class ReturnPlayerDto extends CreatePlayerDto {
   @IsNotEmpty()
   id: number;
+
+  @IsNotEmpty()
+  profilePicture?: string;
+
+  @IsOptional()
+  teamId?: number | null;
 }
 
 export class UpdatePlayerProfileImageDto {
