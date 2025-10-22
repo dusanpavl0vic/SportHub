@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
@@ -33,13 +33,19 @@ export class AuthService {
         const user = await this.userService.getUserByEmail(dto.email);
         console.log(user);
 
-        if (!user)
-            throw new ForbiddenException('Invalid credentials');
+        if (!user) {
+            throw new BadRequestException({
+                message: 'User with this email does not exist'
+            });
+        }
 
         const passwordMatch = await argon.verify(user.password, dto.password);
 
-        if (!passwordMatch)
-            throw new ForbiddenException('Invalid credentials');
+        if (!passwordMatch) {
+            throw new BadRequestException({
+                message: 'Incorrect password'
+            });
+        }
 
         const token = await this.signToken(user.id, user.email, user.role);
 
@@ -52,7 +58,9 @@ export class AuthService {
         }
 
         if (!profile) {
-            throw new ForbiddenException('User profile not found');
+            throw new ForbiddenException({
+                message: 'User not found',
+            });
         }
 
         return { access_token: token.access_token, user: profile, role: user.role };

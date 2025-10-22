@@ -37,7 +37,20 @@ export class AuthEffects {
               role: response.role
             })
           ),
-          catchError((error) => of(AuthActions.loginFailure({ error: error })))
+          catchError((error) => {
+            // console.log('RAW error:', error);
+            // console.log('error.error:', error.error);
+            // console.log('error.error.message:', error?.error?.message);
+
+            const message =
+              error?.error?.message.message ||
+              error?.message ||
+              'Došlo je do greške prilikom logina';
+
+            console.log('Final message:', message);
+
+            return of(AuthActions.loginFailure({ error: message }));
+          })
         )
       )
     )

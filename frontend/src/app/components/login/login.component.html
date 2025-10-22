@@ -1,8 +1,27 @@
-<form (ngSubmit)="onSubmit()">
-  <input type="text" [(ngModel)]="email" placeholder="Email" />
-  <input type="password" [(ngModel)]="password" placeholder="Password" />
-  <button type="submit" [disabled]="loading$ | async">Login</button>
-</form>
+<div class="login-background">
+  <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">Email: </label>
+      <input formControlName="email" placeholder="Email" />
 
-<div *ngIf="loading$ | async">Loading...</div>
-<div *ngIf="error$ | async as error" class="error">{{ error }}</div>
+      <div class="alert"
+        *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)">
+        <div *ngIf="loginForm.get('email')?.hasError('required')">Email je obavezan.</div>
+        <div *ngIf="loginForm.get('email')?.hasError('email')">Neispravan format emaila.</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password">Password: </label>
+      <input formControlName="password" type="password" placeholder="Password" />
+      <div class="alert"
+        *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)">
+        <div *ngIf="loginForm.get('password')?.hasError('required')">Lozinka je obavezna.</div>
+        <div *ngIf="loginForm.get('password')?.hasError('minlength')">Lozinka mora biti najmanje 8 karaktera.</div>
+      </div>
+    </div>
+    <button type="submit">Login</button>
+  </form>
+
+  <div *ngIf="loading$ | async">Loading...</div>
+  <div *ngIf="error$ | async as error" class="error">{{error.toString()}}</div>
+</div>

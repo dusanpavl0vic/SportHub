@@ -12,4 +12,5 @@ export interface Team {
   numberOfPlayers: number;
 
   sport: Sport;
+
 }
