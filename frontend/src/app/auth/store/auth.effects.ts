@@ -56,4 +56,53 @@ export class AuthEffects {
     )
   );
 
+
+  registerPlayer$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.registerPlayer),
+      switchMap(({ data }) =>
+        this.authService.registerPlayer(data).pipe(
+          map((response) =>
+            AuthActions.registerPlayerSuccess({
+              token: response.access_token,
+              player: response.player,
+              role: response.role
+            })
+          ),
+          catchError((error) => {
+            const message =
+              error?.error?.message.message ||
+              error?.message ||
+              'Došlo je do greške prilikom registracije igrača';
+            return of(AuthActions.registerPlayerFailure({ error: message }));
+          })
+        )
+      )
+    )
+  );
+
+  registerTeam$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.registerTeam),
+      switchMap(({ data }) =>
+        this.authService.registerTeam(data).pipe(
+          map((response) =>
+            AuthActions.registerTeamSuccess({
+              token: response.access_token,
+              team: response.team,
+              role: response.role
+            })
+          ),
+          catchError((error) => {
+            const message =
+              error?.error?.message.message ||
+              error?.message ||
+              'Došlo je do greške prilikom registracije tima';
+            return of(AuthActions.registerTeamFailure({ error: message }));
+          })
+        )
+      )
+    )
+  );
+
 }

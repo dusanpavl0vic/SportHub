@@ -1,0 +1,26 @@
+<app-loader [loading]="loading$"></app-loader>
+<form class="login-form" [formGroup]="registerPlayerForm" (ngSubmit)="onSubmit()">
+  <h1>Register player</h1>
+  <div class="form-inputs">
+    <app-login-input label="Firstname" placeholder="Enter your firstname" type="text" icon="person"
+      [control]="getFistnameControl"></app-login-input>
+    <app-login-input label="Lastname" placeholder="Enter your lastname" type="text" icon="person"
+      [control]="getLastnameControl"></app-login-input>
+    <app-login-input label="Email" placeholder="Enter your email" type="email" icon="email"
+      [control]="getEmailContorl"></app-login-input>
+    <app-login-input label="Password" placeholder="Enter your password" type="password" icon="lock"
+      [control]="getPasswordContorl"></app-login-input>
+    <app-login-input label="Phone number" placeholder="Enter your phone number" type="number" icon="phone_enabled"
+      [control]="getPhoneControler"></app-login-input>
+    <app-login-input label="Birthdate" placeholder="Enter your phone birthdate" type="date" icon="date_range"
+      [control]="getBirthdateControl"></app-login-input>
+    <app-login-input label="City" placeholder="Enter your phone city" type="text" icon="location_on"
+      [control]="getCityControl"></app-login-input>
+  </div>
+  <div *ngIf="error$ | async as error" class="error">{{error.toString()}}</div>
+  <app-button [disabled]="registerPlayerForm.invalid" type="submit">Register</app-button>
+  <p>
+    Imate nalog?
+    <a (click)="goToSignIn()">Log In</a>
+  </p>
+</form>

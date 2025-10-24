@@ -23,7 +23,7 @@ export interface RegisterPlayerRequest {
   firstname: string;
   lastname: string;
   phoneNumber?: string;
-  birthdate: string;
+  birthdate: Date;
   city: string;
 }
 

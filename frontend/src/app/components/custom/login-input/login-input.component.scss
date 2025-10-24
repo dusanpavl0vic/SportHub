@@ -1,0 +1,22 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  .alert {
+    color: #d32f2f;
+    font-size: 0.875rem;
+    margin-top: 0.35rem;
+    min-height: 1.2em;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  ::ng-deep .mat-form-field-suffix .mat-icon-button {
+    width: 24px;
+
+    padding: 0;
+  }
+}
