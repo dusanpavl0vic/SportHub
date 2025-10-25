@@ -15,3 +15,12 @@ export interface RegisterPlayerForm {
   birthdate: FormControl<Date>;
   city: FormControl<string>;
 }
+
+export interface RegisterTeamForm {
+  email: FormControl<string>;
+  password: FormControl<string>;
+
+  name: FormControl<string>;
+  city: FormControl<string>;
+  sportid: FormControl<number>;
+}

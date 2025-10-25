@@ -55,6 +55,19 @@ export const routes: Routes = [
   },
 
   { path: 'login', component: LoginComponent, canActivate: [GuestGuard] },
-  { path: 'register', component: RegisterComponent, canActivate: [GuestGuard] },
+  {
+    path: 'register', component: RegisterComponent, canActivate: [GuestGuard],
+    children: [
+      { path: '', redirectTo: 'player', pathMatch: 'full' },
+      {
+        path: 'player',
+        loadComponent: () => import('./components/register-player/register-player.component').then(m => m.RegisterPlayerComponent)
+      },
+      {
+        path: 'team',
+        loadComponent: () => import('./components/register-team/register-team.component').then(m => m.RegisterTeamComponent)
+      }
+    ]
+  },
   { path: '**', component: NotfoundComponent }
 ];

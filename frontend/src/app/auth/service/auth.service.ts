@@ -33,7 +33,6 @@ export interface RegisterTeamRequest {
     password: string;
   };
   name: string;
-  profilePicture?: string;
   city: string;
   sportId: number;
 }

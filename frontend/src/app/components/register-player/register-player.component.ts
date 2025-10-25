@@ -49,7 +49,7 @@ export class RegisterPlayerComponent {
       password: this.fb.control('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
       firstname: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
       lastname: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
-      phoneNumber: this.fb.control('', { nonNullable: false }),
+      phoneNumber: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
       birthdate: this.fb.control(new Date(), { nonNullable: true, validators: [Validators.required] }),
       city: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     });

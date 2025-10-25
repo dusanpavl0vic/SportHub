@@ -1,1 +1,22 @@
-<p>register-team works!</p>
+<app-loader [loading]="loading$"></app-loader>
+<form class="login-form" [formGroup]="registerTeamForm" (ngSubmit)="onSubmit()">
+  <h1>Register player</h1>
+  <div class="form-inputs">
+    <app-login-input label="Team name" placeholder="Enter your team name" type="text" icon="person"
+      [control]="getNameControl"></app-login-input>
+    <app-login-input label="City" placeholder="Enter your city" type="text" icon="person"
+      [control]="getCityControl"></app-login-input>
+    <app-login-input label="Email" placeholder="Enter your email" type="email" icon="email"
+      [control]="getEmailContorl"></app-login-input>
+    <app-login-input label="Password" placeholder="Enter your password" type="password" icon="lock"
+      [control]="getPasswordContorl"></app-login-input>
+    <app-login-input label="Sport" placeholder="Choose your phone sport" type="number" icon="sports_soccer"
+      [control]="getSportIdControl"></app-login-input>
+  </div>
+  <div *ngIf="error$ | async as error" class="error">{{error.toString()}}</div>
+  <app-button [disabled]="registerTeamForm.invalid" type="submit">Register</app-button>
+  <p>
+    Imate nalog?
+    <a (click)="goToSignIn()">Log In</a>
+  </p>
+</form>

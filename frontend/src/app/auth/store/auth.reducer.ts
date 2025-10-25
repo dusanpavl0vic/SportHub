@@ -33,4 +33,45 @@ export const authReducer = createReducer(
     loading: false,
     error
   })),
+  on(AuthActions.registerPlayer, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(AuthActions.registerPlayerSuccess, (state, { token, player, role }) => ({
+    ...state,
+    isAuthenticated: true,
+    token,
+    user: player,
+    role,
+    loading: false,
+    error: null
+  })),
+  on(AuthActions.registerPlayerFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
+  on(AuthActions.registerTeam, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(AuthActions.registerTeamSuccess, (state, { token, team, role }) => ({
+    ...state,
+    isAuthenticated: true,
+    token,
+    user: team,
+    role,
+    loading: false,
+    error: null
+  })),
+  on(AuthActions.registerTeamFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
+  //TODO: add reducer for player registration
+  //TODO: add reducer for team registration
+  //TODO: add reducer for logout
 );
