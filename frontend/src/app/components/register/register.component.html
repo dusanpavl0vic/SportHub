@@ -9,8 +9,8 @@
       </button>
     </div>
     <div class="content">
-      <app-register-player *ngIf="selectedTab === 'player'"></app-register-player>
-      <app-register-team *ngIf="selectedTab === 'team'"></app-register-team>
+      <app-register-player *ngIf="selectedTab === 'player'" [citiesList]="citiesList"></app-register-player>
+      <app-register-team *ngIf="selectedTab === 'team'" [citiesList]="citiesList"></app-register-team>
     </div>
   </div>
 </div>

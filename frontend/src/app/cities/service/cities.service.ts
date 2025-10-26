@@ -5,7 +5,7 @@ import { Observable } from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class CitiesService {
   private apiUrl = 'https://countriesnow.space/api/v0.1/'; // prilagodi ako backend radi na drugom portu
 
   constructor(

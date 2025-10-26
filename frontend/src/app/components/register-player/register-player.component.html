@@ -12,10 +12,28 @@
       [control]="getPasswordContorl"></app-login-input>
     <app-login-input label="Phone number" placeholder="Enter your phone number" type="number" icon="phone_enabled"
       [control]="getPhoneControler"></app-login-input>
+
+
     <app-login-input label="Birthdate" placeholder="Enter your phone birthdate" type="date" icon="date_range"
       [control]="getBirthdateControl"></app-login-input>
-    <app-login-input label="City" placeholder="Enter your phone city" type="text" icon="location_on"
-      [control]="getCityControl"></app-login-input>
+
+
+    <div *ngIf="citiesList && citiesList.length > 0; else manualInput">
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>City</mat-label>
+        <mat-select [formControl]="getCityControl">
+          <mat-option *ngFor="let city of citiesList" [value]="city">
+            {{ city }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <ng-template #manualInput>
+      <app-login-input label="City" placeholder="Enter your city" type="text" icon="location_on"
+        [control]="getCityControl">
+      </app-login-input>
+    </ng-template>
   </div>
   <div *ngIf="error$ | async as error" class="error">{{error.toString()}}</div>
   <app-button [disabled]="registerPlayerForm.invalid" type="submit">Register</app-button>

@@ -1,5 +1,7 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { Role } from "src/enum/role.enum";
+import { Player } from "src/interfaces/player/player.dto";
+import { Team } from "src/interfaces/team/team.dto";
 import { AuthState } from "./auth.model";
 
 export const selectAuthState = createFeatureSelector<AuthState>('auth');
@@ -23,13 +25,13 @@ export const selectUser = createSelector(
 export const selectPlayer = createSelector(
   selectAuthState,
   (state: AuthState) =>
-    state.role === Role.PLAYER ? state.user : null
+    state.role === Role.PLAYER ? state.user as Player : null
 );
 
 export const selectTeam = createSelector(
   selectAuthState,
   (state: AuthState) =>
-    state.role === Role.TEAM ? state.user : null
+    state.role === Role.TEAM ? state.user as Team : null
 );
 
 export const selectError = createSelector(

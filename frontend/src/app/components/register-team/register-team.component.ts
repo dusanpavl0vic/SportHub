@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, Input } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, tap } from 'rxjs';
@@ -21,12 +23,18 @@ import { LoginInputComponent } from '../custom/login-input/login-input.component
     CommonModule,
     LoginInputComponent,
     LoaderComponent,
-    ButtonComponent
+    ButtonComponent,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule
   ],
   templateUrl: './register-team.component.html',
   styleUrl: './register-team.component.scss'
 })
 export class RegisterTeamComponent {
+
+  @Input() citiesList: string[] = [];
+
   store = inject(Store);
   router = inject(Router);
 

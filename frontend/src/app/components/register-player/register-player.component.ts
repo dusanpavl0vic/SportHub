@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, tap } from 'rxjs';
@@ -21,12 +23,20 @@ import { LoginInputComponent } from '../custom/login-input/login-input.component
     CommonModule,
     LoginInputComponent,
     LoaderComponent,
-    ButtonComponent
+    ButtonComponent,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule,
   ],
   templateUrl: './register-player.component.html',
-  styleUrl: './register-player.component.scss'
+  styleUrl: './register-player.component.scss',
+
 })
-export class RegisterPlayerComponent {
+export class RegisterPlayerComponent implements OnChanges {
+
+  @Input() citiesList: string[] = [];
+
+
   store = inject(Store);
   router = inject(Router);
 
@@ -37,6 +47,9 @@ export class RegisterPlayerComponent {
   error$!: Observable<string | null>;
 
   constructor() {
+
+    //console.log('Cities list in RegisterPlayerComponent:', this.citiesList);
+
     this.error$ = this.store.select(AuthSelector.selectError).pipe(
       tap((error) => console.log('Auth error:', error))
     );
@@ -53,6 +66,12 @@ export class RegisterPlayerComponent {
       birthdate: this.fb.control(new Date(), { nonNullable: true, validators: [Validators.required] }),
       city: this.fb.control('', { nonNullable: true, validators: [Validators.required] }),
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['citiesList']) {
+      console.log('Cities updated:', this.citiesList);
+    }
   }
 
   onSubmit() {
@@ -75,6 +94,8 @@ export class RegisterPlayerComponent {
 
 
     this.store.dispatch(registerPlayer({ data: player }));
+
+
   }
 
   get getEmailContorl(): FormControl {

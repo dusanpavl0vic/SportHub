@@ -4,8 +4,23 @@
   <div class="form-inputs">
     <app-login-input label="Team name" placeholder="Enter your team name" type="text" icon="person"
       [control]="getNameControl"></app-login-input>
-    <app-login-input label="City" placeholder="Enter your city" type="text" icon="person"
-      [control]="getCityControl"></app-login-input>
+    <div *ngIf="citiesList && citiesList.length > 0; else manualInput">
+      <mat-form-field class="w-full" appearance="outline">
+        <mat-label>City</mat-label>
+        <mat-select [formControl]="getCityControl">
+          <mat-option *ngFor="let city of citiesList" [value]="city">
+            {{ city }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <ng-template #manualInput>
+      <app-login-input label="City" placeholder="Enter your city" type="text" icon="location_on"
+        [control]="getCityControl">
+      </app-login-input>
+    </ng-template>
+
     <app-login-input label="Email" placeholder="Enter your email" type="email" icon="email"
       [control]="getEmailContorl"></app-login-input>
     <app-login-input label="Password" placeholder="Enter your password" type="password" icon="lock"

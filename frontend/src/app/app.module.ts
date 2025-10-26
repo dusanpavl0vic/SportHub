@@ -49,6 +49,8 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
     AnnComponent,
     NotfoundComponent,
     TeamDashboardComponent,
+
+
   ],
   providers: [
     provideStoreDevtools({

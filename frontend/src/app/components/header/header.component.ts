@@ -3,8 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { AppState } from 'src/app/app.state';
+import * as AuthSelector from 'src/app/auth/store/auth.selector';
 import { Player } from 'src/interfaces/player/player.dto';
 import { Team } from 'src/interfaces/team/team.dto';
 
@@ -30,17 +31,22 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    // this.isAuthenticated$ = this.store.select(state => state.auth.isAuthenticated);
-    // this.player$ = this.store.select(state => state.auth.player);
+    this.isAuthenticated$ = this.store.select(AuthSelector.selectIsAuthenticated);
+    this.player$ = this.store.select(AuthSelector.selectPlayer).pipe((
+      tap((player) => console.log('Player:', player))
+    ));
 
-    // // this.player$.subscribe(player => {
-    // //   console.log('Player from store:', player);
-    // // });
-    // this.team$ = this.store.select(state => state.auth.team);
+    this.team$ = this.store.select(AuthSelector.selectTeam).pipe((
+      tap((team) => console.log('Team:', team))
+    ));
 
-    // // this.team$.subscribe(team => {
-    // //   console.log('Team from store:', team);
-    // // });
+    // this.player$.subscribe(player => {
+    //   console.log('Player from store:', player);
+    // });
+
+    // this.team$.subscribe(team => {
+    //   console.log('Team from store:', team);
+    // });
   }
 
   goToLogin() {
