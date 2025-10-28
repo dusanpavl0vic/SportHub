@@ -25,7 +25,7 @@ services:
       - POSTGRES_PASSWORD=meda
       - POSTGRES_DB=sporthubDB
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
 volumes:
   postgres_data:

@@ -1,3 +1,5 @@
+import { UserDto } from "../user/create-user.dto";
+
 export interface Player {
   id: number;
 
@@ -14,4 +16,6 @@ export interface Player {
   profilePicture: string;
 
   teamId: number
+
+  user: UserDto
 }

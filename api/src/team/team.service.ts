@@ -55,13 +55,14 @@ export class TeamService {
 
   ): Promise<TeamDto> {
 
-    const team = await this.repo.findOne({
+    const userteam = await this.repo.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
     });
-    if (!team) {
+    if (!userteam) {
       throw new NotFoundException(`Team with user ID ${userId} not found`);
     }
+    const team = await this.findByIdWithOutUser(userteam.id);
     return team;
   }
 

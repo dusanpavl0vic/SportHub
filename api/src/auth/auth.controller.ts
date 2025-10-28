@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { RegisterPlayerDto } from 'src/player/dto/create-player.dto';
 import { TeamWithSportIdDto } from 'src/team/dto/create-team.dto';
 import { AuthService } from './auth.service';
@@ -12,7 +12,7 @@ export class AuthController {
 
     @HttpCode(HttpStatus.OK)
     @Post('login')
-    loginPlayer(@Body() dto: LoginDto) {
+    loginPlayer(@Body() dto: LoginDto): Promise<{ access_token: string, user: any, role: any }> {
         return this.authService.login(dto);
     }
 
@@ -26,6 +26,11 @@ export class AuthController {
     @Post('registerTeam')
     registerTeam(@Body() dto: TeamWithSportIdDto) {
         return this.authService.registerTeam(dto);
+    }
+
+    @Get('getUserProfile:id')
+    getUserProfile(@Param("id") userId: number) {
+        return this.authService.getUser(userId);
     }
 
     // @HttpCode(HttpStatus.CREATED)

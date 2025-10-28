@@ -98,13 +98,15 @@ export class PlayerService {
   async findByUserId(
     userId: number,
   ): Promise<PlayerDto> {
-    const player = await this.repo.findOne({
+    const userplayer = await this.repo.findOne({
       where: { user: { id: userId } },
       relations: ['user'],
     });
-    if (!player) {
+    if (!userplayer) {
       throw new NotFoundException(`Player with user ID ${userId} not found`);
     }
+
+    const player = await this.findByIdWithOutUser(userplayer.id);
     return player;
   }
 

@@ -16,6 +16,11 @@ export class JwtService {
     return decoded?.role || null;
   }
 
+  getSubFromToken(token: string): string {
+    const decoded = this.decodeToken(token);
+    return decoded?.sub || null;
+  }
+
   isTokenExpired(token: string | null): boolean {
     if (!token) {
       return true;

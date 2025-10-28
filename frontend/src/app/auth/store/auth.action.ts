@@ -20,9 +20,9 @@ export const logout = createAction('[Auth] Logout');
 
 // export const loadUser = createAction('[Auth] Load User', props<{ token: string }>());
 
-// export const loadPlayerSuccess = createAction('[Auth] Load Player Success', props<{ user: Player }>());
-// export const loadTeamSuccess = createAction('[Auth] Load Team Success', props<{ user: Team }>());
-// export const loadUserFailure = createAction('[Auth] Load User Failure', props<{ error: string }>());
+// // export const loadPlayerSuccess = createAction('[Auth] Load Player Success', props<{ user: Player }>());
+// // export const loadTeamSuccess = createAction('[Auth] Load Team Success', props<{ user: Team }>());
+// // export const loadUserFailure = createAction('[Auth] Load User Failure', props<{ error: string }>());
 
 
 export const autoLogin = createAction(

@@ -79,6 +79,26 @@ export class UserService {
     return true;
   }
 
+  async findById(
+    id: number,
+  ): Promise<User> {
+    const user = await this.repo.findOne({
+      where: { id: id },
+    });
+
+    if (!user) {
+      console.log("User not found with ID:", id);
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    console.log("User found:", user);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
+  }
+
   async createWithManager(manager: EntityManager, dto: CreateUserDto): Promise<User> {
     return manager.save(User, dto);
   }

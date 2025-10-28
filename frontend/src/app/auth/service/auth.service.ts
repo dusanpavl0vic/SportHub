@@ -65,6 +65,7 @@ export class AuthService {
     return this.http.post<{ token: string, user: Player | Team, role: Role }>(`${this.apiUrl}/login`, data).pipe(
       tap((response: any) => {
         localStorage.setItem('token', response.access_token);
+        console.log('auth.service.ts - login response:', response);
       })
     );
   }
@@ -108,6 +109,10 @@ export class AuthService {
   logout(): void {
     this.store.dispatch(logout());
     this.router.navigate(['/login']);
+  }
+
+  getUserProfile(userId: number): Observable<Player | Team> {
+    return this.http.get<any>(`${this.apiUrl}/getUserProfile${userId}`);
   }
 }
 

@@ -9,6 +9,7 @@ import { PlayerService } from 'src/player/player.service';
 import { SportService } from 'src/sport/sport.service';
 import { ReturnTeamDto, TeamDto, TeamWithSportIdDto } from 'src/team/dto/create-team.dto';
 import { TeamService } from 'src/team/team.service';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { DataSource } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
@@ -51,10 +52,11 @@ export class AuthService {
 
         let profile: PlayerDto | TeamDto;
         if (user.role == Role.PLAYER) {
-            profile = await this.playerService.findByUserId(user.id);
+            profile = await this.playerService.findByIdWithOutUser(user.id) as PlayerDto;
+            console.log('Profile:', profile);
         }
         else {
-            profile = await this.teamService.findByUserId(user.id);
+            profile = await this.teamService.findByUserId(user.id) as TeamDto;
         }
 
         if (!profile) {
@@ -234,6 +236,18 @@ export class AuthService {
 
         return {
             access_token: token,
+        }
+    }
+
+    async getUser(userId: number): Promise<PlayerDto | TeamDto> {
+        const user: User = await this.userService.findById(userId);
+
+        if (user.role === Role.PLAYER) {
+            return this.playerService.findByUserId(userId);
+        } else if (user.role === Role.TEAM) {
+            return this.teamService.findByUserId(userId);
+        } else {
+            throw new BadRequestException('Invalid user role');
         }
     }
 }

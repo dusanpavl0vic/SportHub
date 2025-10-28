@@ -1,15 +1,17 @@
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { isDevMode, NgModule } from '@angular/core';
+import { APP_INITIALIZER, isDevMode, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
+import { Store, StoreModule } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { AppComponent } from './app.component';
+import { appInitializerFactory } from './app.initializer';
 import { appReducer } from './app.reducer';
 import { routes } from './app.routes';
+import { AuthService } from './auth/service/auth.service';
 import { AuthEffects } from './auth/store/auth.effects';
 import { AnnComponent } from './components/ann/ann.component';
 import { HeaderComponent } from './components/header/header.component';
@@ -23,6 +25,7 @@ import { TeamScheduleComponent } from './components/team-schedule/team-schedule.
 import { TeamSettingsComponent } from './components/team-settings/team-settings.component';
 import { TeamsListComponent } from "./components/teams-list/teams-list.component";
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
+import { JwtService } from './core/services/jwt.service';
 
 
 @NgModule({
@@ -64,6 +67,12 @@ import { AuthInterceptor } from './core/interceptor/auth.interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    {
+      provide: APP_INITIALIZER, // pre nego sto se ucita app pozove se app_initializer koji zapravo poziva funkcijuappInitializerFactory koja proverava local storage 
+      useFactory: appInitializerFactory,
+      deps: [Store, JwtService, AuthService],
       multi: true
     }
   ],

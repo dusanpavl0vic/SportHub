@@ -105,4 +105,22 @@ export class AuthEffects {
     )
   );
 
+  autoLogin$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.autoLogin),
+      switchMap(({ token, role }) => {
+        const userId = this.jwtService.getSubFromToken(token);
+
+        return this.authService.getUserProfile(parseInt(userId)).pipe(
+          map(user => {
+            if (!user) {
+              return AuthActions.loginFailure({ error: 'User not found' });
+            }
+            return AuthActions.loginSuccess({ token, user, role });
+          }),
+          catchError(() => of(AuthActions.loginFailure({ error: 'Auto login failed' })))
+        );
+      })
+    )
+  );
 }

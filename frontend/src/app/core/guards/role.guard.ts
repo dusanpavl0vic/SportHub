@@ -14,6 +14,7 @@ export class RoleGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     const allowedRoles = route.data['roles'] as Role[];
+    // proverava role korisnika i dozvoljava mu da udje u zavsnosti sta smo naveli u data['roles'] za tu rutu
 
     return this.store.select(selectRole).pipe(
       map(role => {

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { CanActivate, Router } from "@angular/router";
 import { Store } from "@ngrx/store";
-import { map, Observable, of, switchMap } from "rxjs";
+import { map, Observable, of, switchMap, take } from "rxjs";
 import { AppState } from "src/app/app.state";
 import { selectIsAuthenticated, selectRole } from "src/app/auth/store/auth.selector";
 import { Role } from "src/enum/role.enum";
@@ -10,11 +10,14 @@ import { Role } from "src/enum/role.enum";
   providedIn: 'root'
 })
 export class GuestGuard implements CanActivate {
+  // cuva login i register od ulogovanih korisnika
   constructor(private store: Store<AppState>, private router: Router) { }
 
   canActivate(): Observable<boolean> {
     return this.store.select(selectIsAuthenticated).pipe(
+      take(1),
       switchMap(isAuth => {
+        console.log("guest.guard.ts " + isAuth);
         if (!isAuth) {
           return of(true);
         }

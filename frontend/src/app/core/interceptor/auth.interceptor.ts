@@ -17,18 +17,18 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, handler: HttpHandler): Observable<HttpEvent<any>> {
     const token = localStorage.getItem('token');
 
-    let clonedRequest = req;
-    if (token) {
-      clonedRequest = req.clone({
+    // Ako postoji token, kloniraj zahtev sa Authorization headerom
+    const clonedRequest = token
+      ? req.clone({
         headers: req.headers.set('Authorization', `Bearer ${token}`)
-      });
-      return handler.handle(clonedRequest);
-    }
+      })
+      : req;
 
+    // Sada uvek hendlaj greške
     return handler.handle(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-
+          // Token nevažeći ili istekao → očisti stanje
           localStorage.removeItem('token');
           this.store.dispatch(logout());
           this.router.navigate(['/login']);

@@ -1,4 +1,5 @@
 import { Sport } from "../sport/sport.dto";
+import { UserDto } from "../user/create-user.dto";
 
 export interface Team {
   id: number;
@@ -13,4 +14,5 @@ export interface Team {
 
   sport: Sport;
 
+  user: UserDto;
 }
