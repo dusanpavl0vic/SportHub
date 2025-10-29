@@ -79,6 +79,8 @@ export class RegisterTeamComponent {
 
 
     this.store.dispatch(registerTeam({ data: team }));
+
+    this.router.navigate(['/']);
   }
 
   get getEmailContorl(): FormControl {

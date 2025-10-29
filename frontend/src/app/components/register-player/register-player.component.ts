@@ -95,7 +95,7 @@ export class RegisterPlayerComponent implements OnChanges {
 
     this.store.dispatch(registerPlayer({ data: player }));
 
-
+    this.router.navigate(['/']);
   }
 
   get getEmailContorl(): FormControl {

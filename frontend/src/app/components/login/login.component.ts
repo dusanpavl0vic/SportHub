@@ -62,6 +62,8 @@ export class LoginComponent {
     console.log('Login button clicked', email, password);
 
     this.store.dispatch(login({ email, password }));
+
+    this.router.navigate(['/']);
   }
 
 
