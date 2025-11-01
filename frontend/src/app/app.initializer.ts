@@ -13,6 +13,7 @@ export function appInitializerFactory(
   return () => {
     const token = localStorage.getItem('token');
     if (!token) return Promise.resolve();
+    if (jwtService.isTokenExpired(token)) return Promise.resolve();
 
     const role = jwtService.getRoleFromToken(token);
     return authService.getUserProfile(parseInt(jwtService.getSubFromToken(token))).toPromise()

@@ -17,6 +17,7 @@ import { AnnComponent } from './components/ann/ann.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
+import { SidebarComponentComponent } from './components/sidebar-component/sidebar-component.component';
 import { TeamAddAnnComponent } from './components/team-add-ann/team-add-ann.component';
 import { TeamCardComponent } from "./components/team-card/team-card.component";
 import { TeamDashboardComponent } from './components/team-dashboard/team-dashboard.component';
@@ -52,7 +53,7 @@ import { JwtService } from './core/services/jwt.service';
     AnnComponent,
     NotfoundComponent,
     TeamDashboardComponent,
-
+    SidebarComponentComponent,
 
   ],
   providers: [

@@ -9,6 +9,7 @@ import { Observable, Subscription } from 'rxjs';
 import { AppState } from 'src/app/app.state';
 import { TeamService } from 'src/app/core/services/team.service';
 import { Team } from 'src/interfaces/team/team.dto';
+import { TeamScheduleComponent } from '../team-schedule/team-schedule.component';
 
 @Component({
   selector: 'app-team-dashboard',
@@ -18,6 +19,7 @@ import { Team } from 'src/interfaces/team/team.dto';
     FormsModule,
     MatButtonModule,
     MatIconModule,
+    TeamScheduleComponent
   ],
   templateUrl: './team-dashboard.component.html',
   styleUrl: './team-dashboard.component.scss',

@@ -1,0 +1,53 @@
+<div class="sidebar">
+  <!-- Profil / Avatar sekcija -->
+  <div class="sidebar-item profile" (click)="goToProfile()">
+    <ng-container *ngIf="team$ | async as team; else playerTemplate">
+      <div class="avatar">
+        <img *ngIf="team.profilePicture; else teamInitial" [src]="url + team.profilePicture" [alt]="team.name"
+          class="avatar-img" />
+        <ng-template #teamInitial>
+          <div class="avatar-circle" [ngStyle]="{ 'background-color': '#0B348C' }">
+            {{ team.name[0].toUpperCase() }}
+          </div>
+        </ng-template>
+      </div>
+      <span class="label">{{ team.name }}</span>
+    </ng-container>
+
+    <ng-template #playerTemplate>
+      <ng-container *ngIf="player$ | async as player">
+        <div class="avatar">
+          <img *ngIf="player.profilePicture; else playerInitial" [src]="url + player.profilePicture"
+            [alt]="player.firstname" class="avatar-img" />
+          <ng-template #playerInitial>
+            <div class="avatar-circle" [ngStyle]="{ 'background-color': '#0B348C' }">
+              {{ player.firstname[0].toUpperCase() }}
+            </div>
+          </ng-template>
+        </div>
+        <span class="label">{{ player.firstname }}</span>
+      </ng-container>
+    </ng-template>
+  </div>
+
+  <!-- Meni dugmići -->
+  <div class="sidebar-item" (click)="goToSchedule()">
+    <i class="bi bi-calendar"></i>
+    <span>Schedule</span>
+  </div>
+
+  <div class="sidebar-item" (click)="goToMembers()">
+    <i class="bi bi-people"></i>
+    <span>Members</span>
+  </div>
+
+  <div class="sidebar-item" (click)="goToSettings()">
+    <i class="bi bi-gear"></i>
+    <span>Settings</span>
+  </div>
+
+  <div class="sidebar-item logout" (click)="logout()">
+    <i class="bi bi-box-arrow-right"></i>
+    <span>Logout</span>
+  </div>
+</div>

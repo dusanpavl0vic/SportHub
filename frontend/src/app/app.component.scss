@@ -5,4 +5,20 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+
+  .with-sidebar {
+    display: flex;
+    align-items: stretch;
+    min-height: 100vh;
+
+    app-sidebar-component {
+      width: 250px;
+      flex-shrink: 0;
+    }
+
+    .content-wrapper {
+      flex: 1;
+      display: block;
+    }
+  }
 }

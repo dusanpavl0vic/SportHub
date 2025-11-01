@@ -34,4 +34,29 @@ export class JwtService {
     const currentTime = Math.floor(Date.now() / 1000);
     return decoded.exp < currentTime;
   }
+
+  isAuthenticated(): boolean {
+    const token = localStorage.getItem('token');
+    return token !== null && !this.isTokenExpired(token);
+  }
+
+  getRole(): Role | null {
+
+    const token = localStorage.getItem('token');
+
+    if (token == null)
+      return null;
+
+    return this.getRoleFromToken(token);
+  }
+
+  getSub(): string | null {
+
+    const token = localStorage.getItem('token');
+
+    if (token == null)
+      return null;
+
+    return this.getSubFromToken(token);
+  }
 }

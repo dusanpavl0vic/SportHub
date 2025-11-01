@@ -1,0 +1,87 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+  min-height: 90vh;
+  background: #e88b5a;
+  border-right: 1px solid #e5e5e5;
+  padding: 2rem;
+  box-sizing: border-box;
+  align-items: center;
+  color: #fff;
+  font-size: 1rem;
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    gap: 0.5rem;
+    i {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    span {
+      font-weight: 500;
+    }
+
+    &:hover {
+      background-color: #f1ad87;
+    }
+  }
+
+  .profile {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+
+    .avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .avatar-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .label {
+      font-weight: 600;
+    }
+  }
+
+  .logout {
+    margin-top: auto;
+    color: #cc1913;
+
+    &:hover {
+      background-color: #fdecea;
+    }
+
+    i {
+      color: #cc1913;
+    }
+  }
+}

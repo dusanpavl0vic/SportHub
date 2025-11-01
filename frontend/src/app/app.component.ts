@@ -1,9 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { select, Store } from '@ngrx/store';
+import { combineLatest, filter, map, startWith, tap } from 'rxjs';
 import { WishItem } from 'src/shared/models/wishitems';
 import { AppState } from './app.state';
 import { AuthService } from './auth/service/auth.service';
+import { selectIsAuthenticated } from './auth/store/auth.selector';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +16,7 @@ import { AuthService } from './auth/service/auth.service';
 export class AppComponent implements OnInit {
 
   private activatedRoute = inject(ActivatedRoute);
+  private router = inject(Router);
 
 
   constructor(private store: Store<AppState>,
@@ -46,5 +49,21 @@ export class AppComponent implements OnInit {
   }
 
 
+  isAuthPage$ = this.router.events.pipe(
+    filter(event => event instanceof NavigationEnd),
+    startWith(null),
+    map(() => {
+      const hiddenRoutes = ['/login', '/register'];
+      return hiddenRoutes.includes(this.router.url);
+    }),
+    tap(x => console.log('isAuthPage', x))
+  );
+
+
+  isAuthenticated$ = this.store.pipe(select(selectIsAuthenticated));
+
+  showLayout$ = combineLatest([this.isAuthenticated$, this.isAuthPage$]).pipe(
+    map(([isAuth, isAuthPage]) => isAuth && !isAuthPage)
+  );
 
 }
