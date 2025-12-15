@@ -24,7 +24,7 @@ export class AuthInterceptor implements HttpInterceptor {
       })
       : req;
 
-    // Sada uvek hendlaj greške
+    // Sada uvek hendluj greške
     return handler.handle(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {

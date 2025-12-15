@@ -16,3 +16,5 @@ export interface Team {
 
   user: UserDto;
 }
+
+export type TeamPreview = Omit<Team, 'user'>;

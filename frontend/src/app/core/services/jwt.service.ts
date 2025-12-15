@@ -59,4 +59,15 @@ export class JwtService {
 
     return this.getSubFromToken(token);
   }
+
+  getProfileId(): string | null {
+
+    const token = localStorage.getItem('token');
+
+    if (token == null)
+      return null;
+
+    const decoded = this.decodeToken(token);
+    return decoded?.profileId || null;
+  }
 }

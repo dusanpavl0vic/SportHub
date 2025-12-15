@@ -60,10 +60,7 @@ export class LoginComponent {
 
     const { email, password } = this.loginForm.getRawValue();
     console.log('Login button clicked', email, password);
-
     this.store.dispatch(login({ email, password }));
-
-    this.router.navigate(['/']);
   }
 
 

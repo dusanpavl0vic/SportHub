@@ -7,3 +7,4 @@ export type TeamCardDto = Omit<CreateTeamDto, 'sport'> & {
   sportName: string;
   sportImage: string;
 };
+

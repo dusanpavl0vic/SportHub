@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { jwtDecode } from "jwt-decode";
 import { Observable, tap } from 'rxjs';
 import { AppState } from 'src/app/app.state';
-import { autoLogin, logout } from 'src/app/auth/store/auth.action';
+import { autoLogin } from 'src/app/auth/store/auth.action';
 import { Role } from 'src/enum/role.enum';
 import { Player } from 'src/interfaces/player/player.dto';
 import { Team } from 'src/interfaces/team/team.dto';
@@ -107,7 +107,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.store.dispatch(logout());
+    localStorage.removeItem("token");
     this.router.navigate(['/login']);
   }
 

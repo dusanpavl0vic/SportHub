@@ -13,7 +13,6 @@
       </div>
       <span class="label">{{ team.name }}</span>
     </ng-container>
-
     <ng-template #playerTemplate>
       <ng-container *ngIf="player$ | async as player">
         <div class="avatar">
@@ -30,16 +29,43 @@
     </ng-template>
   </div>
 
-  <!-- Meni dugmići -->
-  <div class="sidebar-item" (click)="goToSchedule()">
-    <i class="bi bi-calendar"></i>
-    <span>Schedule</span>
-  </div>
+  <ng-container *ngIf="player$ | async as player">
+    <ng-container *ngIf="playerTeam$ | async as team">
+      <hr class="divider" />
 
-  <div class="sidebar-item" (click)="goToMembers()">
-    <i class="bi bi-people"></i>
-    <span>Members</span>
-  </div>
+      <div class="sidebar-item profile player-team-section">
+        <button class="player-team-profile">
+          Moj tim: {{ team.name }}
+
+          <div class="avatar" (click)="goToMyTeam()">
+            <ng-container>
+              <img *ngIf=" team.profilePicture; else teamInitial" [src]="url + team.profilePicture" [alt]="team.name"
+                class="avatar-img" />
+            </ng-container>
+            <ng-template #teamInitial>
+              <div class="avatar-circle" [ngStyle]="{ 'background-color': '#e88b5a' }">
+                {{ team.name[0].toUpperCase() }}
+              </div>
+            </ng-template>
+          </div>
+        </button>
+
+        <div class=" button-group d-flex gap-2">
+          <div class="sidebar-item" (click)="goToSchedule()">
+            <i class="bi bi-calendar"></i>
+            <span>Schedule</span>
+          </div>
+
+          <div class="sidebar-item" (click)="goToMembers()">
+            <i class="bi bi-people"></i>
+            <span>Members</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+
 
   <div class="sidebar-item" (click)="goToSettings()">
     <i class="bi bi-gear"></i>

@@ -3,13 +3,15 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { combineLatest, Observable, take, tap } from 'rxjs';
+import { catchError, combineLatest, filter, map, Observable, of, switchMap, take, tap } from 'rxjs';
 import { AppState } from 'src/app/app.state';
+import * as AuthAction from 'src/app/auth/store/auth.action';
 import * as AuthSelector from 'src/app/auth/store/auth.selector';
 import { JwtService } from 'src/app/core/services/jwt.service';
+import { TeamService } from 'src/app/core/services/team.service';
 import { Role } from 'src/enum/role.enum';
 import { Player } from 'src/interfaces/player/player.dto';
-import { Team } from 'src/interfaces/team/team.dto';
+import { Team, TeamPreview } from 'src/interfaces/team/team.dto';
 
 
 @Component({
@@ -29,18 +31,35 @@ export class SidebarComponentComponent {
   isAuthenticated$!: Observable<boolean>;
   player$!: Observable<Player | null>;
   team$!: Observable<Team | null>;
+  role$!: Observable<Role | null>;
+  playerTeam$?: Observable<TeamPreview | null>;
 
 
   constructor(
     private store: Store<AppState>,
     private router: Router,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private teamService: TeamService
   ) { }
 
   ngOnInit(): void {
     this.isAuthenticated$ = this.store.select(AuthSelector.selectIsAuthenticated);
     this.player$ = this.store.select(AuthSelector.selectPlayer).pipe(tap(p => console.log('Player:', p)));
     this.team$ = this.store.select(AuthSelector.selectTeam).pipe(tap(t => console.log('Team:', t)));
+    this.role$ = this.store.select(AuthSelector.selectRole);
+
+    this.playerTeam$ = this.player$.pipe(
+      filter(player => !!player?.teamId && player != null),
+      switchMap(player =>
+        this.teamService.getTeam(player?.teamId!).pipe(
+          map(team => {
+            const { user, ...teamPreview } = team;
+            return teamPreview as TeamPreview;
+          }),
+          catchError(() => of(null))
+        )
+      )
+    );
   }
 
   goToProfile() {
@@ -57,6 +76,15 @@ export class SidebarComponentComponent {
     }
   }
 
+  goToMyTeam() {
+    this.player$.pipe(
+      take(1),
+      filter(player => !!player?.teamId)
+    ).subscribe(player => {
+      this.router.navigate(['/teams', player!.teamId]);
+    });
+  }
+
   goToSchedule() {
     this.router.navigate(['schedule']);
   }
@@ -70,8 +98,8 @@ export class SidebarComponentComponent {
   }
 
   logout() {
-    localStorage.clear();
-    this.router.navigate(['login']);
+    this.store.dispatch(AuthAction.logout())
   }
+
 }
 

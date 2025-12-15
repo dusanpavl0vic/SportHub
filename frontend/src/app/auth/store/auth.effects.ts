@@ -36,6 +36,7 @@ export class AuthEffects {
               user: response.user,
               role: response.role
             })
+
           ),
           catchError((error) => {
             // console.log('RAW error:', error);
@@ -54,6 +55,16 @@ export class AuthEffects {
         )
       )
     )
+  );
+  loginSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.loginSuccess),
+        tap(() => {
+          this.router.navigate(['/']);
+        })
+      ),
+    { dispatch: false }
   );
 
 
@@ -105,11 +116,15 @@ export class AuthEffects {
     )
   );
 
+
+
   autoLogin$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.autoLogin),
       switchMap(({ token, role }) => {
         const userId = this.jwtService.getSubFromToken(token);
+
+
 
         return this.authService.getUserProfile(parseInt(userId)).pipe(
           map(user => {
@@ -122,5 +137,17 @@ export class AuthEffects {
         );
       })
     )
+  );
+
+
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          this.authService.logout();
+        })
+      ),
+    { dispatch: false }
   );
 }

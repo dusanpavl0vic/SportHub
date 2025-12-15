@@ -71,7 +71,7 @@ export const authReducer = createReducer(
     loading: false,
     error
   })),
-  //TODO: add reducer for player registration
-  //TODO: add reducer for team registration
-  //TODO: add reducer for logout
+  on(AuthActions.logout, (state) => ({
+    ...initialState
+  })),
 );
