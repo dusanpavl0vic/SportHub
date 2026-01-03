@@ -1,33 +1,54 @@
 <mat-card class="card">
-  <div class=" header">
-    <div *ngIf="team.profilePicture !== null; else letterCircle">
-      <img [src]="url + team.profilePicture" alt="{{ team.name }} Logo" class="logo" />
-    </div>
-    <ng-template #letterCircle>
-      <div class="circle-avatar" [ngStyle]="{ 'background-color': '#0B348C' }">
-        {{ team.name[0].toUpperCase() }}
-      </div>
-    </ng-template>
-    <h2>{{team.name}}</h2>
+ <div class="header">
+  <div
+   *ngIf="team.profilePicture !== null; else letterCircle"
+  >
+   <img
+    [src]="url + team.profilePicture"
+    alt="{{ team.name }} Logo"
+    class="logo"
+   />
+  </div>
+  <ng-template #letterCircle>
+   <div
+    class="circle-avatar"
+    [ngStyle]="{
+     'background-color': '#0B348C',
+    }"
+   >
+    {{ team.name[0].toUpperCase() }}
+   </div>
+  </ng-template>
+  <h2>{{ team.name }}</h2>
+ </div>
+
+ <div class="info-box">
+  <div class="info-item">
+   <mat-icon>
+    <img
+     [src]="url + team.sport.iconFilename"
+     alt="{{ team.sport.iconFilename }} Logo"
+     class="logo"
+    />
+   </mat-icon>
+   <span>{{ team.sport.name }}</span>
+  </div>
+  <div class="info-item">
+   <mat-icon>location_on</mat-icon>
+   <span>{{ team.city }}</span>
+  </div>
+  <div class="info-item">
+   <mat-icon>group</mat-icon>
+   <span>{{ team.numberOfPlayers }}</span>
   </div>
 
-  <div class="info-box">
-    <div class="info-item">
-
-      <mat-icon>
-        <img [src]="url + team.sport.iconFilename" alt="{{ team.sport.iconFilename }} Logo" class="logo" />
-      </mat-icon>
-      <span>{{ team.sport.name}}</span>
-    </div>
-    <div class="info-item">
-      <mat-icon>location_on</mat-icon>
-      <span>{{team.city}}</span>
-    </div>
-    <div class="info-item">
-      <mat-icon>group</mat-icon>
-      <span>{{team.numberOfPlayers}}</span>
-    </div>
-
-    <button (click)="goToTeam(team.id)" mat-raised-button color="warn" class="more-btn">More info</button>
-  </div>
+  <button
+   (click)="goToTeam(team.id)"
+   mat-raised-button
+   color="warn"
+   class="more-btn"
+  >
+   More info
+  </button>
+ </div>
 </mat-card>

@@ -1,20 +1,20 @@
-import { Sport } from "../sport/sport.dto";
-import { UserDto } from "../user/create-user.dto";
+import { Sport } from '../sport/sport.dto';
+import { UserDto } from '../user/create-user.dto';
 
 export interface Team {
-  id: number;
+ id: number;
 
-  name: string;
+ name: string;
 
-  profilePicture: string;
+ profilePicture: string;
 
-  city: string;
+ city: string;
 
-  numberOfPlayers: number;
+ numberOfPlayers: number;
 
-  sport: Sport;
+ sport: Sport;
 
-  user: UserDto;
+ user: UserDto;
 }
 
 export type TeamPreview = Omit<Team, 'user'>;

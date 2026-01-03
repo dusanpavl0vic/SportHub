@@ -1,24 +1,24 @@
 .login-background {
-  background-color: white;
-  background-image: url('/assets/backgroundPattern.svg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+ background-color: white;
+ background-image: url('/assets/backgroundPattern.svg');
+ background-repeat: no-repeat;
+ background-size: cover;
+ background-position: center;
+ background-attachment: fixed;
 
-  .with-sidebar {
-    display: flex;
-    align-items: stretch;
-    min-height: 100vh;
+ .with-sidebar {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
 
-    app-sidebar-component {
-      width: 250px;
-      flex-shrink: 0;
-    }
-
-    .content-wrapper {
-      flex: 1;
-      display: block;
-    }
+  app-sidebar-component {
+   width: 250px;
+   flex-shrink: 0;
   }
+
+  .content-wrapper {
+   flex: 1;
+   display: block;
+  }
+ }
 }

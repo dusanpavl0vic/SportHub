@@ -1,21 +1,21 @@
-import { UserDto } from "../user/create-user.dto";
+import { UserDto } from '../user/create-user.dto';
 
 export interface Player {
-  id: number;
+ id: number;
 
-  firstname: string;
+ firstname: string;
 
-  lastname: string;
+ lastname: string;
 
-  phoneNumber: string;
+ phoneNumber: string;
 
-  birthdate: Date;
+ birthdate: Date;
 
-  city: string;
+ city: string;
 
-  profilePicture: string;
+ profilePicture: string;
 
-  teamId: number
+ teamId: number;
 
-  user: UserDto
+ user: UserDto;
 }

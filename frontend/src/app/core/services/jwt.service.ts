@@ -1,73 +1,67 @@
-import { Injectable } from "@angular/core";
-import { Role } from "src/enum/role.enum";
+import { Injectable } from '@angular/core';
+import { Role } from 'src/enum/role.enum';
 
 @Injectable({ providedIn: 'root' })
 export class JwtService {
-  decodeToken(token: string): any {
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-      return null;
-    }
+ decodeToken(token: string): any {
+  try {
+   return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+   return null;
+  }
+ }
+
+ getRoleFromToken(token: string): Role {
+  const decoded = this.decodeToken(token);
+  return decoded?.role || null;
+ }
+
+ getSubFromToken(token: string): string {
+  const decoded = this.decodeToken(token);
+  return decoded?.sub || null;
+ }
+
+ isTokenExpired(token: string | null): boolean {
+  if (!token) {
+   return true;
   }
 
-  getRoleFromToken(token: string): Role {
-    const decoded = this.decodeToken(token);
-    return decoded?.role || null;
+  const decoded: any = this.decodeToken(token);
+  if (!decoded || !decoded.exp) {
+   return true;
   }
 
-  getSubFromToken(token: string): string {
-    const decoded = this.decodeToken(token);
-    return decoded?.sub || null;
-  }
+  const currentTime = Math.floor(Date.now() / 1000);
+  return decoded.exp < currentTime;
+ }
 
-  isTokenExpired(token: string | null): boolean {
-    if (!token) {
-      return true;
-    }
+ isAuthenticated(): boolean {
+  const token = localStorage.getItem('token');
+  return token !== null && !this.isTokenExpired(token);
+ }
 
-    const decoded: any = this.decodeToken(token);
-    if (!decoded || !decoded.exp) {
-      return true;
-    }
+ getRole(): Role | null {
+  const token = localStorage.getItem('token');
 
-    const currentTime = Math.floor(Date.now() / 1000);
-    return decoded.exp < currentTime;
-  }
+  if (token == null) return null;
 
-  isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    return token !== null && !this.isTokenExpired(token);
-  }
+  return this.getRoleFromToken(token);
+ }
 
-  getRole(): Role | null {
+ getSub(): string | null {
+  const token = localStorage.getItem('token');
 
-    const token = localStorage.getItem('token');
+  if (token == null) return null;
 
-    if (token == null)
-      return null;
+  return this.getSubFromToken(token);
+ }
 
-    return this.getRoleFromToken(token);
-  }
+ getProfileId(): string | null {
+  const token = localStorage.getItem('token');
 
-  getSub(): string | null {
+  if (token == null) return null;
 
-    const token = localStorage.getItem('token');
-
-    if (token == null)
-      return null;
-
-    return this.getSubFromToken(token);
-  }
-
-  getProfileId(): string | null {
-
-    const token = localStorage.getItem('token');
-
-    if (token == null)
-      return null;
-
-    const decoded = this.decodeToken(token);
-    return decoded?.profileId || null;
-  }
+  const decoded = this.decodeToken(token);
+  return decoded?.profileId || null;
+ }
 }

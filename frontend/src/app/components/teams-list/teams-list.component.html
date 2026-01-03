@@ -1,53 +1,87 @@
 <div class="team-list">
-  <div class="filters">
-    <mat-form-field appearance="outline">
-      <mat-label>Sport</mat-label>
-      <mat-select [value]="(filters$ | async)?.sport" (selectionChange)="onFilterChange({ sport: $event.value })"
-        [compareWith]="compareSports">
-        <mat-option [value]="undefined">All sports</mat-option>
-        <mat-option *ngFor="let sport of sports" [value]="sport">
-          {{ sport.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+ <div class="filters">
+  <mat-form-field appearance="outline">
+   <mat-label>Sport</mat-label>
+   <mat-select
+    [value]="(filters$ | async)?.sport"
+    (selectionChange)="
+     onFilterChange({
+      sport: $event.value,
+     })
+    "
+    [compareWith]="compareSports"
+   >
+    <mat-option [value]="undefined">All sports</mat-option>
+    <mat-option
+     *ngFor="let sport of sports"
+     [value]="sport"
+    >
+     {{ sport.name }}
+    </mat-option>
+   </mat-select>
+  </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>City</mat-label>
-      <mat-select [value]="(filters$ | async)?.city" (selectionChange)="onFilterChange({ city: $event.value })">
-        <mat-option [value]="undefined">All cities</mat-option>
-        <mat-option *ngFor="let city of cities" [value]="city">
-          {{ city }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+  <mat-form-field appearance="outline">
+   <mat-label>City</mat-label>
+   <mat-select
+    [value]="(filters$ | async)?.city"
+    (selectionChange)="
+     onFilterChange({
+      city: $event.value,
+     })
+    "
+   >
+    <mat-option [value]="undefined">All cities</mat-option>
+    <mat-option *ngFor="let city of cities" [value]="city">
+     {{ city }}
+    </mat-option>
+   </mat-select>
+  </mat-form-field>
 
+  <mat-form-field appearance="outline">
+   <mat-label>Sort</mat-label>
+   <mat-select
+    [value]="(filters$ | async)?.sort"
+    (selectionChange)="
+     onFilterChange({
+      sort: $event.value,
+     })
+    "
+   >
+    <mat-option [value]="undefined">No sorting</mat-option>
+    <mat-option
+     *ngFor="let option of sortOptions"
+     [value]="option.value"
+    >
+     {{ option.label }}
+    </mat-option>
+   </mat-select>
+  </mat-form-field>
+ </div>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Sort</mat-label>
-      <mat-select [value]="(filters$ | async)?.sort" (selectionChange)="onFilterChange({ sort: $event.value })">
-        <mat-option [value]="undefined">No sorting</mat-option>
-        <mat-option *ngFor="let option of sortOptions" [value]="option.value">
-          {{ option.label }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <ng-container *ngIf="teams$ | async as teams">
-    <ng-container *ngIf="teams.length === 0; else teamsList">
-      <div class="no-teams-message">
-        <p>No teams found.</p>
-      </div>
-    </ng-container>
-
-    <ng-template #teamsList>
-      <div class="team-card-container">
-        <team-card *ngFor="let team of teams" [team]="team"></team-card>
-      </div>
-    </ng-template>
+ <ng-container *ngIf="teams$ | async as teams">
+  <ng-container *ngIf="teams.length === 0; else teamsList">
+   <div class="no-teams-message">
+    <p>No teams found.</p>
+   </div>
   </ng-container>
 
-  <mat-paginator [length]="(totalTeams$ | async) || 0" [pageSize]="(pagination$ | async)?.limit"
-    [pageIndex]="(pagination$ | async)!.page - 1" (page)="onPageChange($event)" aria-label="Select page">
-  </mat-paginator>
+  <ng-template #teamsList>
+   <div class="team-card-container">
+    <team-card
+     *ngFor="let team of teams"
+     [team]="team"
+    ></team-card>
+   </div>
+  </ng-template>
+ </ng-container>
+
+ <mat-paginator
+  [length]="(totalTeams$ | async) || 0"
+  [pageSize]="(pagination$ | async)?.limit"
+  [pageIndex]="(pagination$ | async)!.page - 1"
+  (page)="onPageChange($event)"
+  aria-label="Select page"
+ >
+ </mat-paginator>
 </div>

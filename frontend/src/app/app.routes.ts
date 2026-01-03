@@ -17,58 +17,86 @@ import { TeamMembershipGuard } from './core/guards/team-membership.guard';
 // import { TeamMembershipGuard } from './core/guards/team-membership.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'teams', pathMatch: 'full' },
+ {
+  path: '',
+  redirectTo: 'teams',
+  pathMatch: 'full',
+ },
 
-  { path: 'teams', component: TeamsListComponent },
+ { path: 'teams', component: TeamsListComponent },
 
-  {
-    path: 'teams/:teamId',
-    component: TeamDashboardComponent,
-    children: [
-      { path: '', redirectTo: 'overview', pathMatch: 'full' },
-      {
-        path: 'schedule',
-        component: TeamScheduleComponent,
-        canActivate: [AuthGuard, TeamMembershipGuard]
-      },
-      {
-        path: 'members',
-        component: TeamMembersComponent,
-        canActivate: [AuthGuard, TeamMembershipGuard]
-      },
-      {
-        path: 'settings',
-        component: TeamSettingsComponent,
-        canActivate: [AuthGuard, RoleGuard],
-        data: { roles: [Role.TEAM] }
-      },
-      {
-        path: 'add-ann',
-        component: TeamAddAnnComponent,
-        canActivate: [AuthGuard, RoleGuard],
-        data: { roles: [Role.TEAM] }
-      },
-    ]
-  },
-  {
-    path: 'player/:playerId',
-    component: PlayerProfileComponent,
-    canActivate: [AuthGuard],
-  },
-  { path: 'login', component: LoginComponent, canActivate: [GuestGuard] },
-  {
-    path: 'register', component: RegisterComponent, canActivate: [GuestGuard],
-    children: [
-      { path: '', redirectTo: 'player', pathMatch: 'full' },
-      {
-        path: 'player',
-        loadComponent: () => import('./components/register-player/register-player.component').then(m => m.RegisterPlayerComponent)
-      },
-      {
-        path: 'team',
-        loadComponent: () => import('./components/register-team/register-team.component').then(m => m.RegisterTeamComponent)
-      }
-    ]
-  },
-  { path: '**', component: NotfoundComponent }
+ {
+  path: 'teams/:teamId',
+  component: TeamDashboardComponent,
+  children: [
+   {
+    path: '',
+    redirectTo: 'overview',
+    pathMatch: 'full',
+   },
+   {
+    path: 'schedule',
+    component: TeamScheduleComponent,
+    canActivate: [AuthGuard, TeamMembershipGuard],
+   },
+   {
+    path: 'members',
+    component: TeamMembersComponent,
+    canActivate: [AuthGuard, TeamMembershipGuard],
+   },
+   {
+    path: 'settings',
+    component: TeamSettingsComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+     roles: [Role.TEAM],
+    },
+   },
+   {
+    path: 'add-ann',
+    component: TeamAddAnnComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+     roles: [Role.TEAM],
+    },
+   },
+  ],
+ },
+ {
+  path: 'player/:playerId',
+  component: PlayerProfileComponent,
+  canActivate: [AuthGuard],
+ },
+ {
+  path: 'login',
+  component: LoginComponent,
+  canActivate: [GuestGuard],
+ },
+ {
+  path: 'register',
+  component: RegisterComponent,
+  canActivate: [GuestGuard],
+  children: [
+   {
+    path: '',
+    redirectTo: 'player',
+    pathMatch: 'full',
+   },
+   {
+    path: 'player',
+    loadComponent: () =>
+     import('./components/register-player/register-player.component').then(
+      (m) => m.RegisterPlayerComponent,
+     ),
+   },
+   {
+    path: 'team',
+    loadComponent: () =>
+     import('./components/register-team/register-team.component').then(
+      (m) => m.RegisterTeamComponent,
+     ),
+   },
+  ],
+ },
+ { path: '**', component: NotfoundComponent },
 ];

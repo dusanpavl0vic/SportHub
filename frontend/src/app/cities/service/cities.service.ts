@@ -1,25 +1,27 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+ providedIn: 'root',
 })
 export class CitiesService {
-  private apiUrl = 'https://countriesnow.space/api/v0.1/'; // prilagodi ako backend radi na drugom portu
+ private apiUrl = 'https://countriesnow.space/api/v0.1/'; // prilagodi ako backend radi na drugom portu
 
-  constructor(
-    private http: HttpClient
-  ) { }
+ constructor(private http: HttpClient) {}
 
-  getCities(data: { country: string }): Observable<CitiesResponse> {
-    return this.http.post<CitiesResponse>(`${this.apiUrl}countries/cities`, data);
-  }
+ getCities(data: {
+  country: string;
+ }): Observable<CitiesResponse> {
+  return this.http.post<CitiesResponse>(
+   `${this.apiUrl}countries/cities`,
+   data,
+  );
+ }
 }
 
-
 interface CitiesResponse {
-  error: string,
-  msg: string,
-  data: string[]
+ error: string;
+ msg: string;
+ data: string[];
 }

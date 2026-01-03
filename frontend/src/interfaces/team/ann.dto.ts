@@ -1,9 +1,9 @@
 export interface ReturnAnnouncementDto {
-  id: number;
+ id: number;
 
-  title: string;
+ title: string;
 
-  description: string;
+ description: string;
 
-  date: Date;
+ date: Date;
 }

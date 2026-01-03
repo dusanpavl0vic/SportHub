@@ -1,16 +1,31 @@
 <div class="login-container">
-  <div class="register-container">
-    <div class="tabs">
-      <button class="tab" [class.active]="selectedTab === 'player'" (click)="selectTab('player')">
-        Player
-      </button>
-      <button class="tab" [class.active]="selectedTab === 'team'" (click)="selectTab('team')">
-        Team
-      </button>
-    </div>
-    <div class="content">
-      <app-register-player *ngIf="selectedTab === 'player'" [citiesList]="citiesList"></app-register-player>
-      <app-register-team *ngIf="selectedTab === 'team'" [citiesList]="citiesList"></app-register-team>
-    </div>
+ <div class="register-container">
+  <div class="tabs">
+   <button
+    class="tab"
+    [class.active]="selectedTab === 'player'"
+    (click)="selectTab('player')"
+   >
+    Player
+   </button>
+   <button
+    class="tab"
+    [class.active]="selectedTab === 'team'"
+    (click)="selectTab('team')"
+   >
+    Team
+   </button>
   </div>
+  <div class="content">
+   <app-register-player
+    *ngIf="selectedTab === 'player'"
+    [citiesList]="citiesList"
+   ></app-register-player>
+   <app-register-team
+    *ngIf="selectedTab === 'team'"
+    [citiesList]="citiesList"
+    [sportsList]="sportsList"
+   ></app-register-team>
+  </div>
+ </div>
 </div>

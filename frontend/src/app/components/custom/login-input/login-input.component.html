@@ -1,22 +1,48 @@
 <div class="input-wrapper">
-  <mat-form-field class="w-full" appearance="outline">
-    <mat-label>{{ label }}</mat-label>
+ <mat-form-field class="w-full" appearance="outline">
+  <mat-label>{{ label }}</mat-label>
 
-    <input matInput [type]="showPassword ? 'text' : type" [placeholder]="placeholder" [formControl]="control"
-      (input)="onInput($event)" />
+  <input
+   matInput
+   [type]="showPassword ? 'text' : type"
+   [placeholder]="placeholder"
+   [formControl]="control"
+   (input)="onInput($event)"
+  />
 
-    <mat-icon *ngIf="type === 'password'" matSuffix class="cursor-pointer" (click)="togglePassword()">
-      {{ showPassword ? 'visibility' : 'visibility_off' }}
-    </mat-icon>
+  <mat-icon
+   *ngIf="type === 'password'"
+   matSuffix
+   class="cursor-pointer"
+   (click)="togglePassword()"
+  >
+   {{ showPassword ? 'visibility' : 'visibility_off' }}
+  </mat-icon>
 
-    <mat-icon *ngIf="type !== 'password'" matSuffix>{{ icon }}</mat-icon>
-  </mat-form-field>
-  <div class="alert" *ngIf="control.invalid && (control.dirty || control.touched)">
-    <div *ngIf="control.hasError('required')">{{ label }} je obavezan.</div>
-    <div *ngIf="type === 'email' && control.hasError('email')">Neispravan format emaila</div>
-    <div *ngIf="type === 'password' && control.hasError('minlength')">
-      Lozinka duzine min 8
-    </div>
+  <mat-icon *ngIf="type !== 'password'" matSuffix>{{
+   icon
+  }}</mat-icon>
+ </mat-form-field>
+ <div
+  class="alert"
+  *ngIf="
+   control.invalid && (control.dirty || control.touched)
+  "
+ >
+  <div *ngIf="control.hasError('required')">
+   {{ label }} je obavezan.
   </div>
-
+  <div
+   *ngIf="type === 'email' && control.hasError('email')"
+  >
+   Neispravan format emaila
+  </div>
+  <div
+   *ngIf="
+    type === 'password' && control.hasError('minlength')
+   "
+  >
+   Lozinka duzine min 8
+  </div>
+ </div>
 </div>

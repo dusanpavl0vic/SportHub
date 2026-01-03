@@ -1,12 +1,14 @@
-import { CreateTeamDto } from "./create-team.dto";
+import { CreateTeamDto } from './create-team.dto';
 
-export interface UpdateTeamDto extends Partial<Omit<CreateTeamDto, 'sport'>> { }
+export interface UpdateTeamDto extends Partial<
+ Omit<CreateTeamDto, 'sport'>
+> {}
 
 export interface ReturnTeamDto extends UpdateTeamDto {
-  id: number;
+ id: number;
 }
 
 export interface UpdateTeamProfileImageDto {
-  id: number;
-  profileImage: string;
+ id: number;
+ profileImage: string;
 }

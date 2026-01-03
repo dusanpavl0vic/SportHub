@@ -10,55 +10,61 @@ import { Player } from 'src/interfaces/player/player.dto';
 import { Team } from 'src/interfaces/team/team.dto';
 
 @Component({
-  selector: 'app-header',
-  imports: [
-    CommonModule,
-    FormsModule,
-  ],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
-  standalone: true,
+ selector: 'app-header',
+ imports: [CommonModule, FormsModule],
+ templateUrl: './header.component.html',
+ styleUrl: './header.component.scss',
+ standalone: true,
 })
 export class HeaderComponent implements OnInit {
+ url = 'http://localhost:3000';
 
-  url = "http://localhost:3000"
+ isAuthenticated$!: Observable<boolean>;
+ player$!: Observable<Player | null>;
+ team$!: Observable<Team | null>;
 
-  isAuthenticated$!: Observable<boolean>;
-  player$!: Observable<Player | null>;
-  team$!: Observable<Team | null>;
+ constructor(
+  private store: Store<AppState>,
+  private router: Router,
+ ) {}
 
-  constructor(private store: Store<AppState>, private router: Router) { }
+ ngOnInit(): void {
+  this.isAuthenticated$ = this.store.select(
+   AuthSelector.selectIsAuthenticated,
+  );
+  this.player$ = this.store
+   .select(AuthSelector.selectPlayer)
+   .pipe(tap((player) => console.log('Player:', player)));
 
-  ngOnInit(): void {
+  this.team$ = this.store
+   .select(AuthSelector.selectTeam)
+   .pipe(tap((team) => console.log('Team:', team)));
 
-    this.isAuthenticated$ = this.store.select(AuthSelector.selectIsAuthenticated);
-    this.player$ = this.store.select(AuthSelector.selectPlayer).pipe((
-      tap((player) => console.log('Player:', player))
-    ));
+  // this.player$.subscribe(player => {
+  //   console.log('Player from store:', player);
+  // });
 
-    this.team$ = this.store.select(AuthSelector.selectTeam).pipe((
-      tap((team) => console.log('Team:', team))
-    ));
+  // this.team$.subscribe(team => {
+  //   console.log('Team from store:', team);
+  // });
+ }
 
-    // this.player$.subscribe(player => {
-    //   console.log('Player from store:', player);
-    // });
+ goToLogin() {
+  this.router.navigate(['login']);
+ }
 
-    // this.team$.subscribe(team => {
-    //   console.log('Team from store:', team);
-    // });
-  }
+ goToTeams() {
+  this.router.navigate(['teams']);
+ }
 
-  goToLogin() {
-    this.router.navigate(['login']);
-  }
-
-  goToTeams() {
-    this.router.navigate(["teams"]);
-  }
-
-  getRandomColor(): string {
-    const colors = ['#FF6B6B', '#6BCB77', '#4D96FF', '#FFD93D', '#845EC2'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
+ getRandomColor(): string {
+  const colors = [
+   '#FF6B6B',
+   '#6BCB77',
+   '#4D96FF',
+   '#FFD93D',
+   '#845EC2',
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+ }
 }

@@ -1,16 +1,16 @@
 <header class="header">
-  <div class="logo">Sport<span>Hub</span></div>
+ <div class="logo">Sport<span>Hub</span></div>
 
-  <ng-container *ngIf="!(isAuthenticated$ | async)">
-    <div class="nav-links">
-      <a (click)="goToTeams()">Teams</a>
-      <a (click)="goToLogin()">Login</a>
-    </div>
-  </ng-container>
+ <ng-container *ngIf="!(isAuthenticated$ | async)">
+  <div class="nav-links">
+   <a (click)="goToTeams()">Teams</a>
+   <a (click)="goToLogin()">Login</a>
+  </div>
+ </ng-container>
 
-  <ng-container *ngIf="isAuthenticated$ | async">
-    <div class="nav-links">
-      <a (click)="goToTeams()">Teams</a>
-    </div>
-  </ng-container>
+ <ng-container *ngIf="isAuthenticated$ | async">
+  <div class="nav-links">
+   <a (click)="goToTeams()">Teams</a>
+  </div>
+ </ng-container>
 </header>
