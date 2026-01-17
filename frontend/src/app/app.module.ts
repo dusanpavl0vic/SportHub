@@ -1,11 +1,11 @@
 import {
- HTTP_INTERCEPTORS,
- HttpClientModule,
+  HTTP_INTERCEPTORS,
+  HttpClientModule,
 } from '@angular/common/http';
 import {
- APP_INITIALIZER,
- isDevMode,
- NgModule,
+  APP_INITIALIZER,
+  isDevMode,
+  NgModule,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -20,7 +20,6 @@ import { appReducer } from './app.reducer';
 import { routes } from './app.routes';
 import { AuthService } from './auth/service/auth.service';
 import { AuthEffects } from './auth/store/auth.effects';
-import { AnnComponent } from './components/ann/ann.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginComponent } from './components/login/login.component';
 import { NotfoundComponent } from './components/notfound/notfound.component';
@@ -35,54 +34,54 @@ import { TeamsListComponent } from './components/teams-list/teams-list.component
 import { AuthInterceptor } from './core/interceptor/auth.interceptor';
 import { JwtService } from './core/services/jwt.service';
 import { storageMetaReducer } from './store/meta-reducers/storage.metareducer';
+import { TeamMembersEffects } from './store/team-members/team-members.effects';
 
 @NgModule({
- declarations: [AppComponent],
- imports: [
-  RouterModule.forRoot(routes),
-  BrowserModule,
-  FormsModule,
-  HttpClientModule,
-  StoreModule.forRoot(appReducer, {
-   metaReducers: [storageMetaReducer],
-  }),
-  EffectsModule.forRoot([AuthEffects]),
-  LoginComponent,
-  MatSlideToggleModule,
-  TeamCardComponent,
-  TeamsListComponent,
-  HeaderComponent,
-  TeamDashboardComponent,
-  TeamAddAnnComponent,
-  TeamScheduleComponent,
-  TeamMembersComponent,
-  TeamSettingsComponent,
-  AnnComponent,
-  NotfoundComponent,
-  TeamDashboardComponent,
-  SidebarComponentComponent,
- ],
- providers: [
-  provideStoreDevtools({
-   maxAge: 25,
-   logOnly: !isDevMode(),
-   autoPause: true,
-   trace: false,
-   traceLimit: 75,
-   connectInZone: true,
-  }),
-  {
-   provide: HTTP_INTERCEPTORS,
-   useClass: AuthInterceptor,
-   multi: true,
-  },
-  {
-   provide: APP_INITIALIZER,
-   useFactory: appInitializerFactory,
-   deps: [Store, JwtService, AuthService],
-   multi: true,
-  },
- ],
- bootstrap: [AppComponent],
+  declarations: [AppComponent],
+  imports: [
+    RouterModule.forRoot(routes),
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    StoreModule.forRoot(appReducer, {
+      metaReducers: [storageMetaReducer],
+    }),
+    EffectsModule.forRoot([AuthEffects, TeamMembersEffects]),
+    LoginComponent,
+    MatSlideToggleModule,
+    TeamCardComponent,
+    TeamsListComponent,
+    HeaderComponent,
+    TeamDashboardComponent,
+    TeamAddAnnComponent,
+    TeamScheduleComponent,
+    TeamMembersComponent,
+    TeamSettingsComponent,
+    NotfoundComponent,
+    TeamDashboardComponent,
+    SidebarComponentComponent,
+  ],
+  providers: [
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: !isDevMode(),
+      autoPause: true,
+      trace: false,
+      traceLimit: 75,
+      connectInZone: true,
+    }),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializerFactory,
+      deps: [Store, JwtService, AuthService],
+      multi: true,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

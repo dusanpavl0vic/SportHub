@@ -1,87 +1,94 @@
-<div class="team-list">
- <div class="filters">
-  <mat-form-field appearance="outline">
-   <mat-label>Sport</mat-label>
-   <mat-select
-    [value]="(filters$ | async)?.sport"
-    (selectionChange)="
-     onFilterChange({
-      sport: $event.value,
-     })
-    "
-    [compareWith]="compareSports"
-   >
-    <mat-option [value]="undefined">All sports</mat-option>
-    <mat-option
-     *ngFor="let sport of sports"
-     [value]="sport"
-    >
-     {{ sport.name }}
-    </mat-option>
-   </mat-select>
-  </mat-form-field>
+<div class="team-list-page">
+  <div class="page-header">
+    <h1 class="page-title">Timovi</h1>
+    <p class="page-subtitle">Pretražite i pronađite svoj savršen tim</p>
+  </div>
 
-  <mat-form-field appearance="outline">
-   <mat-label>City</mat-label>
-   <mat-select
-    [value]="(filters$ | async)?.city"
-    (selectionChange)="
-     onFilterChange({
-      city: $event.value,
-     })
-    "
-   >
-    <mat-option [value]="undefined">All cities</mat-option>
-    <mat-option *ngFor="let city of cities" [value]="city">
-     {{ city }}
-    </mat-option>
-   </mat-select>
-  </mat-form-field>
+  <div class="filters-section">
+    <div class="filter-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Sport</mat-label>
+        <mat-select [value]="(filters$ | async)?.sport" (selectionChange)="
+       onFilterChange({
+        sport: $event.value,
+       })
+      " [compareWith]="compareSports">
+          <mat-option [value]="undefined">All sports</mat-option>
+          <mat-option *ngFor="let sport of sports" [value]="sport">
+            {{ sport.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-  <mat-form-field appearance="outline">
-   <mat-label>Sort</mat-label>
-   <mat-select
-    [value]="(filters$ | async)?.sort"
-    (selectionChange)="
-     onFilterChange({
-      sort: $event.value,
-     })
-    "
-   >
-    <mat-option [value]="undefined">No sorting</mat-option>
-    <mat-option
-     *ngFor="let option of sortOptions"
-     [value]="option.value"
-    >
-     {{ option.label }}
-    </mat-option>
-   </mat-select>
-  </mat-form-field>
- </div>
+    <div class="filter-group">
+      <mat-form-field appearance="outline">
+        <mat-label>City</mat-label>
+        <mat-select [value]="(filters$ | async)?.city" (selectionChange)="
+       onFilterChange({
+        city: $event.value,
+       })
+      ">
+          <mat-option [value]="undefined">All cities</mat-option>
+          <mat-option *ngFor="let city of cities" [value]="city">
+            {{ city }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
 
- <ng-container *ngIf="teams$ | async as teams">
-  <ng-container *ngIf="teams.length === 0; else teamsList">
-   <div class="no-teams-message">
-    <p>No teams found.</p>
-   </div>
+    <div class="filter-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Sort</mat-label>
+        <mat-select [value]="(filters$ | async)?.sort" (selectionChange)="
+       onFilterChange({
+        sort: $event.value,
+       })
+      ">
+          <mat-option [value]="undefined">No sorting</mat-option>
+          <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <ng-container *ngIf="teams$ | async as teams">
+    <ng-container *ngIf="teams.length === 0; else teamsList">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h3 class="empty-title">Nema pronađenih timova</h3>
+        <p class="empty-description">
+          Pokušajte da promenite filtere ili pretražite ponovo
+        </p>
+      </div>
+    </ng-container>
+
+    <ng-template #teamsList>
+      <div class="team-card-container">
+        <team-card *ngFor="let team of teams" [team]="team"></team-card>
+      </div>
+    </ng-template>
   </ng-container>
 
-  <ng-template #teamsList>
-   <div class="team-card-container">
-    <team-card
-     *ngFor="let team of teams"
-     [team]="team"
-    ></team-card>
-   </div>
-  </ng-template>
- </ng-container>
-
- <mat-paginator
-  [length]="(totalTeams$ | async) || 0"
-  [pageSize]="(pagination$ | async)?.limit"
-  [pageIndex]="(pagination$ | async)!.page - 1"
-  (page)="onPageChange($event)"
-  aria-label="Select page"
- >
- </mat-paginator>
+  <ng-container *ngIf="teams$ | async as teams">
+    <ng-container *ngIf="totalTeams$ | async as total">
+      <ng-container *ngIf="pagination$ | async as pagination">
+        <div class="pagination-wrapper" *ngIf="teams.length > 0">
+          <mat-paginator [length]="total" [pageSize]="pagination.limit" [pageIndex]="pagination.page - 1"
+            (page)="onPageChange($event)" aria-label="Select page">
+          </mat-paginator>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
 </div>

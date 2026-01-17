@@ -53,6 +53,7 @@ export class RegisterTeamComponent {
  loading$!: Observable<boolean>;
  error$!: Observable<string | null>;
 
+  
  constructor() {
   this.error$ = this.store
    .select(AuthSelector.selectError)

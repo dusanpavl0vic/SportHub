@@ -5,93 +5,127 @@ import * as AuthActions from './auth.action';
 import { AuthState } from './auth.model';
 
 const persistedState =
- loadFromLocalStorage<any>('app_state');
+  loadFromLocalStorage<any>('app_state');
 
 export const initialState: AuthState = {
- isAuthenticated:
-  persistedState?.auth?.isAuthenticated ?? false,
- token: persistedState?.auth?.token ?? null,
- role: persistedState?.auth?.role ?? null,
- user: persistedState?.auth?.user ?? null,
- loading: false,
- error: null,
+  isAuthenticated:
+    persistedState?.auth?.isAuthenticated ?? false,
+  token: persistedState?.auth?.token ?? null,
+  role: persistedState?.auth?.role ?? null,
+  user: persistedState?.auth?.user ?? null,
+  loading: false,
+  error: null,
 };
 
 export const authReducer = createReducer(
- initialState,
- on(AuthActions.login, (state) => ({
-  ...state,
-  loading: true,
-  error: null,
- })),
- on(
-  AuthActions.loginSuccess,
-  (state, { token, user, role }) => ({
-   ...state,
-   isAuthenticated: true,
-   token,
-   user,
-   role,
-   loading: false,
-   error: null,
+  initialState,
+  on(AuthActions.login, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(
+    AuthActions.loginSuccess,
+    (state, { token, user, role }) => ({
+      ...state,
+      isAuthenticated: true,
+      token,
+      user,
+      role,
+      loading: false,
+      error: null,
+    }),
+  ),
+  on(AuthActions.loginFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+  on(AuthActions.registerPlayer, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(
+    AuthActions.registerPlayerSuccess,
+    (state, { token, player, role }) => ({
+      ...state,
+      isAuthenticated: true,
+      token,
+      user: player,
+      role,
+      loading: false,
+      error: null,
+    }),
+  ),
+  on(
+    AuthActions.registerPlayerFailure,
+    (state, { error }) => ({
+      ...state,
+      loading: false,
+      error,
+    }),
+  ),
+  on(AuthActions.registerTeam, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+  on(
+    AuthActions.registerTeamSuccess,
+    (state, { token, team, role }) => ({
+      ...state,
+      isAuthenticated: true,
+      token,
+      user: team,
+      role,
+      loading: false,
+      error: null,
+    }),
+  ),
+  on(
+    AuthActions.registerTeamFailure,
+    (state, { error }) => ({
+      ...state,
+      loading: false,
+      error,
+    }),
+  ),
+  on(AuthActions.logout, (state) => ({
+    ...state,
+    isAuthenticated: false,
+    token: null,
+    user: null,
+    role: null,
+    loading: false,
+    error: null,
+  })),
+  on(AuthActions.clearAuthError, (state) => ({
+    ...state,
+    error: null
+  })),
+  on(AuthActions.decrementNumberOfPlayers, (state) => {
+    if (state.user && 'numberOfPlayers' in state.user) {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          numberOfPlayers: state.user.numberOfPlayers - 1
+        }
+      };
+    }
+    return state;
   }),
- ),
- on(AuthActions.loginFailure, (state, { error }) => ({
-  ...state,
-  loading: false,
-  error,
- })),
- on(AuthActions.registerPlayer, (state) => ({
-  ...state,
-  loading: true,
-  error: null,
- })),
- on(
-  AuthActions.registerPlayerSuccess,
-  (state, { token, player, role }) => ({
-   ...state,
-   isAuthenticated: true,
-   token,
-   user: player,
-   role,
-   loading: false,
-   error: null,
-  }),
- ),
- on(
-  AuthActions.registerPlayerFailure,
-  (state, { error }) => ({
-   ...state,
-   loading: false,
-   error,
-  }),
- ),
- on(AuthActions.registerTeam, (state) => ({
-  ...state,
-  loading: true,
-  error: null,
- })),
- on(
-  AuthActions.registerTeamSuccess,
-  (state, { token, team, role }) => ({
-   ...state,
-   isAuthenticated: true,
-   token,
-   user: team,
-   role,
-   loading: false,
-   error: null,
-  }),
- ),
- on(
-  AuthActions.registerTeamFailure,
-  (state, { error }) => ({
-   ...state,
-   loading: false,
-   error,
-  }),
- ),
- on(AuthActions.logout, () => ({
-  ...initialState,
- })),
+  on(AuthActions.incrementNumberOfPlayers, (state) => {
+    if (state.user && 'numberOfPlayers' in state.user) {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          numberOfPlayers: state.user.numberOfPlayers + 1
+        }
+      };
+    }
+    return state;
+  })
 );

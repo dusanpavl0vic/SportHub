@@ -1,0 +1,31 @@
+<div class="overlay">
+  <div class="popup-card">
+    <div class="header">
+      <h2>Nova objava</h2>
+      <button mat-icon-button class="close-icon" (click)="close()" [disabled]="loading">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="form-content">
+      <div class="form-group">
+        <label class="form-label">Naslov</label>
+        <input type="text" class="form-input" [(ngModel)]="title" placeholder="Unesite naslov objave" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Opis</label>
+        <textarea class="form-textarea" [(ngModel)]="description" rows="5" placeholder="Unesite opis objave"></textarea>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="cancel-btn" (click)="close()" [disabled]="loading">
+        Otkaži
+      </button>
+      <button class="submit-btn" (click)="submit()" [disabled]="loading">
+        Objavi
+      </button>
+    </div>
+  </div>
+</div>

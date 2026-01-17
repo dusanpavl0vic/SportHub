@@ -8,8 +8,6 @@
 
  .with-sidebar {
   display: flex;
-  align-items: stretch;
-  min-height: 100vh;
 
   app-sidebar-component {
    width: 250px;

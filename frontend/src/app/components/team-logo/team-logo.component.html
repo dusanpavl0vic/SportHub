@@ -1,0 +1,11 @@
+<div *ngIf="logoUrl; else letterCircle">
+  <img [src]="'http://localhost:3000' + logoUrl" [alt]="teamName + ' Logo'" class="team-logo" />
+</div>
+
+<ng-template #letterCircle>
+  <div class="circle-avatar" [ngStyle]="{
+          'background-color': '#0B348C'
+        }">
+    {{ teamName[0]?.toUpperCase() }}
+  </div>
+</ng-template>

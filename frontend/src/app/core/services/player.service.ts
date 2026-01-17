@@ -15,4 +15,10 @@ export class PlayerService {
   // });
   return this.http.get<Player>(`${this.apiUrl}/me`);
  }
+  requestJoinTeam(teamId: string | number) {
+    return this.http.post(
+      `${this.apiUrl}/me/request/team/${teamId}`,
+      {}
+    );
+  }
 }

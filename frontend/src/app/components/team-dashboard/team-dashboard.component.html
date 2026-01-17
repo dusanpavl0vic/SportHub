@@ -1,82 +1,54 @@
-<div
- class="team-dashboard mat-elevation-z2"
- *ngIf="team$ | async as team"
->
- <div class="team-header">
-  <img
-   [src]="'http://localhost:3000' + team.profilePicture"
-   alt="Team Logo"
-   class="team-logo"
-  />
+<div class="team-dashboard mat-elevation-z2" *ngIf="team$ | async as team">
+  <div class="team-header">
 
-  <div class="team-info">
-   <h2 class="team-name">
-    {{ team.name }}
-   </h2>
-   <div class="team-sport">
-    <mat-icon>sports_football</mat-icon>
-    <span>{{ team.sport.name }}</span>
-   </div>
+    <app-team-logo [logoUrl]="team.profilePicture" [teamName]="team.name"></app-team-logo>
 
-   <button
-    *ngIf="meTeam"
-    mat-raised-button
-    color="primary"
-    class="btn-orange"
-   >
-    Change profile
-   </button>
-   <button
-    *ngIf="!meTeam && !haveTeam"
-    mat-raised-button
-    color="primary"
-    class="btn-orange"
-   >
-    Join
-   </button>
+    <div class="team-info">
+      <h2 class="team-name">
+        {{ team.name }}
+      </h2>
+      <div class="team-sport">
+        <mat-icon>sports_football</mat-icon>
+        <span>{{ team.sport.name }}</span>
+      </div>
+      <button (click)="requestJoin(teamId)" *ngIf="!meTeam && !haveTeam" mat-raised-button color="primary"
+        class="btn-orange">
+        Join
+      </button>
+    </div>
   </div>
- </div>
 
- <div class="team-details">
-  <div class="detail-item">
-   <mat-icon>groups</mat-icon>
-   <span>{{ team.numberOfPlayers }}</span>
+  <div class="team-details">
+    <div class="detail-item">
+      <mat-icon>groups</mat-icon>
+      <span>{{ team.numberOfPlayers }}</span>
+    </div>
+    <div class="detail-item">
+      <mat-icon>call</mat-icon>
+      <span>+381 606227726</span>
+    </div>
+    <div class="detail-item">
+      <mat-icon>person</mat-icon>
+      <span>Dusan Pavlovic</span>
+    </div>
   </div>
-  <div class="detail-item">
-   <mat-icon>call</mat-icon>
-   <span>+381 606227726</span>
-  </div>
-  <div class="detail-item">
-   <mat-icon>person</mat-icon>
-   <span>Dusan Pavlovic</span>
-  </div>
- </div>
 
- <div *ngIf="meTeam || playerTeam" class="team-actions">
-  <button
-   mat-raised-button
-   color="primary"
-   class="btn-orange"
-  >
-   <mat-icon>person_add</mat-icon>
-   Players
-  </button>
-  <button
-   mat-raised-button
-   color="primary"
-   class="btn-orange"
-  >
-   <mat-icon>event_note</mat-icon>
-   Schedule
-  </button>
- </div>
+  <div *ngIf="meTeam || playerTeam" class="team-actions">
+    <button mat-raised-button color="primary" class="btn-orange" routerLink="members">
+      <mat-icon>person_add</mat-icon>
+      Players
+    </button>
+    <button mat-raised-button color="primary" class="btn-orange" routerLink="schedule">
+      <mat-icon>event_note</mat-icon>
+      Schedule
+    </button>
+  </div>
 </div>
 
 <!-- 
 <div *ngIf="!hasChildRoute">
   <app-ann></app-ann>
 </div> -->
+<!-- <app-team-announcement [teamId]="teamId"></app-team-announcement> -->
 
 <router-outlet></router-outlet>
-
-<app-team-schedule></app-team-schedule>

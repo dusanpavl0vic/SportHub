@@ -45,7 +45,18 @@ body {
  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
+* {
+ box-sizing: border-box;
+}
+
 .mat-mdc-form-field-subscript-wrapper,
 .mat-mdc-form-field-bottom-align {
  display: none !important;
+}
+
+html,
+body {
+ height: 100%;
+ margin: 0;
+ overflow: hidden;
 }

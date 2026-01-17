@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
  FormBuilder,
  FormControl,
@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, tap } from 'rxjs';
 import { LoginForm } from 'src/app/auth/interfaces/auth.interface';
-import { login } from 'src/app/auth/store/auth.action';
+import { clearAuthError, login } from 'src/app/auth/store/auth.action';
 import * as AuthSelector from 'src/app/auth/store/auth.selector';
 import { ButtonComponent } from '../custom/button/button.component';
 import { LoaderComponent } from '../custom/loader/loader.component';
@@ -34,7 +34,7 @@ import { LoginInputComponent } from '../custom/login-input/login-input.component
  ],
  standalone: true,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
  store = inject(Store);
  router = inject(Router);
 
@@ -68,6 +68,9 @@ export class LoginComponent {
    }),
   });
  }
+  ngOnInit(): void {
+    this.store.dispatch(clearAuthError());
+  }
 
  onSubmit() {
   if (this.loginForm.invalid) return;

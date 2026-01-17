@@ -1,0 +1,12 @@
+<div class="main-layout" [class.authenticated]="isAuthenticated$ | async">
+  <app-header class="main-header"></app-header>
+
+  <div class="layout-body">
+    <app-sidebar-component *ngIf="isAuthenticated$ | async" class="main-sidebar">
+    </app-sidebar-component>
+
+    <main class="main-content" [class.full-width]="!(isAuthenticated$ | async)">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

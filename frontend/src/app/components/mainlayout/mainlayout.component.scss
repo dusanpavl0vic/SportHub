@@ -1,0 +1,205 @@
+$header-height: 70px;
+$sidebar-width: 280px;
+$content-padding: 1.5rem;
+$bg-color: #f9fafb;
+
+/* RESET & BASE */
+:host {
+ display: block;
+ height: 100vh;
+ overflow: hidden;
+ background-color: $bg-color;
+}
+
+/* MAIN LAYOUT CONTAINER */
+.main-layout {
+ display: flex;
+ flex-direction: column;
+ height: 100vh;
+ width: 100%;
+ overflow: hidden;
+}
+
+/* HEADER - FIXED NA VRHU */
+.main-header {
+ position: fixed;
+ top: 0;
+ left: 0;
+ right: 0;
+ height: $header-height;
+ z-index: 1000;
+ background: white;
+ box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* BODY - ISPOD HEADERA */
+.layout-body {
+ display: flex;
+ margin-top: $header-height;
+ height: calc(100vh - #{$header-height});
+ overflow: hidden;
+ position: relative;
+}
+
+/* SIDEBAR - FIXED LEVO */
+.main-sidebar {
+ position: fixed;
+ left: 0;
+ top: $header-height;
+ width: $sidebar-width;
+ height: calc(100vh - #{$header-height});
+ overflow-y: auto;
+ overflow-x: hidden;
+ background: white;
+ box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+ z-index: 900;
+
+ /* Custom scrollbar */
+ &::-webkit-scrollbar {
+  width: 6px;
+ }
+
+ &::-webkit-scrollbar-track {
+  background: transparent;
+ }
+
+ &::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+
+  &:hover {
+   background: #a0aec0;
+  }
+ }
+}
+
+/* MAIN CONTENT - SA SCROLL-OM */
+.main-content {
+ flex: 1;
+ margin-left: $sidebar-width;
+ height: calc(100vh - #{$header-height});
+ overflow-y: auto;
+ overflow-x: hidden;
+ padding: $content-padding;
+ box-sizing: border-box;
+ background-color: $bg-color;
+
+ /* Smooth scroll */
+ scroll-behavior: smooth;
+
+ /* Custom scrollbar */
+ &::-webkit-scrollbar {
+  width: 8px;
+ }
+
+ &::-webkit-scrollbar-track {
+  background: #f1f1f1;
+ }
+
+ &::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+
+  &:hover {
+   background: #a0aec0;
+  }
+ }
+
+ /* KADA NEMA SIDEBARA (not authenticated) */
+ &.full-width {
+  margin-left: 0;
+  width: 100%;
+ }
+}
+
+/* DODATNO - ANIMACIJE ZA SIDEBAR */
+.main-layout.authenticated {
+ .main-content {
+  transition: margin-left 0.3s ease-in-out;
+ }
+}
+
+/* RESPONSIVE - TABLET */
+@media (max-width: 1024px) {
+ $sidebar-width-tablet: 240px;
+
+ .main-sidebar {
+  width: $sidebar-width-tablet;
+ }
+
+ .main-content {
+  margin-left: $sidebar-width-tablet;
+ }
+}
+
+/* RESPONSIVE - MOBILE */
+@media (max-width: 768px) {
+ .layout-body {
+  flex-direction: column;
+ }
+
+ .main-sidebar {
+  position: fixed;
+  left: -100%;
+  width: 280px;
+  transition: left 0.3s ease-in-out;
+
+  /* Prikaži sidebar sa toggle button ili swipe */
+  &.open {
+   left: 0;
+  }
+ }
+
+ .main-content {
+  margin-left: 0;
+  width: 100%;
+  padding: 1rem;
+
+  &.full-width {
+   margin-left: 0;
+  }
+ }
+
+ /* Overlay kada je sidebar otvoren na mobile */
+ .main-layout.authenticated .layout-body::before {
+  content: '';
+  position: fixed;
+  top: $header-height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 850;
+ }
+
+ .main-sidebar.open ~ .layout-body::before {
+  opacity: 1;
+  pointer-events: auto;
+ }
+}
+
+/* UTILITY CLASSES */
+.no-scroll {
+ overflow: hidden !important;
+}
+
+/* LOADING STATE */
+.main-content.loading {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ min-height: 400px;
+}
+
+/* EMPTY STATE */
+.main-content.empty {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ min-height: 60vh;
+ color: #6c757d;
+}

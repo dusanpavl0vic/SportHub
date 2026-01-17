@@ -1,0 +1,151 @@
+.announcements-container {
+ width: 100%;
+}
+
+.header-section {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 24px;
+ gap: 16px;
+ flex-wrap: wrap;
+}
+
+.section-title {
+ margin: 0;
+ color: #333;
+ font-size: 26px;
+ font-weight: 600;
+ letter-spacing: 0.3px;
+}
+
+.add-btn {
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ padding: 12px 24px;
+ background: linear-gradient(
+  135deg,
+  #e8916a 0%,
+  #d67d56 100%
+ );
+ color: white;
+ border: none;
+ border-radius: 20px;
+ font-size: 15px;
+ font-weight: 500;
+ cursor: pointer;
+ transition: all 0.3s ease;
+ letter-spacing: 0.3px;
+ box-shadow: 0 2px 8px rgba(232, 145, 106, 0.3);
+}
+
+.add-btn:hover {
+ transform: translateY(-2px);
+ box-shadow: 0 6px 20px rgba(232, 145, 106, 0.4);
+}
+
+.add-btn:active {
+ transform: translateY(0);
+}
+
+.add-btn svg {
+ transition: transform 0.3s ease;
+}
+
+.add-btn:hover svg {
+ transform: rotate(90deg);
+}
+
+/* Empty state */
+.empty-state {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ padding: 60px 20px;
+ text-align: center;
+ background: linear-gradient(
+  135deg,
+  #fafafa 0%,
+  #f5f5f5 100%
+ );
+ border-radius: 20px;
+ border: 2px dashed #e0e0e0;
+ margin-top: 20px;
+}
+
+.empty-icon {
+ margin-bottom: 20px;
+ color: #e8916a;
+ opacity: 0.7;
+ animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+ 0%,
+ 100% {
+  transform: translateY(0px);
+ }
+ 50% {
+  transform: translateY(-10px);
+ }
+}
+
+.empty-title {
+ margin: 0 0 8px 0;
+ color: #666;
+ font-size: 20px;
+ font-weight: 600;
+ letter-spacing: 0.2px;
+}
+
+.empty-description {
+ margin: 0;
+ color: #999;
+ font-size: 15px;
+ line-height: 1.5;
+ max-width: 400px;
+}
+
+/* Announcements list */
+.announcements-list {
+ display: flex;
+ flex-direction: column;
+ gap: 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+ .header-section {
+  flex-direction: column;
+  align-items: stretch;
+ }
+
+ .section-title {
+  font-size: 22px;
+  text-align: center;
+ }
+
+ .add-btn {
+  width: 100%;
+  justify-content: center;
+ }
+
+ .empty-state {
+  padding: 40px 20px;
+ }
+
+ .empty-icon svg {
+  width: 48px;
+  height: 48px;
+ }
+
+ .empty-title {
+  font-size: 18px;
+ }
+
+ .empty-description {
+  font-size: 14px;
+ }
+}

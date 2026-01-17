@@ -1,0 +1,19 @@
+.team-logo {
+ width: 70px;
+ height: 70px;
+ border-radius: 50%;
+ object-fit: cover;
+}
+
+.circle-avatar {
+ width: 70px;
+ height: 70px;
+ border-radius: 50%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ color: #fff;
+ font-weight: bold;
+ font-size: 25px;
+ text-transform: uppercase;
+}

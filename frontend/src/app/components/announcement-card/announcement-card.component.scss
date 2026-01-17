@@ -1,0 +1,97 @@
+.announcement-card {
+ background: white;
+ border-radius: 16px;
+ border-left: 5px solid #e8916a;
+ margin-bottom: 20px;
+ box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+ overflow: hidden;
+}
+.card-header {
+ padding: 20px 24px 12px 24px;
+ border-bottom: 1px solid #f0f0f0;
+}
+
+.card-title {
+ margin: 0;
+ color: #333;
+ font-size: 20px;
+ font-weight: 600;
+ letter-spacing: 0.2px;
+ line-height: 1.4;
+}
+
+.card-content {
+ padding: 16px 24px;
+}
+
+.description {
+ margin: 0;
+ color: #666;
+ font-size: 15px;
+ line-height: 1.6;
+ letter-spacing: 0.1px;
+}
+
+.card-actions {
+ padding: 12px 24px 20px 24px;
+ display: flex;
+ justify-content: flex-end;
+}
+
+.read-btn {
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ padding: 10px 20px;
+ background: white;
+ color: #e8916a;
+ border: 2px solid #e8916a;
+ border-radius: 20px;
+ font-size: 14px;
+ font-weight: 500;
+ cursor: pointer;
+ transition: all 0.3s ease;
+ letter-spacing: 0.3px;
+}
+
+.read-btn:hover {
+ background: #e8916a;
+ color: white;
+ transform: translateX(3px);
+ box-shadow: 0 4px 12px rgba(232, 145, 106, 0.3);
+}
+
+.read-btn:active {
+ transform: translateX(1px);
+}
+
+.read-btn svg {
+ transition: transform 0.3s ease;
+}
+
+.read-btn:hover svg {
+ transform: translateX(3px);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+ .card-header {
+  padding: 16px 20px 10px 20px;
+ }
+
+ .card-title {
+  font-size: 18px;
+ }
+
+ .card-content {
+  padding: 12px 20px;
+ }
+
+ .description {
+  font-size: 14px;
+ }
+
+ .card-actions {
+  padding: 10px 20px 16px 20px;
+ }
+}
