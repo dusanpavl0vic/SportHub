@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlayerSettingsComponent } from './player-settings.component';
+import { ScheduleDialogComponent } from './schedule-dialog.component';
 
-describe('PlayerSettingsComponent', () => {
-  let component: PlayerSettingsComponent;
-  let fixture: ComponentFixture<PlayerSettingsComponent>;
+describe('ScheduleDialogComponent', () => {
+  let component: ScheduleDialogComponent;
+  let fixture: ComponentFixture<ScheduleDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayerSettingsComponent]
+      imports: [ScheduleDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PlayerSettingsComponent);
+    fixture = TestBed.createComponent(ScheduleDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

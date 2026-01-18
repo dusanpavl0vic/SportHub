@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Novi termin</h2>
+<mat-dialog-content>
+  <mat-form-field class="w-100">
+    <mat-select [(ngModel)]="dto.dayOfWeek">
+      <mat-option *ngFor="let d of days" [value]="d">{{d}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="w-100">
+    <input matInput type="time" [(ngModel)]="dto.startTime">
+  </mat-form-field>
+
+  <mat-form-field class="w-100">
+    <input matInput type="time" [(ngModel)]="dto.endTime">
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Otkaži</button>
+  <button mat-raised-button color="primary" (click)="save()">Sačuvaj</button>
+</mat-dialog-actions>

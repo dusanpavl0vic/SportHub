@@ -33,11 +33,13 @@
     </div>
   </div>
 
-  <div *ngIf="meTeam || playerTeam" class="team-actions">
+  <div *ngIf="meTeam" class="team-actions">
     <button mat-raised-button color="primary" class="btn-orange" routerLink="members">
       <mat-icon>person_add</mat-icon>
       Players
     </button>
+  </div>
+  <div *ngIf="meTeam || playerTeam" class="team-actions">
     <button mat-raised-button color="primary" class="btn-orange" routerLink="schedule">
       <mat-icon>event_note</mat-icon>
       Schedule

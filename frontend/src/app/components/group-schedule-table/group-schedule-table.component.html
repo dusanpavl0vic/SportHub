@@ -1,0 +1,33 @@
+<table mat-table [dataSource]="schedules" class="mat-elevation-z2">
+
+  <ng-container matColumnDef="day">
+    <th mat-header-cell *matHeaderCellDef>Dan</th>
+    <td mat-cell *matCellDef="let s">{{ s.dayOfWeek }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="start">
+    <th mat-header-cell *matHeaderCellDef>Početak</th>
+    <td mat-cell *matCellDef="let s">{{ isoToTimeString(s.startTime) }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="end">
+    <th mat-header-cell *matHeaderCellDef>Kraj</th>
+    <td mat-cell *matCellDef="let s">{{ isoToTimeString(s.endTime) }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Akcije</th>
+    <td mat-cell *matCellDef="let s">
+      <button mat-icon-button color="warn" (click)="deleteSchedule(s)" *ngIf="isOwner">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<button *ngIf="isOwner" mat-raised-button color="accent" (click)="openAddSchedule()">
+  + Dodaj termin
+</button>

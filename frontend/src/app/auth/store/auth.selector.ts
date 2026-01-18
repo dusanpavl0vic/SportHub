@@ -53,3 +53,11 @@ export const selectToken = createSelector(
   selectAuthState,
   (state: AuthState) => state.token,
 );
+
+export const selectTeamImage = createSelector(
+  selectAuthState,
+  (state) =>
+    state.user && 'numberOfPlayers' in state.user
+      ? state.user.profilePicture
+      : null
+);

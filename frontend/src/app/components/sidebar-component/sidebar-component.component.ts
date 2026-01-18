@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   catchError,
@@ -10,6 +10,7 @@ import {
   map,
   Observable,
   of,
+  Subscription,
   switchMap,
   take,
   tap,
@@ -40,12 +41,18 @@ export class SidebarComponentComponent implements OnInit {
   team$!: Observable<Team | null>;
   role$!: Observable<Role | null>;
   playerTeam$?: Observable<TeamPreview | null>;
+  teamId!: any;
+  meTeam = false;
+  teamImage$!: Observable<string | null>;
+  private subscription!: Subscription;
 
+  private route = inject(ActivatedRoute);
   constructor(
     private store: Store<AppState>,
     private router: Router,
     private jwtService: JwtService,
     private teamService: TeamService,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -60,6 +67,10 @@ export class SidebarComponentComponent implements OnInit {
       .pipe(tap((t) => console.log('Team:', t)));
     this.role$ = this.store.select(AuthSelector.selectRole);
 
+    this.teamImage$ = this.store.select(AuthSelector.selectTeamImage).pipe(tap((p) => console.log('Image:', p)));
+    this.teamImage$.subscribe(() => {
+      this.cd.detectChanges(); // prisilno osvežava sliku
+    });
     this.playerTeam$ = this.player$.pipe(
       filter((player) => !!player?.teamId && player != null),
       switchMap((player) =>
@@ -133,18 +144,20 @@ export class SidebarComponentComponent implements OnInit {
   goToSettings() {
     combineLatest([this.role$, this.team$, this.player$])
       .pipe(take(1))
-      .subscribe(([role, team, player]) => {
+      .subscribe(([role, team]) => {
         if (role === Role.TEAM && team) {
           this.router.navigate(['teams', team.id, 'settings']);
-        }
-
-        if (role === Role.PLAYER && player) {
-          this.router.navigate(['player', player.id, 'settings']);
         }
       });
   }
 
   logout() {
     this.store.dispatch(AuthAction.logout());
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

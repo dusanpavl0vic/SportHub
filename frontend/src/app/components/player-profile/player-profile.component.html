@@ -1,1 +1,29 @@
-<p>player-profile works!</p>
+<div *ngIf="player$ | async as player; else loading">
+  <div *ngIf="isPlayerIdMatch(player.id); else error">
+    <div class="player-profile-container">
+      <div class="avatar">
+        <img *ngIf="player.profilePicture; else playerInitial" [src]="url + player.profilePicture"
+          [alt]="player.firstname" class="avatar-img" />
+        <ng-template #playerInitial>
+          <div class="avatar-circle" [ngStyle]="{'background-color': '#0B348C'}">
+            {{ player.firstname[0].toUpperCase() }}
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="player-info">
+        <h1>{{ player.firstname }} {{ player.lastname }}</h1>
+        <p><strong>Phone Number:</strong> {{ player.phoneNumber }}</p>
+        <p><strong>Birthdate:</strong> {{ player.birthdate | date: 'dd/MM/yyyy' }}</p>
+        <p><strong>City:</strong> {{ player.city }}</p>
+      </div>
+    </div>
+  </div>
+  <ng-template #error>
+    <p class="error-message">Player ID does not match the route ID.</p>
+  </ng-template>
+</div>
+
+<ng-template #loading>
+  <p>Loading player data...</p>
+</ng-template>

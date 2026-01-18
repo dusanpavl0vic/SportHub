@@ -7,7 +7,7 @@ import {
 import { JwtService } from 'src/app/core/services/jwt.service';
 
 import { Router } from '@angular/router';
-import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { catchError, map, mergeMap, of, switchMap, tap } from 'rxjs';
 import { AuthService } from 'src/app/auth/service/auth.service';
 import * as AuthActions from 'src/app/auth/store/auth.action';
 import { PlayerService } from 'src/app/core/services/player.service';
@@ -52,9 +52,6 @@ export class AuthEffects {
               }),
             ),
             catchError((error) => {
-              // console.log('RAW error:', error);
-              // console.log('error.error:', error.error);
-              // console.log('error.error.message:', error?.error?.message);
 
               const message =
                 error?.error?.message.message ||
@@ -63,7 +60,6 @@ export class AuthEffects {
 
               console.log('Final message:', message);
 
-              //TODO: razmisli o nekom mapperu za porue o gresci ili na backendu da se menja
               return of(
                 AuthActions.loginFailure({
                   error: message,
@@ -223,5 +219,31 @@ export class AuthEffects {
         }
       }),
     ),
+  );
+
+  updateTeam$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.updateTeam),
+      mergeMap((action) =>
+        this.teamService.updateTeam(action.updateTeamDto).pipe(
+          map((team) => AuthActions.updateTeamSuccess({ team })),
+          catchError((error) => of(AuthActions.updateTeamFailure({ error })))
+        )
+      )
+    )
+  );
+
+  uploadTeamImage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.uploadTeamImage),
+      mergeMap((action) =>
+        this.teamService.uploadImage(action.file).pipe(
+          map((imageUrl) => AuthActions.uploadTeamImageSuccess({ imageUrl })),
+          catchError((error) =>
+            of(AuthActions.uploadTeamImageFailure({ error }))
+          )
+        )
+      )
+    )
   );
 }

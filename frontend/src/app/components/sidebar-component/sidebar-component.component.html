@@ -4,7 +4,7 @@
     <div class="sidebar-item profile" (click)="goToProfile()">
       <ng-container *ngIf="team$ | async as team; else playerTemplate">
         <div class="avatar">
-          <img *ngIf="team.profilePicture; else teamInitial" [src]="url + team.profilePicture" [alt]="team.name"
+          <img *ngIf="teamImage$ | async as img; else teamInitial" [src]="url + img" [alt]="team.name"
             class="avatar-img" />
           <ng-template #teamInitial>
             <div class="avatar-circle" [ngStyle]="{'background-color': '#0B348C'}">
@@ -57,22 +57,20 @@
             <i class="bi bi-calendar"></i>
             <span>Schedule</span>
           </div>
-          <div class="sidebar-item" (click)="goToMembers()">
-            <i class="bi bi-people"></i>
-            <span>Members</span>
-          </div>
         </div>
       </div>
     </ng-container>
   </ng-container>
 
   <!-- Navigation Section -->
-  <div class="sidebar-section nav-section">
-    <div class="sidebar-item" (click)="goToSettings()">
-      <i class="bi bi-gear"></i>
-      <span>Settings</span>
+  <ng-container *ngIf="team$ | async as team">
+    <div class="sidebar-section nav-section">
+      <div class="sidebar-item" (click)="goToSettings()">
+        <i class="bi bi-gear"></i>
+        <span>Settings</span>
+      </div>
     </div>
-  </div>
+  </ng-container>
 
   <!-- Logout Section -->
   <div class="sidebar-section logout-section">

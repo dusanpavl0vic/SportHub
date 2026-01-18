@@ -146,7 +146,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('app_state');
-    this.router.navigate(['/login']);
+    //this.router.navigate(['/login']);
   }
 
   getUserProfile(userId: number): Observable<Player | Team> {

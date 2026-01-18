@@ -43,8 +43,8 @@ import { TeamLogoComponent } from "../team-logo/team-logo.component";
   standalone: true,
 })
 export class TeamDashboardComponent implements OnInit {
-  teamId!: any;
   team$!: Observable<Team>;
+  teamId!: any;
   meTeam = false;
   playerTeam = false;
   isAuth = false;
@@ -73,8 +73,8 @@ export class TeamDashboardComponent implements OnInit {
 
 
       this.isAuth = !!this.isAuth;
-      this.meTeam = team?.id === this.teamId;
-      this.playerTeam = player?.teamId === this.teamId;
+      this.meTeam = team?.id == this.teamId;
+      this.playerTeam = player?.teamId == this.teamId;
       this.haveTeam = !!player?.teamId;
 
       if (this.meTeam && team) {

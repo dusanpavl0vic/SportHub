@@ -127,5 +127,35 @@ export const authReducer = createReducer(
       };
     }
     return state;
-  })
+  }),
+  on(AuthActions.updateTeamSuccess, (state, { team }) => {
+    if (state.user && 'numberOfPlayers' in state.user) {
+      return {
+        ...state,
+        user: { ...state.user, ...team },
+        loading: false,
+        error: null,
+      };
+    }
+    return state;
+  }),
+  on(AuthActions.uploadTeamImageSuccess, (state, { imageUrl }) => {
+    if (state.user && 'numberOfPlayers' in state.user) {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          profilePicture: imageUrl,
+        },
+        loading: false,
+        error: null,
+      };
+    }
+    return state;
+  }),
+  on(AuthActions.uploadTeamImageFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  }))
 );

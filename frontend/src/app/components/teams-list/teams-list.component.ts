@@ -28,6 +28,7 @@ import { SortOrder } from 'src/enum/sort.enum';
 import { Sport } from 'src/interfaces/sport/sport.dto';
 import { FilterTeamDto } from 'src/interfaces/team/filter.dto';
 import { TeamCardComponent } from '../team-card/team-card.component';
+import { TeamSearchComponent } from "../team-search/team-search.component";
 
 @Component({
   selector: 'app-teams-list',
@@ -39,7 +40,8 @@ import { TeamCardComponent } from '../team-card/team-card.component';
     MatPaginatorModule,
     MatFormFieldModule,
     MatSelectModule,
-  ],
+    TeamSearchComponent
+],
   templateUrl: './teams-list.component.html',
   styleUrl: './teams-list.component.scss',
   standalone: true,

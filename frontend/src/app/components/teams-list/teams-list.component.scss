@@ -2,6 +2,9 @@
  padding: 32px 24px;
  max-width: 1400px;
  margin: 0 auto;
+ gap: 20px;
+ display: flex;
+ flex-direction: column;
 }
 
 .page-header {

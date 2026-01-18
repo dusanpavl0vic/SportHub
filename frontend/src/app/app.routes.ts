@@ -11,7 +11,7 @@ import { TeamSettingsComponent } from './components/team-settings/team-settings.
 import { TeamsListComponent } from './components/teams-list/teams-list.component';
 
 import { MainlayoutComponent } from './components/mainlayout/mainlayout.component';
-import { PlayerSettingsComponent } from './components/player-settings/player-settings.component';
+import { PlayerMembershipsComponent } from './components/player-memberships/player-memberships.component';
 import { TeamAnnouncementComponent } from './components/team-announcement/team-announcement.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { GuestGuard } from './core/guards/guest.guard';
@@ -55,13 +55,13 @@ export const routes: Routes = [
           {
             path: 'members',
             component: TeamMembersComponent,
-            canActivate: [AuthGuard, TeamMembershipGuard],
+            canActivate: [AuthGuard],
           },
           {
             path: 'settings',
             component: TeamSettingsComponent,
             canActivate: [AuthGuard, RoleGuard],
-            data: { role: Role.TEAM }
+            data: { roles: [Role.TEAM] }
           }
         ],
       },
@@ -72,8 +72,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           {
-            path: 'settings',
-            component: PlayerSettingsComponent,
+            path: 'membership',
+            component: PlayerMembershipsComponent,
             canActivate: [AuthGuard, RoleGuard],
             data: { role: Role.PLAYER }
           }

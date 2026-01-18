@@ -6,6 +6,7 @@ import {
 import { Role } from 'src/enum/role.enum';
 import { Player } from 'src/interfaces/player/player.dto';
 import { Team } from 'src/interfaces/team/team.dto';
+import { UpdateTeamDto } from 'src/interfaces/team/update-team.dto';
 
 export const login = createAction(
   '[Auth] Login',
@@ -85,4 +86,37 @@ export const decrementNumberOfPlayers = createAction(
 
 export const incrementNumberOfPlayers = createAction(
   '[Team Stats] Increment Number Of Players'
+);
+
+export const updateTeam = createAction(
+  '[Auth] Update Team',
+  props<{
+    updateTeamDto: UpdateTeamDto
+  }>()
+);
+
+export const updateTeamSuccess = createAction(
+  '[Auth] Update Team Success',
+  props<{ team: UpdateTeamDto }>()
+);
+
+
+export const updateTeamFailure = createAction(
+  '[Auth] Update Team Failure',
+  props<{ error: any }>()
+);
+
+export const uploadTeamImage = createAction(
+  '[Auth] Upload Team Image',
+  props<{ file: File }>()
+);
+
+export const uploadTeamImageSuccess = createAction(
+  '[Auth] Upload Team Image Success',
+  props<{ imageUrl: string }>()
+);
+
+export const uploadTeamImageFailure = createAction(
+  '[Auth] Upload Team Image Failure',
+  props<{ error: any }>()
 );
