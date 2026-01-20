@@ -1,4 +1,3 @@
-// auth.reducer.ts
 import { createReducer, on } from '@ngrx/store';
 import { loadFromLocalStorage } from 'src/app/core/storage/storage';
 import * as AuthActions from './auth.action';
@@ -139,23 +138,21 @@ export const authReducer = createReducer(
     }
     return state;
   }),
-  on(AuthActions.uploadTeamImageSuccess, (state, { imageUrl }) => {
-    if (state.user && 'numberOfPlayers' in state.user) {
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          profilePicture: imageUrl,
-        },
-        loading: false,
-        error: null,
-      };
-    }
-    return state;
-  }),
+  on(AuthActions.uploadTeamImageSuccess, (state, { team }) => ({
+    ...state,
+    user: team
+  })),
   on(AuthActions.uploadTeamImageFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
+  })),
+  on(AuthActions.clearPlayerTeam, (state) => ({
+    ...state,
+    user:
+      state.user && 'teamId' in state.user
+        ? { ...state.user, teamId: null }
+        : state.user,
+    team: null,
   }))
 );

@@ -6,37 +6,35 @@ import { Role } from 'src/enum/role.enum';
 import { JwtService } from '../services/jwt.service';
 
 @Injectable({
- providedIn: 'root',
+  providedIn: 'root',
 })
 export class GuestGuard implements CanActivate {
- // cuva login i register od ulogovanih korisnika
- constructor(
-  private store: Store<AppState>,
-  private router: Router,
-  private jwtService: JwtService,
- ) {}
+  // cuva login i register od ulogovanih korisnika
+  constructor(
+    private store: Store<AppState>,
+    private router: Router,
+    private jwtService: JwtService,
+  ) { }
 
- canActivate(): boolean {
-  const isAuth = this.jwtService.isAuthenticated();
+  canActivate(): boolean {
+    const isAuth = this.jwtService.isAuthenticated();
 
-  console.log('guest.guard.ts isAuth' + isAuth);
-  if (!isAuth) {
-   return true;
+    console.log('guest.guard.ts isAuth' + isAuth);
+    if (!isAuth) {
+      return true;
+    }
+
+    const role = this.jwtService.getRole();
+    const profileId = this.jwtService.getProfileId();
+
+    if (role === Role.PLAYER) {
+      this.router.navigate(['/player', profileId]);
+    } else if (role === Role.TEAM) {
+      this.router.navigate(['/teams', profileId]);
+    } else {
+      this.router.navigate(['/']);
+    }
+
+    return false;
   }
-
-  //TODO: izmeni ovo da nemam me ruta nego da uzimas iz tokena sub i
-
-  const role = this.jwtService.getRole();
-  const profileId = this.jwtService.getProfileId();
-
-  if (role === Role.PLAYER) {
-   this.router.navigate(['/player', profileId]);
-  } else if (role === Role.TEAM) {
-   this.router.navigate(['/teams', profileId]);
-  } else {
-   this.router.navigate(['/']);
-  }
-
-  return false;
- }
 }

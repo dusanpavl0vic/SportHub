@@ -51,6 +51,8 @@ export class TeamDashboardComponent implements OnInit {
   haveTeam = false;
   private subscription!: Subscription;
 
+  url = 'http://localhost:3000';
+
   private route = inject(ActivatedRoute);
 
   constructor(
@@ -98,7 +100,10 @@ export class TeamDashboardComponent implements OnInit {
       },
       error: err => {
         if (err.status === 400 && err.error?.message?.message) {
-          this.toast.show(err.error.message.message); // 🔥 Toast za "Već si u timu / čekanje odobrenja"
+          this.toast.show(err.error.message.message);
+        } else if (err.status === 401) {
+          this.toast.show("Registruj se");
+
         } else {
           this.toast.show('Došlo je do greške prilikom slanja zahteva');
         }

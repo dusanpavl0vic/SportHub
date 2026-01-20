@@ -1,5 +1,4 @@
 <div class="sidebar">
-  <!-- Profile Section -->
   <div class="sidebar-section profile-section">
     <div class="sidebar-item profile" (click)="goToProfile()">
       <ng-container *ngIf="team$ | async as team; else playerTemplate">
@@ -31,8 +30,6 @@
       </ng-template>
     </div>
   </div>
-
-  <!-- Player Team Section -->
   <ng-container *ngIf="player$ | async as player">
     <ng-container *ngIf="playerTeam$ | async as team">
       <div class="sidebar-section team-section">
@@ -61,8 +58,6 @@
       </div>
     </ng-container>
   </ng-container>
-
-  <!-- Navigation Section -->
   <ng-container *ngIf="team$ | async as team">
     <div class="sidebar-section nav-section">
       <div class="sidebar-item" (click)="goToSettings()">
@@ -71,8 +66,6 @@
       </div>
     </div>
   </ng-container>
-
-  <!-- Logout Section -->
   <div class="sidebar-section logout-section">
     <div class="sidebar-item logout" (click)="logout()">
       <i class="bi bi-box-arrow-right"></i>

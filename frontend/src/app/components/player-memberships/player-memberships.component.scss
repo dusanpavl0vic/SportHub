@@ -1,0 +1,164 @@
+.membership-card {
+ background: white;
+ border-radius: 16px;
+ overflow: hidden;
+ margin-bottom: 20px;
+ box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+ transition: all 0.3s ease;
+ border-left: 4px solid #e8916a;
+ position: relative;
+}
+
+.membership-card::before {
+ content: '';
+ position: absolute;
+ top: 0;
+ left: 0;
+ right: 0;
+ height: 3px;
+ background: linear-gradient(
+  90deg,
+  #e8916a 0%,
+  rgba(232, 145, 106, 0.2) 100%
+ );
+}
+
+.membership-card:hover {
+ transform: translateY(-4px);
+ box-shadow: 0 8px 24px rgba(232, 145, 106, 0.2);
+}
+
+.membership-card:last-child {
+ margin-bottom: 0;
+}
+
+.card-content {
+ padding: 24px;
+}
+
+.team-header {
+ display: flex;
+ align-items: center;
+ gap: 16px;
+}
+
+.team-icon {
+ width: 56px;
+ height: 56px;
+ background: linear-gradient(
+  135deg,
+  #e8916a 0%,
+  #d67d56 100%
+ );
+ border-radius: 14px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ color: white;
+ flex-shrink: 0;
+ box-shadow: 0 4px 12px rgba(232, 145, 106, 0.3);
+}
+
+.team-info {
+ flex: 1;
+ min-width: 0;
+}
+
+.team-name {
+ margin: 0 0 6px 0;
+ color: #333;
+ font-size: 20px;
+ font-weight: 600;
+ letter-spacing: 0.3px;
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+}
+
+.team-location {
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ color: #666;
+ font-size: 14px;
+}
+
+.team-location svg {
+ color: #e8916a;
+ flex-shrink: 0;
+}
+
+.status-badge {
+ display: flex;
+ align-items: center;
+ gap: 6px;
+ padding: 8px 14px;
+ border-radius: 20px;
+ font-size: 13px;
+ font-weight: 600;
+ white-space: nowrap;
+ flex-shrink: 0;
+}
+
+.status-badge.pending {
+ background: rgba(255, 152, 0, 0.1);
+ color: #ff9800;
+}
+
+.status-badge.active {
+ background: rgba(76, 175, 80, 0.1);
+ color: #4caf50;
+}
+
+.card-actions {
+ padding: 16px 24px;
+ background-color: #f8f8f8;
+ border-top: 1px solid #f0f0f0;
+ display: flex;
+ justify-content: flex-end;
+}
+
+.leave-btn,
+.cancel-btn {
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ padding: 10px 20px;
+ border: 2px solid;
+ border-radius: 20px;
+ font-size: 14px;
+ font-weight: 500;
+ cursor: pointer;
+ transition: all 0.3s ease;
+ background: white;
+ letter-spacing: 0.3px;
+}
+
+.leave-btn {
+ border-color: #e8916a;
+ color: #e8916a;
+}
+
+.leave-btn:hover {
+ background: #e8916a;
+ color: white;
+ transform: translateY(-2px);
+ box-shadow: 0 4px 12px rgba(232, 145, 106, 0.3);
+}
+
+.cancel-btn {
+ border-color: #999;
+ color: #666;
+}
+
+.cancel-btn:hover {
+ border-color: #333;
+ color: #333;
+ background: #f5f5f5;
+ transform: translateY(-2px);
+}
+
+.leave-btn:active,
+.cancel-btn:active {
+ transform: translateY(0);
+}

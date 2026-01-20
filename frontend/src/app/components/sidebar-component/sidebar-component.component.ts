@@ -69,19 +69,21 @@ export class SidebarComponentComponent implements OnInit {
 
     this.teamImage$ = this.store.select(AuthSelector.selectTeamImage).pipe(tap((p) => console.log('Image:', p)));
     this.teamImage$.subscribe(() => {
-      this.cd.detectChanges(); // prisilno osvežava sliku
+      this.cd.detectChanges();
     });
     this.playerTeam$ = this.player$.pipe(
-      filter((player) => !!player?.teamId && player != null),
-      switchMap((player) =>
-        this.teamService.getTeam(player?.teamId!).pipe(
+      switchMap((player) => {
+        if (!player?.teamId) {
+          return of(null);
+        }
+        return this.teamService.getTeam(player.teamId).pipe(
           map((team) => {
             const { user, ...teamPreview } = team;
             return teamPreview as TeamPreview;
           }),
           catchError(() => of(null)),
-        ),
-      ),
+        );
+      }),
     );
   }
 
@@ -120,13 +122,11 @@ export class SidebarComponentComponent implements OnInit {
       .pipe(take(1))
       .subscribe(([role, team, playerTeam]) => {
 
-        // TEAM nalog
         if (role === Role.TEAM && team) {
           this.router.navigate(['teams', team.id, path]);
           return;
         }
 
-        // PLAYER koji ima tim
         if (role === Role.PLAYER && playerTeam) {
           this.router.navigate(['teams', playerTeam.id, path]);
           return;

@@ -8,7 +8,10 @@
         {{ team.name }}
       </h2>
       <div class="team-sport">
-        <mat-icon>sports_football</mat-icon>
+        <div class="icon">
+          <img [src]="url + '/assets/sporticons/' + team.sport.iconFilename" alt="{{ team.sport.iconFilename }} Logo"
+            class="logo" />
+        </div>
         <span>{{ team.sport.name }}</span>
       </div>
       <button (click)="requestJoin(teamId)" *ngIf="!meTeam && !haveTeam" mat-raised-button color="primary"
@@ -46,11 +49,5 @@
     </button>
   </div>
 </div>
-
-<!-- 
-<div *ngIf="!hasChildRoute">
-  <app-ann></app-ann>
-</div> -->
-<!-- <app-team-announcement [teamId]="teamId"></app-team-announcement> -->
 
 <router-outlet></router-outlet>

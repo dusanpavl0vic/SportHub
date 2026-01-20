@@ -35,7 +35,6 @@ $header-bg: #e88b5a;
   }
  }
 
- // Sidebar Items
  .sidebar-item {
   display: flex;
   align-items: center;
@@ -104,7 +103,6 @@ $header-bg: #e88b5a;
   }
  }
 
- // Avatar Styles
  .avatar {
   width: 48px;
   height: 48px;
@@ -137,7 +135,6 @@ $header-bg: #e88b5a;
   }
  }
 
- // Team Section Styles
  .team-section {
   background-color: #f8f9fa;
   border-radius: 12px;
@@ -196,46 +193,6 @@ $header-bg: #e88b5a;
     i {
      font-size: 1.5rem;
     }
-   }
-  }
- }
-
- // Responsive
- @media (max-width: 768px) {
-  width: 100%;
-  min-height: auto;
-  flex-direction: row;
-  padding: 1rem;
-  overflow-x: auto;
-
-  .sidebar-section {
-   padding: 0;
-   border-bottom: none;
-   margin-bottom: 0;
-
-   &:not(:last-child) {
-    padding-right: 1rem;
-    border-right: 1px solid #e9ecef;
-   }
-
-   &.logout-section {
-    margin-left: auto;
-   }
-  }
-
-  .sidebar-item {
-   white-space: nowrap;
-
-   span {
-    display: none;
-   }
-  }
-
-  .team-section {
-   margin: 0;
-
-   .team-actions {
-    flex-direction: row;
    }
   }
  }

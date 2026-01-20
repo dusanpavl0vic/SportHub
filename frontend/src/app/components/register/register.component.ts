@@ -50,7 +50,6 @@ export class RegisterComponent {
       .subscribe({
         next: (response) => {
           this.citiesList = response.data;
-          // console.log('Fetched cities:', this.citiesList);
         },
         error: (error) => {
           console.error('Error fetching cities:', error);

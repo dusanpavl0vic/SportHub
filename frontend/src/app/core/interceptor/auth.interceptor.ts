@@ -25,7 +25,6 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const token = localStorage.getItem('token');
 
-    // Ako postoji token, kloniraj zahtev sa Authorization headerom
     const clonedRequest = token
       ? req.clone({
         headers: req.headers.set(
@@ -35,7 +34,6 @@ export class AuthInterceptor implements HttpInterceptor {
       })
       : req;
 
-    // Sada uvek hendluj greške
     return handler.handle(clonedRequest).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {

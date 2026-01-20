@@ -6,9 +6,10 @@
 
   <div class="info-box">
     <div class="info-item">
-      <mat-icon>
-        <img [src]="url + team.sport.iconFilename" alt="{{ team.sport.iconFilename }} Logo" class="logo" />
-      </mat-icon>
+      <div class="icon">
+        <img [src]="url + '/assets/sporticons/' + team.sport.iconFilename" alt="{{ team.sport.iconFilename }} Logo"
+          class="logo" />
+      </div>
       <span>{{ team.sport.name }}</span>
     </div>
     <div class="info-item">

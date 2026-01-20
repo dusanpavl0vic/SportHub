@@ -29,7 +29,6 @@ export class TeamCardComponent implements OnInit {
   @Input() team!: Team;
   url = 'http://localhost:3000';
 
-  // team$!: Observable<Team | null>;
   constructor(
     private store: Store<AppState>,
     private router: Router,

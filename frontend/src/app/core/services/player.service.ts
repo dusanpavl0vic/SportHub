@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { PlayerMembership } from 'src/interfaces/player/membershi.dto';
 import { Player } from 'src/interfaces/player/player.dto';
 
 @Injectable({ providedIn: 'root' })
@@ -18,6 +19,19 @@ export class PlayerService {
   requestJoinTeam(teamId: string | number) {
     return this.http.post(
       `${this.apiUrl}/me/request/team/${teamId}`,
+      {}
+    );
+  }
+
+  getMyMemberships(): Observable<PlayerMembership[]> {
+    return this.http.get<PlayerMembership[]>(
+      `${this.apiUrl}/me/memberships`
+    );
+  }
+
+  leaveTeam(teamId: number): Observable<void> {
+    return this.http.post<void>(
+      `${this.apiUrl}/me/leave/team/${teamId}`,
       {}
     );
   }

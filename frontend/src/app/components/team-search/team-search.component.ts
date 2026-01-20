@@ -65,17 +65,16 @@ export class TeamSearchComponent implements OnInit, OnDestroy {
   }
 
   onTeamClick(teamId: number): void {
-    this.showDropdown = false; // Sakrij dropdown
+    this.showDropdown = false;
     this.router.navigate(['/teams', teamId]);
   }
 
   clearSearch(): void {
     this.searchControl.setValue('');
-    this.showDropdown = false; // Sakrij dropdown
+    this.showDropdown = false;
   }
 
   onBlur(): void {
-    // Delay da bi klik na tim mogao da se registruje pre nego što se dropdown sakrije
     setTimeout(() => {
       this.showDropdown = false;
     }, 200);

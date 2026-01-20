@@ -52,8 +52,7 @@ interface JwtPayload {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/auth'; // prilagodi ako backend radi na drugom portu
-
+  private apiUrl = 'http://localhost:3000/auth';
   constructor(
     private http: HttpClient,
     private store: Store<AppState>,

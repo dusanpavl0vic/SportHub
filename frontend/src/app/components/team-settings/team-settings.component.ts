@@ -59,8 +59,6 @@ export class TeamSettingsComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       this.selectedFile = input.files[0];
-
-      // Preview
       const reader = new FileReader();
       reader.onload = (e) => {
         this.previewUrl = e.target?.result as string;

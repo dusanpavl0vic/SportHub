@@ -41,8 +41,6 @@
     </app-announcement-card>
   </div>
 </div>
-
-<!-- Add announcement popup -->
 <ng-container *ngIf="meTeam">
   <app-add-announcement *ngIf="showAddPopup" (created)="onCreated($event)" (cancelled)="showAddPopup = false">
   </app-add-announcement>

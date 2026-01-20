@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
  providedIn: 'root',
 })
 export class CitiesService {
- private apiUrl = 'https://countriesnow.space/api/v0.1/'; // prilagodi ako backend radi na drugom portu
+ private apiUrl = 'https://countriesnow.space/api/v0.1/';
 
  constructor(private http: HttpClient) {}
 

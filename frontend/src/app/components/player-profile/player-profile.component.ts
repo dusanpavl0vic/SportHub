@@ -6,10 +6,11 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/app.state';
 import { selectPlayer } from 'src/app/auth/store/auth.selector';
+import { PlayerMembershipsComponent } from "../player-memberships/player-memberships.component";
 
 @Component({
   selector: 'app-player-profile',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PlayerMembershipsComponent],
   templateUrl: './player-profile.component.html',
   styleUrl: './player-profile.component.scss',
 })

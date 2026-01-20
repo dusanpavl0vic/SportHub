@@ -25,7 +25,6 @@ export class AuthEffects {
     private router: Router,
   ) { }
 
-  // switchMap uzima sam poslednji zahtev ako neko klikne 3 puta na login izvrsice se samo poslednji
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.login),
@@ -236,9 +235,18 @@ export class AuthEffects {
   uploadTeamImage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.uploadTeamImage),
-      mergeMap((action) =>
-        this.teamService.uploadImage(action.file).pipe(
-          map((imageUrl) => AuthActions.uploadTeamImageSuccess({ imageUrl })),
+      switchMap(({ file }) =>
+        this.teamService.uploadImage(file).pipe(
+          switchMap((imageUrl) =>
+            this.teamService.getMe().pipe(
+              map((team) =>
+                AuthActions.uploadTeamImageSuccess({
+                  imageUrl,
+                  team,
+                })
+              )
+            )
+          ),
           catchError((error) =>
             of(AuthActions.uploadTeamImageFailure({ error }))
           )

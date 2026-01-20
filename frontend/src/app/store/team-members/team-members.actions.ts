@@ -1,7 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 import { TeamMember } from "src/app/core/services/team-members.service";
 
-// store/team-members.actions.ts
 export const loadActiveMembers = createAction('[Members] Load Active');
 export const loadPendingMembers = createAction('[Members] Load Pending');
 
